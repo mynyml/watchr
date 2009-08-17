@@ -1,0 +1,27 @@
+==== Summary
+
+Agile continious testing.
+
+In fact, it's more like /continious .*/, though it was designed primarily with
+testing in mind.
+
+==== Features
+
+o test framework agnostic (test/unit, rspec, minitest, expectations, ...)
+o web  framework agnostic (rails, merb, sinatra, camping, invisible, ...)
+o Low level / Highly flexible
+o Rediculously simple to use
+o Simple code
+
+==== Examples
+
+continious testing:
+
+
+continious documenting:
+
+
+continious anything:
+
+
+==== Links
