@@ -1,2 +1,15 @@
 #!/usr/bin/env ruby
-case 
+
+require 'pathname'
+root  = Pathname(__FILE__).dirname.parent
+require root.join('lib/watchr')
+
+file = Pathname(ARGV.first || 'specs.watchr')
+
+unless file.exist?
+  puts "no script found"
+  exit
+end
+
+script = Watchr::Script.new.instance_eval(file.read)
+Watchr::Runner.new(script).run

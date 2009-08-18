@@ -6,3 +6,5 @@ o automatically pick up changes to script file?
 
 o clean up code
 o clean up spec code
+
+o help/summary for executable
