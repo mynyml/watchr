@@ -21,22 +21,24 @@ def all_except(res)
 end
 
 spec = Gem::Specification.new do |s|
-  s.name            = 'rack-accept-media-types'
-  s.version         = '0.6'
-  s.summary         = "Rack convenience middleware for simplified handling of Accept header."
-  s.description     = "Rack convenience middleware for simplified handling of Accept header."
+  s.name            = 'watchr'
+  s.version         = '0.1'
+  s.summary         = "Project files observer/trigger."
+  s.description     = "Project files observer/trigger."
   s.author          = "Martin Aumont"
   s.email           = 'mynyml@gmail.com'
   s.homepage        = ''
   s.has_rdoc        = true
   s.require_path    = "lib"
+  s.bindir          = "bin"
+  s.executables     = "watchr"
   s.files           = all_except([/doc/, /pkg/])
 end
 
 desc "Generate rdoc documentation."
 Rake::RDocTask.new("rdoc") { |rdoc|
   rdoc.rdoc_dir = 'doc/rdoc'
-  rdoc.title    = "Rack::AcceptMediaTypes"
+  rdoc.title    = "Watchr"
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.options << '--charset' << 'utf-8'
   rdoc.rdoc_files.include('README')
