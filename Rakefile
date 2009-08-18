@@ -23,8 +23,8 @@ end
 spec = Gem::Specification.new do |s|
   s.name            = 'watchr'
   s.version         = '0.1'
-  s.summary         = "Project files observer/trigger."
-  s.description     = "Project files observer/trigger."
+  s.summary         = "Continious anything"
+  s.description     = "Continious anything; project files observer/trigger."
   s.author          = "Martin Aumont"
   s.email           = 'mynyml@gmail.com'
   s.homepage        = ''

@@ -1,16 +1,15 @@
 ==== Summary
 
-Agile continious testing.
-
-In fact, it's more like /continious .*/, though it was designed primarily with
-testing in mind.
+/continious .*/
 
 ==== Features
 
-o test framework agnostic (test/unit, rspec, minitest, expectations, ...)
-o web  framework agnostic (rails, merb, sinatra, camping, invisible, ...)
-o Low level / Highly flexible
 o Rediculously simple to use
+o test framework agnostic (test/unit, rspec, minitest, expectations, ...)
+o web framework agnostic (rails, merb, sinatra, camping, invisible, ...)
+o ruby interpreter agnostic (ruby1.8, ruby1.9, MRI, JRuby, ...)
+o package framework agnostic (rubygems, rip, ...)
+o Low level / Highly flexible
 o Simple code
 
 ==== Examples
