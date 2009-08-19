@@ -2,8 +2,9 @@ module Watchr
   class Script
     attr_accessor :map
 
-    def initialize(&block)
+    def initialize(str = nil)
       self.map = []
+      self.instance_eval(str) unless str.nil?
     end
 
     def watch(pattern, &action)
@@ -76,7 +77,6 @@ module Watchr
             if path.match(pattern)
               action = self.script.map.assoc(pattern)[1]
               @map[path] = [pattern, action]
-              #@map[path] = Struct.new(:pattern, :action).new(pattern, action)
             end
           end
         end

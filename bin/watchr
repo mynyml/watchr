@@ -11,5 +11,5 @@ unless file.exist?
   exit
 end
 
-script = Watchr::Script.new.instance_eval(file.read)
+script = Watchr::Script.new(file.read)
 Watchr::Runner.new(script).run
