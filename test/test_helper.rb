@@ -1,13 +1,13 @@
 require 'pathname'
 require 'test/unit'
-require 'rubygems'
 require 'matchy'
 require 'mocha'
+require 'every'
+require 'pending'
 begin
   require 'ruby-debug'
   require 'phocus'
-  require 'pending'
-  require 'every'
+  require 'redgreen'
 rescue LoadError, RuntimeError
 end
 

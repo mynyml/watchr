@@ -5,7 +5,7 @@ def all_test_files
 end
 
 run_all_tests = lambda {
-  cmd = "ruby -I.:lib:test -e'%w( #{all_test_files.join(' ')} ).each {|file| require file }'"
+  cmd = "ruby -rubygems -I.:lib:test -e'%w( #{all_test_files.join(' ')} ).each {|file| require file }'"
   puts(cmd)
   system(cmd)
 }
