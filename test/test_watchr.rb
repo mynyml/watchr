@@ -26,6 +26,10 @@ end
 class TestRunner < Test::Unit::TestCase
   include Watchr
 
+  def teardown
+    Fixture.delete_all
+  end
+
   test "maps observed files to their pattern and the actions they trigger" do
     file_a = Fixture.create('a.rb')
     file_b = Fixture.create('b.rb')
@@ -81,7 +85,7 @@ class TestRunner < Test::Unit::TestCase
   test "passes match data to action" do
     file_a = Fixture.create('a.rb')
     script = Script.new
-    pattern = File.join(Fixture::FIXDIR.rel, '(.*)\.(.*)$')
+    pattern = Fixture::DIR.join('(.*)\.(.*)$').rel
     script.watch((pattern)) {|md| [md[1], md[2]].join('|') }
 
     runner = Runner.new(script)

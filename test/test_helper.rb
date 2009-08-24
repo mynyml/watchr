@@ -40,18 +40,25 @@ class Pathname
 end
 
 class Fixture
-  FIXDIR = Pathname(__FILE__).dirname.join('fixtures')
+  DIR = Pathname(__FILE__).dirname.join('fixtures')
 
   class << self
     attr_accessor :files
 
     def create(name=nil)
       name ||= 'a.rb'
-      file = FIXDIR.join(name)
+      file = DIR.join(name)
       self.files ||= []
       self.files << file
       file.open('w+') {|f| f << "fixture\n" }
       file
+    end
+
+    def delete_all
+      DIR.entries.each do |fixture|
+        next if %w( .. . ).include?(fixture.to_s)
+        DIR.join(fixture.to_s).expand_path.delete
+      end
     end
   end
 end
