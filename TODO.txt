@@ -1,10 +1,17 @@
-o ability to run all spec files
-o Ctrl-C once reruns all specs?
-o only rerun failed specs
-o rerun all specs after failed specs pass
-o automatically pick up changes to script file?
-
-o clean up code
-o clean up spec code
 
 o help/summary for executable
+o complete README
+o document source
+o generate gemspec
+
+o automatically pick up changes to script file?
+o split watchr.rb classes into own files?
+
+o use filesystem events for file monitoring (MA)
+  o linux:   inotify
+  o osx:     fsevent
+  o win:     Directory Management? NTFS Change Journal? ReadDirectoryChangesW?
+  o *BSD:    kqueue? pnotify?
+  o solaris: FEM?
+  o fallback to current method when no other method is available
+  o api will also need refactoring for clearer separation of functionality
