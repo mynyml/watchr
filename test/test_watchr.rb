@@ -103,4 +103,20 @@ class TestRunner < Test::Unit::TestCase
     runner = Runner.new(script)
     runner.changed?.should be(false)
   end
+
+  test "a path only triggers its last matching pattern's action" do
+    file_a = Fixture.create('fix_a.rb')
+    file_b = Fixture.create('fix_b.rb')
+    script = Script.new
+    script.watch('fix_a\.rb')  { throw(:ohaie) }
+    script.watch('fix_.*\.rb') { throw(:kkthx) }
+
+    runner = Runner.new(script)
+    runner.stubs(:init_time).returns(Time.now - 100)
+    file_a.touch
+    runner.changed?
+    assert_throws(:kkthx) do
+      runner.instance_eval { call_action! }
+    end
+  end
 end
