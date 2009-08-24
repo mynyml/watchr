@@ -53,21 +53,17 @@ class TestRunner < Test::Unit::TestCase
     runner.last_updated_file.rel.should be(file_a.rel)
   end
 
-  test "initial change state is true" do
-    runner = Runner.new(Script.new)
-    runner.changed?.should be(true)
-  end
-
 #  test "monitors file changes" do
-#    file   = Fixture.create('a.rb')
+#    file_a = Fixture.create('a.rb')
 #    script = Script.new
-#    script.watch(file.pattern) { nil }
+#    script.watch(file_a.pattern) { nil }
 #
 #    runner = Runner.new(script)
+#    runner.changed?.should be(false)
+#    runner.stubs(:init_time).returns(Time.now - 100)
+#    file_a.touch
 #    runner.changed?.should be(true)
-#    sleep(2)
-#    file.touch
-#    runner.changed?.should be(true)
+#    runner.last_updated_file.rel.should be(file_a.rel)
 #  end
 
   test "calls action corresponding to file changed" do
@@ -75,6 +71,7 @@ class TestRunner < Test::Unit::TestCase
     script.watch(Fixture.create.pattern) { throw(:ohaie) }
 
     runner = Runner.new(script)
+    runner.stubs(:init_time).returns(Time.now - 100)
     runner.changed?
     assert_throws(:ohaie) do
       runner.instance_eval { call_action! }
@@ -88,10 +85,18 @@ class TestRunner < Test::Unit::TestCase
     script.watch((pattern)) {|md| [md[1], md[2]].join('|') }
 
     runner = Runner.new(script)
+    runner.stubs(:init_time).returns(Time.now - 100)
+    file_a.touch
     runner.changed?
     runner.instance_eval { call_action! }.should be('a|rb')
   end
 
-  test "a path only triggers its first matching pattern's action" do
+  test "doesn't run at startup" do
+    file   = Fixture.create('a.rb')
+    script = Script.new
+    script.watch(file.pattern) { nil }
+
+    runner = Runner.new(script)
+    runner.changed?.should be(false)
   end
 end

@@ -20,11 +20,16 @@ module Watchr
   class Runner
     attr_accessor :script
     attr_accessor :map
-    attr_accessor :reference_mtime
+    attr_accessor :init_time
     attr_accessor :reference_file
 
+    # Caches reference_file.mtime to allow picking up an update to the
+    # reference file itself
+    attr_accessor :reference_time
+
     def initialize(script)
-      self.script= script
+      self.init_time = Time.now.to_f
+      self.script = script
     end
 
     def paths
@@ -37,12 +42,12 @@ module Watchr
     end
 
     def changed?
-      return true if self.paths.empty?
+      return true  if self.paths.empty?
+      return false if self.last_updated_file.mtime.to_f < self.init_time.to_f
 
-      last = self.last_updated_file
-      if self.reference_mtime.nil? || self.reference_mtime.to_f < last.mtime.to_f
-         self.reference_mtime = last.mtime
-         self.reference_file  = last
+      if self.reference_file.nil? || (self.reference_time.to_f < self.last_updated_file.mtime.to_f)
+         self.reference_file  = self.last_updated_file
+         self.reference_time  = self.last_updated_file.mtime
          true
       else
          false
@@ -50,8 +55,9 @@ module Watchr
     end
 
     def run
+      # enter monitoring state
       loop do
-        call_action! if changed?
+        call_action! if self.changed?
         sleep(1)
       end
     end
@@ -63,6 +69,8 @@ module Watchr
     private
 
       def call_action!
+        raise "no reference file" if self.reference_file.nil?
+
         ref = self.reference_file.to_s
         pattern, action = self.map[ref]
         md = ref.match(pattern)
@@ -71,9 +79,9 @@ module Watchr
 
       def map!
         @map = {}
-        local_files.each do |path|
-          patterns = self.script.map.map {|mapping| mapping[0] }
-          patterns.each do |pattern|
+        patterns = self.script.map.map {|mapping| mapping[0] }
+        patterns.each do |pattern|
+          local_files.each do |path|
             if path.match(pattern)
               action = self.script.map.assoc(pattern)[1]
               @map[path] = [pattern, action]
