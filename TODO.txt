@@ -1,11 +1,14 @@
 
-o help/summary for executable
-o complete README
+x help/summary for executable
+x complete README
 o document source
   o rdoc or yard?
   o add github doc hook
 x generate gemspec
 o write a few prepackaged scripts
+  o post on gists
+  o post links on wiki
+  o post main links in readme
 
 o automatically pick up changes to script file?
 o split watchr.rb classes into own files?
