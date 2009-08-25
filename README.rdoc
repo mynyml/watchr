@@ -1,13 +1,13 @@
 ==== Summary
 
 Agile development tool that monitors a directory recursively, and triggers a
-user defined action whenever an observed file is modified.
-
-Its most typical use is continious testing, and as such it is a more flexible
-alternative to autotest.
+user defined action whenever an observed file is modified. Its most typical use
+is continious testing, and as such it is a more flexible alternative to
+autotest.
 
 
 ==== Features
+
 
 * Ridiculously simple to use
 * web framework agnostic        <i>(rails, merb, sinatra, camping, invisible, ...)</i>
@@ -52,6 +52,8 @@ lib file's associated test. This mimics the equivalent autotest behaviour.
 It's easy to see why watchr is so flexible, since the whole command is custom.
 And remember the scripts are pure ruby, so feel free to add methods,
 Signal#trap calls, etc.
+
+The wiki[http://wiki.github.com/mynyml/watchr] has more details and examples.
 
 
 ==== Install
