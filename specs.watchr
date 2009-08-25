@@ -18,11 +18,12 @@ watch( 'test/test_.*\.rb' )   {|md| run("ruby -rubygems #{md[0]}") }
 watch( 'lib/(.*)\.rb' )       {|md| run("ruby -rubygems test/test_#{md[1]}.rb") }
 watch( 'test/test_helper\.rb', &run_all_tests )
 
-
-Signal.trap('QUIT') { exit(0) }
-
+# Ctrl-C
 Signal.trap('INT') do
   puts " RERUNING ALL TESTS (Ctrl-\\ to quit)"
   puts
   run_all_tests.call
 end
+
+# Ctrl-\
+Signal.trap('QUIT') { exit(0) }

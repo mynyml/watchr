@@ -48,55 +48,9 @@ A continious testing script for a basic project could be
 which, in addition to running any saved test file as above, will also run a
 lib file's associated test. This mimics the equivalent autotest behaviour.
 
-
-==== Flexibility
-
-===== Continious Testing
-
-This project was born out of a need for greater continious testing flexibility
-than autotest could provide, so it seems apropriate to at least briefly compare
-both projects.
-
-autotest is opinionated. For example, it reacts to saving this project's
-test/test_watchr.rb with:
-
-  /usr/bin/ruby1.8 -I.:lib:test -rubygems -e "%w[test/unit test/test_watchr.rb].each { |f| require f }"
-
-locking the environment into ruby1.8, rubygems and test/unit.
-
-It's easy to see why watchr doesn't have any of these restrictions, since the
-whole command is custom. The gem you're working on runs
-minitest[http://github.com/seattlerb/minitest] on ruby1.9, and you use
-rip[http://github.com/defunkt/rip]? Easy:
-
-  watch( 'test/test_.*\.rb' ) {|md| system("/usr/bin/ruby1.9 #{md[0]}") }
-
-Or you use specs/ as your test dir?
-
-  watch( 'test/test_.*\.rb' ) {|md| system("ruby -I.:lib:specs #{md[0]}") }
-
-Maybe the project your working on doesn't load rubygems internaly (which is
-good practice), but you still use it locally yourself:
-
-  watch( 'test/test_.*\.rb' ) {|md| system("ruby -rubygems #{md[0]}") }
-
-
-===== Continious Documenting
-
-watchr is generic enough to allow uses other than running specs. One such use
-is keeping your project's documentation up to date, similar to livelydocs[http://github.com/bmizerany/lively-docs]:
-
-  run_rdoc = lambda { system('rake --silent rdoc') }
-
-  watch( '(lib|bin)/.*\.rb', &run_rdoc )
-  watch( 'README',           &run_rdoc )
-
-Assuming the script is stored in rdocs.watchr, run with
-
-  $ watchr rdocs.watchr
-
-and your documentation will be updated whenever you save a ruby file in lib/
-or bin/, or the README.
+It's easy to see why watchr is so flexible, since the whole command is custom.
+And remember the scripts are pure ruby, so feel free to add methods,
+Signal#trap calls, etc.
 
 
 ==== Install
