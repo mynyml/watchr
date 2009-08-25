@@ -22,7 +22,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name            = 'watchr'
-  s.version         = '0.1'
+  s.version         = '0.2'
   s.summary         = "Continious anything"
   s.description     = "Continious anything; project files observer/trigger."
   s.author          = "Martin Aumont"
