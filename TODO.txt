@@ -3,8 +3,8 @@ o help/summary for executable
 o complete README
 o document source
   o rdoc or yard?
-o generate docs
-o generate gemspec
+  o add github doc hook
+x generate gemspec
 o write a few prepackaged scripts
 
 o automatically pick up changes to script file?

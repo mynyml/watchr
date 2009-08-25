@@ -4,12 +4,16 @@ require 'pathname'
 root  = Pathname(__FILE__).dirname.parent
 require root.join('lib/watchr')
 
-file = Pathname(ARGV.first)
-
-unless file.exist?
-  puts "no script found"
-  exit
+case ARGV.first
+when '-h', '--help', nil
+  abort("Usage: watchr path/to/script")
+when '-v', '--version'
+  #TODO retrive from constant
+  abort("watchr version: 0.2")
 end
+
+file = Pathname(ARGV.first)
+abort(%|no script found; file "#{file.to_s}" doesn't exist.|) unless file.exist?
 
 script = Watchr::Script.new(file.read)
 Watchr::Runner.new(script).run

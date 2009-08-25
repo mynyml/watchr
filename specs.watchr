@@ -26,4 +26,4 @@ Signal.trap('INT') do
 end
 
 # Ctrl-\
-Signal.trap('QUIT') { exit(0) }
+Signal.trap('QUIT') { abort("\n") }
