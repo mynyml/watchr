@@ -61,7 +61,7 @@ Signal#trap calls, etc.
 ==== See Also
 
 redgreen[http://github.com/mynyml/redgreen]:: Standalone redgreen eye candy for test results, ala autotest.
-phocus[http://github.com/mynyml/phocus]::     Allows running focused tests when running the whole file/suite is unnecessary.
+phocus[http://github.com/mynyml/phocus]::     Run focused tests when running the whole file/suite is unnecessary.
 
 
 ==== Links
