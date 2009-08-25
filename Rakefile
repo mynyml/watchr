@@ -36,12 +36,13 @@ spec = Gem::Specification.new do |s|
 end
 
 desc "Generate rdoc documentation."
-Rake::RDocTask.new("rdoc") { |rdoc|
+Rake::RDocTask.new(:rdoc => 'rdoc', :clobber_rdoc => 'rdoc:clean', :rerdoc => 'rdoc:force') { |rdoc|
   rdoc.rdoc_dir = 'doc/rdoc'
   rdoc.title    = "Watchr"
   rdoc.options << '--line-numbers' << '--inline-source'
   rdoc.options << '--charset' << 'utf-8'
-  rdoc.rdoc_files.include('README')
+  rdoc.main = 'README.rdoc'
+  rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
 }
 

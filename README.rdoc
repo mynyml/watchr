@@ -17,6 +17,7 @@ alternative to autotest.
 * Low level / highly flexible
 
 
+
 ==== Usage
 
 On the command line,
@@ -30,7 +31,7 @@ recursively, and react to events on those files in accordance with the script.
 ==== Scripts
 
 The script contains a set of simple rules that map observed files to an action.
-Its DSL is a single method: <tt>watch(pattern, &action)</tt>
+Its DSL is a single method: watch(pattern, &action)
 
   watch( 'a regexp pattern matching paths to observe' )  {|match_data_object| command_to_run }
 
