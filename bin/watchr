@@ -4,7 +4,7 @@ require 'pathname'
 root  = Pathname(__FILE__).dirname.parent
 require root.join('lib/watchr')
 
-file = Pathname(ARGV.first || 'specs.watchr')
+file = Pathname(ARGV.first)
 
 unless file.exist?
   puts "no script found"
