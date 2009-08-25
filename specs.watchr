@@ -1,4 +1,6 @@
-# vim:ft=ruby
+# Run me with:
+#
+#   $ watchr specs.watchr
 
 def all_test_files
   Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
@@ -27,3 +29,8 @@ end
 
 # Ctrl-\
 Signal.trap('QUIT') { abort("\n") }
+
+
+
+
+# vim:ft=ruby
