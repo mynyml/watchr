@@ -2,7 +2,10 @@
 o help/summary for executable
 o complete README
 o document source
+  o rdoc or yard?
+o generate docs
 o generate gemspec
+o write a few prepackaged scripts
 
 o automatically pick up changes to script file?
 o split watchr.rb classes into own files?
@@ -15,3 +18,10 @@ o use filesystem events for file monitoring (MA)
   o solaris: FEM?
   o fallback to current method when no other method is available
   o api will also need refactoring for clearer separation of functionality
+
+o respond to different file events
+  o modified
+  o created
+  o deleted
+  o etc.
+  o watch(pattern, EVENT, &action)
