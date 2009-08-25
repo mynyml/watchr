@@ -1,26 +1,118 @@
 ==== Summary
 
-/continious .*/
+Agile development tool that monitors a directory recursively, and triggers a
+user defined action whenever an observed file is modified.
+
+Its most typical use is continious testing, and as such it is a more flexible
+alternative to autotest.
+
 
 ==== Features
 
-o Rediculously simple to use
-o test framework agnostic (test/unit, rspec, minitest, expectations, ...)
-o web framework agnostic (rails, merb, sinatra, camping, invisible, ...)
-o ruby interpreter agnostic (ruby1.8, ruby1.9, MRI, JRuby, ...)
-o package framework agnostic (rubygems, rip, ...)
-o Low level / Highly flexible
-o Simple code
-
-==== Examples
-
-continious testing:
+* Ridiculously simple to use
+* web framework agnostic        <i>(rails, merb, sinatra, camping, invisible, ...)</i>
+* test framework agnostic       <i>(test/unit, minitest, rspec, test/spec, expectations, ...)</i>
+* ruby interpreter agnostic     <i>(ruby1.8, ruby1.9, MRI, JRuby, ...)</i>
+* package framework agnostic    <i>(rubygems, rip, ...)</i>
+* Low level / highly flexible
 
 
-continious documenting:
+==== Usage
+
+On the command line,
+
+  $ watchr path/to/script.file
+
+will monitor all files from within the current directory and below it
+recursively, and react to events on those files in accordance with the script.
 
 
-continious anything:
+==== Scripts
+
+The script contains a set of simple rules that map observed files to an action.
+Its DSL is a single method: <tt>watch(pattern, &action)</tt>
+
+  watch( 'a regexp pattern matching paths to observe' )  {|match_data_object| command_to_run }
+
+So for example,
+
+  watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
+
+will match test files and run them whenever they are modified.
+
+A continious testing script for a basic project could be
+
+  watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
+  watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
+
+which, in addition to running any saved test file as above, will also run a
+lib file's associated test. This mimics the equivalent autotest behaviour.
+
+
+==== Flexibility
+
+===== Continious Testing
+
+This project was born out of a need for greater continious testing flexibility
+than autotest could provide, so it seems apropriate to at least briefly compare
+both projects.
+
+autotest is opinionated. For example, it reacts to saving this project's
+test/test_watchr.rb with:
+
+  /usr/bin/ruby1.8 -I.:lib:test -rubygems -e "%w[test/unit test/test_watchr.rb].each { |f| require f }"
+
+locking the environment into ruby1.8, rubygems and test/unit.
+
+It's easy to see why watchr doesn't have any of these restrictions, since the
+whole command is custom. The gem you're working on runs
+minitest[http://github.com/seattlerb/minitest] on ruby1.9, and you use
+rip[http://github.com/defunkt/rip]? Easy:
+
+  watch( 'test/test_.*\.rb' ) {|md| system("/usr/bin/ruby1.9 #{md[0]}") }
+
+Or you use specs/ as your test dir?
+
+  watch( 'test/test_.*\.rb' ) {|md| system("ruby -I.:lib:specs #{md[0]}") }
+
+Maybe the project your working on doesn't load rubygems internaly (which is
+good practice), but you still use it locally yourself:
+
+  watch( 'test/test_.*\.rb' ) {|md| system("ruby -rubygems #{md[0]}") }
+
+
+===== Continious Documenting
+
+watchr is generic enough to allow uses other than running specs. One such use
+is keeping your project's documentation up to date, similar to livelydocs[http://github.com/bmizerany/lively-docs]:
+
+  run_rdoc = lambda { system('rake --silent rdoc') }
+
+  watch( '(lib|bin)/.*\.rb', &run_rdoc )
+  watch( 'README',           &run_rdoc )
+
+Assuming the script is stored in rdocs.watchr, run with
+
+  $ watchr rdocs.watchr
+
+and your documentation will be updated whenever you save a ruby file in lib/
+or bin/, or the README.
+
+
+==== Install
+
+  gem install mynyml-watchr --source http://gems.github.com/
+
+
+==== See Also
+
+redgreen[http://github.com/mynyml/redgreen]:: Standalone redgreen eye candy for test results, ala autotest.
+phocus[http://github.com/mynyml/phocus]::     Allows running focused tests when running the whole file/suite is unnecessary.
 
 
 ==== Links
+
+source:: http://github.com/mynyml/watchr
+rdocs::  http://docs.github.com/mynyml/watchr
+wiki::   http://wiki.github.com/mynyml/watchr
+

@@ -1,3 +1,4 @@
 doc/
 pkg/
 test/fixtures/*
+.wiki
