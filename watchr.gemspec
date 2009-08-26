@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: watchr
 version: !ruby/object:Gem::Version 
-  version: "0.2"
+  version: 0.3.0
 platform: ruby
 authors: 
 - Martin Aumont
@@ -9,7 +9,7 @@ autorequire:
 bindir: bin
 cert_chain: []
 
-date: 2009-08-25 00:00:00 -04:00
+date: 2009-08-26 00:00:00 -04:00
 default_executable: 
 dependencies: []
 
@@ -24,7 +24,6 @@ extra_rdoc_files: []
 files: 
 - Rakefile
 - test
-- test/fixtures
 - test/test_watchr.rb
 - test/test_helper.rb
 - TODO.txt
@@ -32,10 +31,14 @@ files:
 - bin/watchr
 - lib
 - lib/watchr
+- lib/watchr/version.rb
 - lib/watchr.rb
+- README.rdoc
 - LICENSE
+- yard.watchr
+- rdoc.watchr
 - specs.watchr
-- README
+- watchr.gemspec
 has_rdoc: true
 homepage: ""
 licenses: []

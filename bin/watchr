@@ -4,14 +4,14 @@ require 'pathname'
 require 'optparse'
 root  = Pathname(__FILE__).dirname.parent
 require root.join('lib/watchr')
+require root.join('lib/watchr/version')
 
 def usage
   "Usage: watchr [opts] path/to/script"
 end
 
-# TODO fetch from constant
 def version
-  "watchr version: 0.2"
+  "watchr version: %s" % Watchr.version
 end
 
 opts = OptionParser.new do |opts|

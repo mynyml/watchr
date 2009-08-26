@@ -5,6 +5,7 @@ require 'rake/gempackagetask'
 require 'rake/rdoctask'
 require 'pathname'
 require 'yaml'
+require 'lib/watchr/version'
 
 RUBY_1_9  = RUBY_VERSION =~ /^1\.9/
 WIN       = (RUBY_PLATFORM =~ /mswin|cygwin/)
@@ -22,7 +23,7 @@ end
 
 spec = Gem::Specification.new do |s|
   s.name            = 'watchr'
-  s.version         = '0.2'
+  s.version         =  Watchr.version
   s.summary         = "Continious anything"
   s.description     = "Continious anything; project files observer/trigger."
   s.author          = "Martin Aumont"
@@ -32,7 +33,7 @@ spec = Gem::Specification.new do |s|
   s.require_path    = "lib"
   s.bindir          = "bin"
   s.executables     = "watchr"
-  s.files           = all_except([/doc/, /pkg/])
+  s.files           = all_except %w( ^doc ^pkg ^test/fixtures )
 end
 
 desc "Generate rdoc documentation."
