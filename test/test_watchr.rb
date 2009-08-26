@@ -28,6 +28,7 @@ class TestRunner < Test::Unit::TestCase
 
   def teardown
     Fixture.delete_all
+    Runner.debug = nil
   end
 
   test "maps observed files to their pattern and the actions they trigger" do
@@ -118,5 +119,11 @@ class TestRunner < Test::Unit::TestCase
     assert_throws(:kkthx) do
       runner.instance_eval { call_action! }
     end
+  end
+
+  test "debug mode" do
+    Runner.debug?.should be(false)
+    Runner.debug = true
+    Runner.debug?.should be(true)
   end
 end

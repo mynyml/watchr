@@ -27,6 +27,14 @@ module Watchr
     # reference file itself
     attr_accessor :reference_time
 
+    class << self
+      attr_accessor :debug
+
+      def debug?
+        !!@debug
+      end
+    end
+
     def initialize(script)
       self.init_time = Time.now.to_f
       self.script = script
@@ -69,6 +77,7 @@ module Watchr
     private
 
       def call_action!
+        puts "[debug] monitored paths: #{self.paths.inspect}" if self.class.debug?
         raise "no reference file" if self.reference_file.nil?
 
         ref = self.reference_file.to_s
