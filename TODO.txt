@@ -1,16 +1,10 @@
 
-x help/summary for executable
-x complete README
-x generate gemspec
 o write a few prepackaged scripts
   o post on gists
   o post links on wiki
   o post main links in readme
 
-x automatically pick up changes to script file
 o split watchr.rb classes into own files?
-o Runner.options.debug? (options = Struct.new(:debug?).new ?)
-  o actually, should be Watchr.options.debug?
 o run script within own context?
 
 o use filesystem events for file monitoring (MA)
@@ -24,7 +18,6 @@ o use filesystem events for file monitoring (MA)
 
 o document source
   o rdoc or yard?
-  x add github doc hook
 
 o respond to different file events
   o modified
