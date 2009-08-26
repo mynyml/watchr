@@ -33,9 +33,12 @@ class Pathname
   def pattern
     Regexp.escape(self.rel)
   end
-  def touch
-    `touch #{self.expand_path.to_s}`
+  def touch(time = Time.now)
+    `touch -mt #{time.strftime('%Y%m%d%H%M.%S')} #{self.expand_path.to_s}`
     self
+  end
+  def mtime=(t)
+    self.touch(t).mtime
   end
 end
 
@@ -45,12 +48,12 @@ class Fixture
   class << self
     attr_accessor :files
 
-    def create(name=nil)
+    def create(name=nil, content=nil)
       name ||= 'a.rb'
       file = DIR.join(name)
       self.files ||= []
       self.files << file
-      file.open('w+') {|f| f << "fixture\n" }
+      file.open('w+') {|f| f << (content || "fixture\n") }
       file
     end
 

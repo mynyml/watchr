@@ -1,17 +1,17 @@
 
 x help/summary for executable
 x complete README
-o document source
-  o rdoc or yard?
-  o add github doc hook
 x generate gemspec
 o write a few prepackaged scripts
   o post on gists
   o post links on wiki
   o post main links in readme
 
-o automatically pick up changes to script file?
+x automatically pick up changes to script file
 o split watchr.rb classes into own files?
+o Runner.options.debug? (options = Struct.new(:debug?).new ?)
+  o actually, should be Watchr.options.debug?
+o run script within own context?
 
 o use filesystem events for file monitoring (MA)
   o linux:   inotify
@@ -21,6 +21,10 @@ o use filesystem events for file monitoring (MA)
   o solaris: FEM?
   o fallback to current method when no other method is available
   o api will also need refactoring for clearer separation of functionality
+
+o document source
+  o rdoc or yard?
+  x add github doc hook
 
 o respond to different file events
   o modified

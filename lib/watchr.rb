@@ -1,10 +1,13 @@
 module Watchr
   class Script
     attr_accessor :map
+    attr_accessor :file
+    attr_accessor :reference_time
 
-    def initialize(str = nil)
-      self.map = []
-      self.instance_eval(str) unless str.nil?
+    def initialize(file = nil)
+      self.map  = []
+      self.file = file.is_a?(Pathname) ? file : Pathname.new(file) unless file.nil?
+      self.parse!
     end
 
     def watch(pattern, &action)
@@ -14,6 +17,24 @@ module Watchr
 
     def default_action(&action)
       @default_action = action
+    end
+
+    def changed?
+      return false unless self.bound?
+      self.file.mtime > self.reference_time
+    end
+
+    def parse!
+      puts "[debug] loading script file #{self.file.to_s.inspect}" if Runner.debug?
+
+      return false unless self.bound?
+      self.map.clear
+      self.instance_eval(self.file.read)
+      self.reference_time = self.file.mtime
+    end
+
+    def bound?
+      self.file && self.file.respond_to?(:exist?) && self.file.exist?
     end
   end
 
@@ -37,7 +58,7 @@ module Watchr
 
     def initialize(script)
       self.init_time = Time.now.to_f
-      self.script = script
+      self.script = script.is_a?(Script) ? script : Script.new(script)
     end
 
     def paths
@@ -49,6 +70,7 @@ module Watchr
       Pathname(path)
     end
 
+    # TODO extract updating the reference out of this method
     def changed?
       return true  if self.paths.empty?
       return false if self.last_updated_file.mtime.to_f < self.init_time.to_f
@@ -65,19 +87,24 @@ module Watchr
     def run
       # enter monitoring state
       loop do
-        call_action! if self.changed?
-        sleep(1)
+        self.trigger
+        Kernel.sleep(1)
       end
     end
 
-    def map
-      @map || map!
+    def trigger
+      self.script.parse! && self.map! if self.script.changed?
+      self.call_action!               if self.changed?
     end
 
-    private
+    def map
+      @map || self.map!
+    end
+
+    protected
 
       def call_action!
-        puts "[debug] monitored paths: #{self.paths.inspect}" if self.class.debug?
+        puts "[debug] monitoring paths: #{self.paths.inspect}" if self.class.debug?
         raise "no reference file" if self.reference_file.nil?
 
         ref = self.reference_file.to_s

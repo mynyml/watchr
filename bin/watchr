@@ -9,6 +9,7 @@ def usage
   "Usage: watchr [opts] path/to/script"
 end
 
+# TODO fetch from constant
 def version
   "watchr version: 0.2"
 end
@@ -27,9 +28,9 @@ opts = OptionParser.new do |opts|
 end
 
 abort(usage) unless ARGV.first
+
 file = Pathname(ARGV.first)
 abort(%|no script found; file "#{file.to_s}" doesn't exist.|) unless file.exist?
 
-script = Watchr::Script.new(file.read)
-Watchr::Runner.new(script).run
+Watchr::Runner.new(file).run
 

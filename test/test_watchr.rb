@@ -21,6 +21,30 @@ class TestScript < Test::Unit::TestCase
     script.map.first[0].should be('pattern')
     script.map.first[1].call.should be(nil)
   end
+
+  test "automatically picks up changes to script file" do
+    file = Fixture.create('script.watchr', "watch('abc')")
+    script = Script.new(file)
+    script.changed?.should be(false)
+
+    script.stubs(:reference_time).returns(Time.now - 10) #mock sleep
+
+    Fixture.create('script.watchr', "watch('def')")
+    script.changed?.should be(true)
+  end
+
+  test "reparses script file" do
+    file   = Fixture.create('script.watchr', "watch('abc')")
+    script = Script.new(file)
+    script.map.first.should include('abc')
+    script.map.first.should exclude('def')
+
+    script.stubs(:reference_time).returns(Time.now - 10) #mock sleep
+    Fixture.create('script.watchr', "watch('def')")
+    script.parse!
+    script.map.first.should include('def')
+    script.map.first.should exclude('abc')
+  end
 end
 
 class TestRunner < Test::Unit::TestCase
@@ -58,25 +82,28 @@ class TestRunner < Test::Unit::TestCase
     runner.last_updated_file.rel.should be(file_a.rel)
   end
 
-#  test "monitors file changes" do
-#    file_a = Fixture.create('a.rb')
-#    script = Script.new
-#    script.watch(file_a.pattern) { nil }
-#
-#    runner = Runner.new(script)
-#    runner.changed?.should be(false)
-#    runner.stubs(:init_time).returns(Time.now - 100)
-#    file_a.touch
-#    runner.changed?.should be(true)
-#    runner.last_updated_file.rel.should be(file_a.rel)
-#  end
+  test "monitors file changes" do
+    file_a = Fixture.create('a.rb')
+    script = Script.new
+    script.watch(file_a.pattern) { nil }
+
+    runner = Runner.new(script)
+    runner.changed?.should be(false)
+
+    # fake Kernel.sleep(2)
+    file_a.mtime     = Time.now - 2
+    runner.init_time = Time.now - 2
+
+    file_a.touch
+    runner.changed?.should be(true)
+  end
 
   test "calls action corresponding to file changed" do
     script = Script.new
     script.watch(Fixture.create.pattern) { throw(:ohaie) }
 
     runner = Runner.new(script)
-    runner.stubs(:init_time).returns(Time.now - 100)
+    runner.init_time = Time.now - 2
     runner.changed?
     assert_throws(:ohaie) do
       runner.instance_eval { call_action! }
@@ -90,7 +117,7 @@ class TestRunner < Test::Unit::TestCase
     script.watch((pattern)) {|md| [md[1], md[2]].join('|') }
 
     runner = Runner.new(script)
-    runner.stubs(:init_time).returns(Time.now - 100)
+    runner.init_time = Time.now - 2
     file_a.touch
     runner.changed?
     runner.instance_eval { call_action! }.should be('a|rb')
@@ -113,7 +140,7 @@ class TestRunner < Test::Unit::TestCase
     script.watch('fix_.*\.rb') { throw(:kkthx) }
 
     runner = Runner.new(script)
-    runner.stubs(:init_time).returns(Time.now - 100)
+    runner.init_time = Time.now - 2
     file_a.touch
     runner.changed?
     assert_throws(:kkthx) do
@@ -125,5 +152,22 @@ class TestRunner < Test::Unit::TestCase
     Runner.debug?.should be(false)
     Runner.debug = true
     Runner.debug?.should be(true)
+  end
+
+  test "updates map when script changes" do
+    file_a = Fixture.create('aaa')
+    file_b = Fixture.create('bbb')
+    script = Fixture.create('script.watchr', "watch('aaa')")
+
+    # fake Kernel.sleep(2)
+    script.mtime = Time.now - 2
+
+    runner = Runner.new(script)
+    assert runner.paths.first.match('aaa')
+
+    Fixture.create('script.watchr', "watch('bbb')")
+
+    runner.trigger
+    assert runner.paths.first.match('bbb')
   end
 end

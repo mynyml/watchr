@@ -8,14 +8,12 @@ autotest.
 
 ==== Features
 
-
 * Ridiculously simple to use
 * web framework agnostic        <i>(rails, merb, sinatra, camping, invisible, ...)</i>
 * test framework agnostic       <i>(test/unit, minitest, rspec, test/spec, expectations, ...)</i>
 * ruby interpreter agnostic     <i>(ruby1.8, ruby1.9, MRI, JRuby, ...)</i>
 * package framework agnostic    <i>(rubygems, rip, ...)</i>
 * Low level / highly flexible
-
 
 
 ==== Usage
