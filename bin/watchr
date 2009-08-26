@@ -18,7 +18,7 @@ opts = OptionParser.new do |opts|
   opts.banner = usage
 
   opts.on('-d', '--debug', "Print extra debug info while program runs") {
-    Watchr::Runner.debug = true
+    Watchr.options.debug = true
   }
 
   opts.on_tail('-h', '--help', "Print inline help") { puts opts;    exit }

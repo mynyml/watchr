@@ -1,4 +1,15 @@
 module Watchr
+  class << self
+    attr_accessor :options
+
+    def options
+      @options ||= Struct.new(:debug).new
+      # set default options
+      @options.debug ||= false
+      @options
+    end
+  end
+
   class Script
     attr_accessor :map
     attr_accessor :file
@@ -25,7 +36,7 @@ module Watchr
     end
 
     def parse!
-      puts "[debug] loading script file #{self.file.to_s.inspect}" if Runner.debug?
+      puts "[debug] loading script file #{self.file.to_s.inspect}" if Watchr.options.debug
 
       return false unless self.bound?
       self.map.clear
@@ -47,14 +58,6 @@ module Watchr
     # Caches reference_file.mtime to allow picking up an update to the
     # reference file itself
     attr_accessor :reference_time
-
-    class << self
-      attr_accessor :debug
-
-      def debug?
-        !!@debug
-      end
-    end
 
     def initialize(script)
       self.init_time = Time.now.to_f
@@ -104,7 +107,7 @@ module Watchr
     protected
 
       def call_action!
-        puts "[debug] monitoring paths: #{self.paths.inspect}" if self.class.debug?
+        puts "[debug] monitoring paths: #{self.paths.inspect}" if Watchr.options.debug
         raise "no reference file" if self.reference_file.nil?
 
         ref = self.reference_file.to_s
