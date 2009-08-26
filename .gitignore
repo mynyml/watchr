@@ -2,3 +2,4 @@ doc/
 pkg/
 test/fixtures/*
 .wiki
+.yardoc
