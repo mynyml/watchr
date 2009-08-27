@@ -4,7 +4,6 @@ o write a few prepackaged scripts
   o post links on wiki
   o post main links in readme
 
-o split watchr.rb classes into own files?
 o run script within own context?
 
 o use filesystem events for file monitoring (MA)
@@ -15,6 +14,9 @@ o use filesystem events for file monitoring (MA)
   o solaris: FEM?
   o fallback to current method when no other method is available
   o api will also need refactoring for clearer separation of functionality
+  o any special handling needed for jruby/ironruby/ruby.net?
+    - inotify-java (http://launchpad.net/inotify-java)
+    - JNotify      (http://jnotify.sourceforge.net/)
 
 o document source
   o rdoc or yard?

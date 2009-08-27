@@ -2,6 +2,9 @@
 #
 #   $ watchr specs.watchr
 
+# --------------------------------------------------
+# Convenience Methods
+# --------------------------------------------------
 def all_test_files
   Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
 end
@@ -16,10 +19,18 @@ def run_all_tests
   run(cmd)
 end
 
-watch( 'test/test_.*\.rb' )     {|md| run("ruby -rubygems #{md[0]}") }
-watch( 'lib/(.*)\.rb' )         {|md| run("ruby -rubygems test/test_#{md[1]}.rb") }
-watch( 'test/test_helper\.rb' ) { run_all_tests }
+# --------------------------------------------------
+# Watchr Rules
+# --------------------------------------------------
+watch( '.*/test_.*\.rb'               )   { |m| run( "ruby -rubygems %s"                        % m[0] ) }
+watch( 'lib/(.*)\.rb'                 )   { |m| run( "ruby -rubygems test/test_%s.rb"           % m[1] ) }
+watch( 'lib/watchr/(.*)\.rb'          )   { |m| run( "ruby -rubygems test/test_%s.rb"           % m[1] ) }
+watch( 'lib/watchr/fsevents/(.*)\.rb' )   { |m| run( "ruby -rubygems test/fsevents/test_%s.rb"  % m[1] ) }
+watch( 'test/test_helper\.rb'         )   { run_all_tests }
 
+# --------------------------------------------------
+# Signal Handling
+# --------------------------------------------------
 # Ctrl-C
 Signal.trap('INT') do
   puts " RERUNING ALL TESTS (Ctrl-\\ to quit)\n\n"
@@ -28,6 +39,8 @@ end
 
 # Ctrl-\
 Signal.trap('QUIT') { abort("\n") }
+
+
 
 
 

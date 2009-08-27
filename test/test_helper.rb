@@ -11,10 +11,8 @@ begin
 rescue LoadError, RuntimeError
 end
 
-ROOT = Pathname(__FILE__).dirname.parent
-$:.unshift(ROOT.join('lib'))
-
-require 'watchr'
+root = Pathname(__FILE__).dirname.parent
+require root + 'lib/watchr'
 
 class Test::Unit::TestCase
   class << self
@@ -28,7 +26,7 @@ end
 
 class Pathname
   def rel
-    self.relative_path_from(ROOT).to_s
+    self.relative_path_from(Watchr::LIBROOT).to_s
   end
   def pattern
     Regexp.escape(self.rel)
