@@ -2,13 +2,11 @@ require 'pathname'
 
 module Watchr
   LIBROOT = Pathname(__FILE__).dirname.parent
-end
 
-require Watchr::LIBROOT + 'lib/watchr/script'
-require Watchr::LIBROOT + 'lib/watchr/runner'
-require Watchr::LIBROOT + 'lib/watchr/fsevents'
+  autoload :Script,       ( LIBROOT + 'lib/watchr/script'        ).to_s
+  autoload :Controller,   ( LIBROOT + 'lib/watchr/controller'    ).to_s
+  autoload :EventHandler, ( LIBROOT + 'lib/watchr/event_handler' ).to_s
 
-module Watchr
   class << self
     attr_accessor :options
 
@@ -17,6 +15,10 @@ module Watchr
       # set default options
       @options.debug ||= false
       @options
+    end
+
+    def debug(str)
+      puts "[debug] #{str}" if options.debug
     end
   end
 end

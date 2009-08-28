@@ -7,8 +7,8 @@ o write a few prepackaged scripts
 o run script within own context?
 
 o use filesystem events for file monitoring (MA)
-  o linux:   inotify
-  o osx:     fsevent
+  o linux:   inotify (ruby-inotify)
+  o osx:     fsevent (http://github.com/ymendel/fsevents/tree/master)
   o win:     Directory Management? NTFS Change Journal? ReadDirectoryChangesW?
   o *BSD:    kqueue? pnotify?
   o solaris: FEM?
