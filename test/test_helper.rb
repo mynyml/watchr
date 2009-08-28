@@ -6,13 +6,12 @@ require 'every'
 require 'pending'
 begin
   require 'ruby-debug'
-  require 'phocus'
   require 'redgreen'
+  require 'phocus'
 rescue LoadError, RuntimeError
 end
 
-root = Pathname(__FILE__).dirname.parent
-require root + 'lib/watchr'
+require Pathname(__FILE__).dirname.parent.join('lib/watchr')
 
 class Test::Unit::TestCase
   class << self
@@ -24,6 +23,23 @@ class Test::Unit::TestCase
   end
 end
 
+# taken from minitest/unit.rb
+def capture_io
+  require 'stringio'
+
+  orig_stdout, orig_stderr         = $stdout, $stderr
+  captured_stdout, captured_stderr = StringIO.new, StringIO.new
+  $stdout, $stderr                 = captured_stdout, captured_stderr
+
+  yield
+
+  return captured_stdout.string, captured_stderr.string
+ensure
+  $stdout = orig_stdout
+  $stderr = orig_stderr
+end
+
+__END__
 class Pathname
   def rel
     self.relative_path_from(Watchr::LIBROOT).to_s

@@ -3,46 +3,48 @@ require 'test/test_helper'
 class TestScript < Test::Unit::TestCase
   include Watchr
 
-  ## api
+  ## external api
 
   test "watch" do
-    script = Script.new
-    script.watch('pattern') { nil }
-
-    script.map.first[0].should be('pattern')
-    script.map.first[1].call.should be(nil)
+    Script.new.watch('pattern')
+    Script.new.watch('pattern') { nil }
   end
 
   test "default action" do
+    Script.new.default_action { nil }
+  end
+
+  ## functionality
+
+  test "finds action for path" do
     script = Script.new
-    script.default_action { nil }
-    script.watch('pattern')
-
-    script.map.first[0].should be('pattern')
-    script.map.first[1].call.should be(nil)
+    script.watch('abc') { :x }
+    script.watch('def') { :y }
+    script.action_for('abc').call.should be(:x)
   end
 
-  test "automatically picks up changes to script file" do
-    file = Fixture.create('script.watchr', "watch('abc')")
+  test "parses script file" do
+    file = StringIO.new(<<-STR)
+      watch( 'abc' ) { :x }
+    STR
     script = Script.new(file)
-    script.changed?.should be(false)
-
-    script.stubs(:reference_time).returns(Time.now - 10) #mock sleep
-
-    Fixture.create('script.watchr', "watch('def')")
-    script.changed?.should be(true)
+    script.action_for('abc').call.should be(:x)
   end
 
-  test "reparses script file" do
-    file   = Fixture.create('script.watchr', "watch('abc')")
-    script = Script.new(file)
-    script.map.first.should include('abc')
-    script.map.first.should exclude('def')
+  test "actions receive a MatchData object" do
+    script = Script.new
+    script.watch('de(.)') {|m| [m[0], m[1]] }
+    script.action_for('def').call.should be(%w( def f ))
+  end
 
-    script.stubs(:reference_time).returns(Time.now - 10) #mock sleep
-    Fixture.create('script.watchr', "watch('def')")
-    script.parse!
-    script.map.first.should include('def')
-    script.map.first.should exclude('abc')
+  test "rule's default action" do
+    script = Script.new
+
+    script.watch('abc')
+    script.action_for('abc').call.should be(nil)
+    script.default_action { :x }
+
+    script.watch('def')
+    script.action_for('def').call.should be(:x)
   end
 end
