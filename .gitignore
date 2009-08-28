@@ -1,5 +1,6 @@
 doc/
 pkg/
+bk/
 test/fixtures/*
 .wiki
 .yardoc
