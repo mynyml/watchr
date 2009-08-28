@@ -42,7 +42,7 @@ end
 __END__
 class Pathname
   def rel
-    self.relative_path_from(Watchr::LIBROOT).to_s
+    self.relative_path_from(Watchr::ROOT).to_s
   end
   def pattern
     Regexp.escape(self.rel)

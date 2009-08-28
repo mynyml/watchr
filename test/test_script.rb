@@ -23,6 +23,14 @@ class TestScript < Test::Unit::TestCase
     script.action_for('abc').call.should be(:x)
   end
 
+  test "collects patterns" do
+    script = Script.new
+    script.watch('abc')
+    script.watch('def')
+    script.patterns.should include('abc')
+    script.patterns.should include('def')
+  end
+
   test "parses script file" do
     file = StringIO.new(<<-STR)
       watch( 'abc' ) { :x }
@@ -46,5 +54,11 @@ class TestScript < Test::Unit::TestCase
 
     script.watch('def')
     script.action_for('def').call.should be(:x)
+  end
+
+  test "file path" do
+    Script.any_instance.stubs(:parse!)
+    script = Script.new(Pathname('some/file'))
+    script.path.to_s.should be('some/file')
   end
 end

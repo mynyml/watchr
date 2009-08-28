@@ -34,10 +34,19 @@ module Watchr
       lambda { rule.action.call(data) }
     end
 
+    def patterns
+      #@rules.every.pattern
+      @rules.map {|r| r.pattern }
+    end
+
+    def path
+      Pathname(@file.to_s)
+    end
+
     private
 
     def rule_for(path)
-      @rules.detect {|rule| path.match(rule.pattern) }
+      @rules.detect {|rule| path.to_s.match(rule.pattern) }
     end
   end
 end
