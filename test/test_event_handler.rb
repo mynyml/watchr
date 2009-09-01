@@ -1,17 +1,6 @@
 require 'test/test_helper'
 require 'tmpdir'
 
-ENV['HANDLER'] ||= 'linux'
-
-HANDLER = case ENV['HANDLER']
-when 'linux'
-  require Watchr::ROOT + 'lib/watchr/event_handlers/linux_event_handler'
-  Watchr::LinuxEventHandler
-else
-  require Watchr::ROOT + 'lib/watchr/event_handlers/portable_event_handler'
-  PortableEventHandler
-end
-
 # names must represent paths to files, not directories
 # directories will be created automatically
 def with_fixtures(names=[], &block)
@@ -47,7 +36,7 @@ Thread.abort_on_exception = true
 class TestEventHandler < Test::Unit::TestCase
 
   test "observable api" do
-    handler = HANDLER.new
+    handler = Watchr.handler.new
     assert handler.respond_to?(:delay)
     assert handler.respond_to?(:listen)
     assert handler.respond_to?(:add_observer)
@@ -57,7 +46,7 @@ class TestEventHandler < Test::Unit::TestCase
     with_fixtures %w( aaa bbb ) do |dir|
 
       begin
-        handler = HANDLER.new
+        handler = Watchr.handler.new
         p = {
           :aaa => dir + 'aaa',
           :bbb => dir + 'bbb'
@@ -73,13 +62,13 @@ class TestEventHandler < Test::Unit::TestCase
           observer.reset
           FileUtils.touch(p[:aaa])
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:aaa]), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified}"
+          assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified}"
         end
         Timeout.timeout(1.5) do
           observer.reset
           FileUtils.touch(p[:bbb])
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:bbb]), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified}"
+          assert observer.notified_with?(p[:bbb].to_s), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified}"
         end
       rescue Timeout::Error
         flunk("Event notification timed out. The handler either didn't pick up the file update, or it took too long to report it.")
@@ -91,7 +80,7 @@ class TestEventHandler < Test::Unit::TestCase
 
   test "ignores events on unmonitored files" do
     with_fixtures %w( aaa bbb ) do |dir|
-      handler = HANDLER.new
+      handler = Watchr.handler.new
       p = {
         :aaa => dir + 'aaa',
         :bbb => dir + 'bbb'

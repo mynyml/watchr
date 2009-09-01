@@ -1,3 +1,4 @@
+o repopulate monitored files array when script is reparsed
 
 o write a few prepackaged scripts
   o post on gists

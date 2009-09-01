@@ -15,11 +15,27 @@ module Watchr
     def debug(str)
       puts "[debug] #{str}" if options.debug
     end
+
+    def event_handler
+      @event_handler ||= case ENV['HANDLER'].downcase
+      when 'linux', 'bsd', 'osx', 'unix'
+        Watchr::EventHandler::Linux
+      #when 'windows'
+      #  Watchr::EventHandler::Windows
+      else
+        Watchr::EventHandler::Portable
+      end
+    end
+    alias :handler :event_handler
   end
 
-  autoload :Script,               ( ROOT + 'lib/watchr/script'                                ).to_s
-  autoload :Controller,           ( ROOT + 'lib/watchr/controller'                            ).to_s
-  autoload :AbstractEventHandler, ( ROOT + 'lib/watchr/event_handlers/abstract_event_handler' ).to_s
-  autoload :PortableEventHandler, ( ROOT + 'lib/watchr/event_handlers/portable_event_handler' ).to_s
-  autoload :LinuxEventHandler,    ( ROOT + 'lib/watchr/event_handlers/linux_event_handler'    ).to_s
+  autoload :Script,     ( ROOT + 'lib/watchr/script'     ).to_s
+  autoload :Controller, ( ROOT + 'lib/watchr/controller' ).to_s
+
+  module EventHandler
+    autoload :Base,     ( ROOT + 'lib/watchr/event_handlers/base'     ).to_s
+    autoload :Portable, ( ROOT + 'lib/watchr/event_handlers/portable' ).to_s
+    autoload :Linux,    ( ROOT + 'lib/watchr/event_handlers/linux'    ).to_s
+    autoload :Unix,     ( ROOT + 'lib/watchr/event_handlers/unix'     ).to_s
+  end
 end
