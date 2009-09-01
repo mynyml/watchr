@@ -8,10 +8,10 @@ module Watchr
     end
 
     def run
-      @handler.listen(observed_paths)
+      @handler.listen(monitored_paths)
     end
 
-    def observed_paths
+    def monitored_paths
       Dir['**/*'].select do |path|
         @script.patterns.any? {|p| path.match(p) }
       end.
@@ -24,7 +24,7 @@ module Watchr
     # @see corelib, Observable
     #
     def update(path, event = nil)
-      path = Pathname(path.to_s)
+      path = Pathname(path)
 
       if path.expand_path.to_s == @script.path.expand_path.to_s
         @script.parse!

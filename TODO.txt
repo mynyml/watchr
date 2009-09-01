@@ -5,6 +5,8 @@ o write a few prepackaged scripts
   o post main links in readme
 
 o run script within own context?
+o only update on actual file change? (instead of save)
+  - possible with inotify (Inotify::MODIFY), see about other handlers
 
 o use filesystem events for file monitoring (MA)
   o linux:   inotify (ruby-inotify)
@@ -14,12 +16,10 @@ o use filesystem events for file monitoring (MA)
   o solaris: FEM?
   o fallback to current method when no other method is available
   o api will also need refactoring for clearer separation of functionality
-  o any special handling needed for jruby/ironruby/ruby.net?
-    - inotify-java (http://launchpad.net/inotify-java)
-    - JNotify      (http://jnotify.sourceforge.net/)
 
 o document source
   o rdoc or yard?
+o single docs.watchr script for both rdoc and yard (just generate both always)
 
 o respond to different file events
   o modified

@@ -21,6 +21,10 @@ class TestController < Test::Unit::TestCase
     @controller = Controller.new(MockScript.new, @handler)
   end
 
+  test "observer api" do
+    assert @controller.respond_to?(:update)
+  end
+
   test "adds itself as an EventHandler observer" do
     @handler.count_observers.should be(1)
     @handler.delete_observer(@controller)
@@ -32,7 +36,7 @@ class TestController < Test::Unit::TestCase
     @controller.run
   end
 
-  test "fetches observed paths" do
+  test "fetches monitored paths" do
     Dir.expects(:[]).at_least_once.with('**/*').returns(%w(
       a
       b/x.z
@@ -43,11 +47,11 @@ class TestController < Test::Unit::TestCase
     script.watch('.\.z') { :x }
 
     contrl = Controller.new(script)
-    contrl.observed_paths.should include('b/x.z')
-    contrl.observed_paths.should include('b/c/y.z')
+    contrl.monitored_paths.should include('b/x.z')
+    contrl.monitored_paths.should include('b/c/y.z')
   end
 
-  test "doesn't fetch unobserved paths" do
+  test "doesn't fetch unmonitored paths" do
     Dir.expects(:[]).at_least_once.with('**/*').returns(%w(
       a
       b/x.z
@@ -58,18 +62,18 @@ class TestController < Test::Unit::TestCase
     script.watch('.\.z') { :x }
 
     contrl = Controller.new(script)
-    contrl.observed_paths.should exclude('a')
-    contrl.observed_paths.should exclude('b/c')
-    contrl.observed_paths.should exclude('p/q.z')
+    contrl.monitored_paths.should exclude('a')
+    contrl.monitored_paths.should exclude('b/c')
+    contrl.monitored_paths.should exclude('p/q.z')
   end
 
-  test "observed paths include script" do
+  test "monitored paths include script" do
     Dir.expects(:[]).at_least_once.with('**/*').returns(%w( a ))
     Script.any_instance.stubs(:parse!)
 
     script = Script.new(Pathname('some/file'))
     contrl = Controller.new(script)
-    contrl.observed_paths.should include('some/file')
+    contrl.monitored_paths.should include('some/file')
   end
 
   ## on update
