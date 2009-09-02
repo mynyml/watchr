@@ -7,10 +7,17 @@ module Watchr
     module Base
       include Observable
 
+      # list of paths the handler keeps track of
+      attr_accessor :monitored_paths
+
       # time the listener is expected to take before it notices a new event
       # nil if almost immediate
       # typically set if listener sleeps in between event checks
       attr_reader :delay
+
+      def initialize
+        self.monitored_paths = []
+      end
 
       # notify that a file was modified
       # note: must notify observer with full path or path relative to Dir.pwd

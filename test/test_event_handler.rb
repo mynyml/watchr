@@ -24,7 +24,7 @@ class MockObserver
     !!@notified
   end
   def notified_with?(*expected)
-    expected == @notified[0..(expected.size)].compact if notified?
+    expected == @notified[0..(expected.size - 1)].compact if notified?
   end
   def reset
     @notified = nil
@@ -33,13 +33,15 @@ end
 
 Thread.abort_on_exception = true
 
+# TODO extract common code
 class TestEventHandler < Test::Unit::TestCase
 
-  test "observable api" do
+  test "api" do
     handler = Watchr.handler.new
-    assert handler.respond_to?(:delay)
-    assert handler.respond_to?(:listen)
-    assert handler.respond_to?(:add_observer)
+    handler.should respond_to(:delay)
+    handler.should respond_to(:listen)
+    handler.should respond_to(:add_observer)
+    handler.should respond_to(:monitored_paths)
   end
 
   test "notifies observers on events to monitored files" do
@@ -55,20 +57,24 @@ class TestEventHandler < Test::Unit::TestCase
         observer = MockObserver.new
         handler.add_observer(observer)
 
-        listening = Thread.new { handler.listen(p.values) }
+        listening = Thread.new {
+          handler.monitored_paths = p.values
+          handler.listen
+        }
         listening.priority = 10
 
         Timeout.timeout(1.5) do
           observer.reset
           FileUtils.touch(p[:aaa])
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified}"
+          assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
         end
+
         Timeout.timeout(1.5) do
           observer.reset
           FileUtils.touch(p[:bbb])
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:bbb].to_s), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified}"
+          assert observer.notified_with?(p[:bbb].to_s), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified.inspect}"
         end
       rescue Timeout::Error
         flunk("Event notification timed out. The handler either didn't pick up the file update, or it took too long to report it.")
@@ -89,7 +95,10 @@ class TestEventHandler < Test::Unit::TestCase
       observer = MockObserver.new
       handler.add_observer(observer)
 
-      listening = Thread.new { handler.listen(p.values) }
+      listening = Thread.new {
+        handler.monitored_paths = p.values
+        handler.listen
+      }
       listening.priority = 10
 
       FileUtils.touch(dir + 'ccc')
@@ -99,5 +108,8 @@ class TestEventHandler < Test::Unit::TestCase
 
       listening.terminate
     end
+  end
+
+  test "updates list of monitored files" do
   end
 end

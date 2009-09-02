@@ -1,4 +1,6 @@
 module Watchr
-  class PortableEventHandler < AbstractEventHandler
+  module EventHandler
+    class Portable
+    end
   end
 end

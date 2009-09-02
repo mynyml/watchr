@@ -8,7 +8,8 @@ module Watchr
     end
 
     def run
-      @handler.listen(monitored_paths)
+      @handler.monitored_paths = monitored_paths
+      @handler.listen
     end
 
     def monitored_paths
@@ -22,6 +23,11 @@ module Watchr
     #
     # @see EventHandler#notify
     # @see corelib, Observable
+    #
+    # TODO handle event types.
+    # TODO build array of recognied event types.
+    #
+    #   Controller.event_types = [:changed, :moved, :deleted, etc]
     #
     def update(path, event = nil)
       path = Pathname(path)
