@@ -44,6 +44,7 @@ class TestEventHandler < Test::Unit::TestCase
     handler.should respond_to(:monitored_paths)
   end
 
+  # TODO split into one spec for each event type
   test "notifies observers on events to monitored files" do
     with_fixtures %w( aaa bbb ) do |dir|
 
@@ -65,14 +66,14 @@ class TestEventHandler < Test::Unit::TestCase
 
         Timeout.timeout(1.5) do
           observer.reset
-          FileUtils.touch(p[:aaa])
+          FileUtils.touch(p[:aaa]) # change of file attributes
           listening.run until observer.notified?
           assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
         end
 
         Timeout.timeout(1.5) do
           observer.reset
-          FileUtils.touch(p[:bbb])
+          p[:bbb].open('w') {|f| f << 'ohaie' } # file modified
           listening.run until observer.notified?
           assert observer.notified_with?(p[:bbb].to_s), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified.inspect}"
         end

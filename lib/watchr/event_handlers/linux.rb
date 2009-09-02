@@ -30,8 +30,8 @@ module Watchr
       private
 
       def mask
-        Inotify::ATTRIB #|
-        #Inotify::MODIFY |
+        Inotify::ATTRIB |
+        Inotify::MODIFY# |
         #Inotify::CREATE |
         #Inotify::DELETE
       end
