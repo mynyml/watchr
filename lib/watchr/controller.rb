@@ -1,7 +1,7 @@
 module Watchr
   class Controller
 
-    def initialize(script, handler = PortableEventHandler.new)
+    def initialize(script, handler = EventHandler::Portable.new)
       @script  = script
       @handler = handler
       @handler.add_observer(self)

@@ -3,7 +3,8 @@ require 'observer'
 
 class MockEventHandler
   include Observable
-  def listen(o_paths) end
+  attr_accessor :monitored_paths
+  def listen() end
 end
 
 class MockScript
