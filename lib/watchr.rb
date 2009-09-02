@@ -1,4 +1,5 @@
 require 'pathname'
+require 'rbconfig'
 
 module Watchr
   ROOT = Pathname(__FILE__).dirname.parent
@@ -17,14 +18,18 @@ module Watchr
     end
 
     def event_handler
-      @event_handler ||= case ENV['HANDLER'].downcase
-      when 'linux', 'bsd', 'osx', 'unix'
-        Watchr::EventHandler::Linux
-      #when 'windows'
-      #  Watchr::EventHandler::Windows
-      else
-        Watchr::EventHandler::Portable
-      end
+      @handler ||=
+       #case ENV['HANDLER'] || RUBY_PLATFORM
+        case ENV['HANDLER'] || Config::CONFIG['host_os']
+          when /linux/i
+            Watchr::EventHandler::Linux
+          when /mswin|windows|cygwin/i
+            Watchr::EventHandler::Windows
+          when /sunos|solaris|darwin/i, 'unix'
+            Watchr::EventHandler::Unix
+          else
+            Watchr::EventHandler::Portable
+        end
     end
     alias :handler :event_handler
   end
