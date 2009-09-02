@@ -22,11 +22,11 @@ end
 # --------------------------------------------------
 # Watchr Rules
 # --------------------------------------------------
-watch( '.*/test_.*\.rb'               )   { |m| run( "ruby -rubygems %s"                        % m[0] ) }
-watch( 'lib/(.*)\.rb'                 )   { |m| run( "ruby -rubygems test/test_%s.rb"           % m[1] ) }
-watch( 'lib/watchr/(.*)\.rb'          )   { |m| run( "ruby -rubygems test/test_%s.rb"           % m[1] ) }
-watch( 'lib/watchr/fsevents/(.*)\.rb' )   { |m| run( "ruby -rubygems test/fsevents/test_%s.rb"  % m[1] ) }
-watch( 'test/test_helper\.rb'         )   { run_all_tests }
+watch( '.*/test_.*\.rb'                     )   { |m| run( "ruby -rubygems %s"                              % m[0] ) }
+watch( 'lib/(.*)\.rb'                       )   { |m| run( "ruby -rubygems test/test_%s.rb"                 % m[1] ) }
+watch( 'lib/watchr/(.*)\.rb'                )   { |m| run( "ruby -rubygems test/test_%s.rb"                 % m[1] ) }
+watch( 'lib/watchr/event_handlers/(.*)\.rb' )   { |m| run( "ruby -rubygems test/event_handlers/test_%s.rb"  % m[1] ) }
+watch( 'test/test_helper\.rb'               )   { run_all_tests }
 
 # --------------------------------------------------
 # Signal Handling

@@ -66,7 +66,8 @@ class TestEventHandler < Test::Unit::TestCase
 
         Timeout.timeout(1.5) do
           observer.reset
-          FileUtils.touch(p[:aaa]) # change of file attributes
+          #FileUtils.touch(p[:aaa]) # change of file attributes
+          p[:aaa].open('w') {|f| f << 'ohaie' } # file modified
           listening.run until observer.notified?
           assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
         end
