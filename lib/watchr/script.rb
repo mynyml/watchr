@@ -29,8 +29,9 @@ module Watchr
     end
 
     def action_for(path)
+      path = rel_path(path).to_s
       rule = rule_for(path)
-      data = path.to_s.match(rule.pattern)
+      data = path.match(rule.pattern)
       lambda { rule.action.call(data) }
     end
 
@@ -40,14 +41,17 @@ module Watchr
     end
 
     def path
-      Pathname(@file.to_s)
+      Pathname(@file.to_s).expand_path
     end
 
     private
 
     def rule_for(path)
-      path = Pathname(path).expand_path.relative_path_from(Pathname(Dir.pwd)).to_s
       @rules.reverse.detect {|rule| path.match(rule.pattern) }
+    end
+
+    def rel_path(path)
+      Pathname(path).expand_path.relative_path_from(Pathname(Dir.pwd))
     end
   end
 end

@@ -1,4 +1,4 @@
-require Watchr::ROOT + 'ext/inotify'
+require Watchr::ROOT + 'lib/c_ext/inotify'
 
 module Watchr
   module EventHandler
@@ -15,7 +15,6 @@ module Watchr
 
       # callback
       #
-      # @arg paths <String,...> Monitored paths. Assume all exist.
       # @see Controller#run
       #
       def listen
@@ -23,15 +22,15 @@ module Watchr
         @inotify.each_event do |event|
           # if event.name.nil? then it's a dir event. ignore?
           path = @dir_map[event.wd] + (event.name || '')
-          notify(path.to_s)
+          notify(path) if path.exist? && monitored_paths.include?(path)
         end
       end
 
       private
 
       def mask
-        Inotify::ATTRIB |
         Inotify::MODIFY# |
+        #Inotify::ATTRIB |
         #Inotify::CREATE |
         #Inotify::DELETE
       end
@@ -44,10 +43,7 @@ module Watchr
       end
 
       def dirnames(paths)
-        paths.map do |path|
-          path = Pathname(path).expand_path
-          path.directory? ? path : path.dirname
-        end.uniq
+        paths.map {|path| path.directory? ? path : path.dirname }.uniq
       end
     end
   end

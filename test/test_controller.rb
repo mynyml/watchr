@@ -17,6 +17,10 @@ end
 class TestController < Test::Unit::TestCase
   include Watchr
 
+  def to_p(str)
+    Pathname(str).expand_path
+  end
+
   def setup
     @handler = MockEventHandler.new
     @controller = Controller.new(MockScript.new, @handler)
@@ -48,8 +52,8 @@ class TestController < Test::Unit::TestCase
     script.watch('.\.z') { :x }
 
     contrl = Controller.new(script)
-    contrl.monitored_paths.should include('b/x.z')
-    contrl.monitored_paths.should include('b/c/y.z')
+    contrl.monitored_paths.should include(to_p('b/x.z'))
+    contrl.monitored_paths.should include(to_p('b/c/y.z'))
   end
 
   test "doesn't fetch unmonitored paths" do
@@ -63,36 +67,36 @@ class TestController < Test::Unit::TestCase
     script.watch('.\.z') { :x }
 
     contrl = Controller.new(script)
-    contrl.monitored_paths.should exclude('a')
-    contrl.monitored_paths.should exclude('b/c')
-    contrl.monitored_paths.should exclude('p/q.z')
+    contrl.monitored_paths.should exclude(to_p('a'))
+    contrl.monitored_paths.should exclude(to_p('b/c'))
+    contrl.monitored_paths.should exclude(to_p('p/q.z'))
   end
 
   test "monitored paths include script" do
     Dir.expects(:[]).at_least_once.with('**/*').returns(%w( a ))
     Script.any_instance.stubs(:parse!)
 
-    script = Script.new(Pathname('some/file'))
+    path   = to_p('some/file')
+    script = Script.new(path)
     contrl = Controller.new(script)
-    contrl.monitored_paths.should include('some/file')
+    contrl.monitored_paths.should include(path)
   end
 
   ## on update
 
   test "calls action for path" do
-    path = Pathname('abc')
-    MockScript.any_instance.stubs(:path).returns(Pathname(''))
+    path = to_p('abc')
     MockScript.any_instance.expects(:action_for).with(path).returns(lambda {})
 
-    @controller.update(path)
+    @controller.update('abc')
   end
 
   test "reloads script" do
-    path = Pathname('abc')
+    path = to_p('abc')
     MockScript.any_instance.stubs(:path).returns(path)
     MockScript.any_instance.expects(:parse!)
 
-    @controller.update(path)
+    @controller.update('abc')
   end
 end
 

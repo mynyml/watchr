@@ -3,7 +3,12 @@ require 'rbconfig'
 
 module Watchr
   ROOT = Pathname(__FILE__).dirname.parent
+end
 
+require Watchr::ROOT + 'lib/core_ext/pathname'
+#require Watchr::ROOT + 'lib/core_ext/string'
+
+module Watchr
   class << self
     attr_accessor :options
 
@@ -34,13 +39,13 @@ module Watchr
     alias :handler :event_handler
   end
 
-  autoload :Script,     ( ROOT + 'lib/watchr/script'     ).to_s
-  autoload :Controller, ( ROOT + 'lib/watchr/controller' ).to_s
+  autoload :Script,     ( ROOT/'lib/watchr/script'     ).to_s
+  autoload :Controller, ( ROOT/'lib/watchr/controller' ).to_s
 
   module EventHandler
-    autoload :Base,     ( ROOT + 'lib/watchr/event_handlers/base'     ).to_s
-    autoload :Portable, ( ROOT + 'lib/watchr/event_handlers/portable' ).to_s
-    autoload :Linux,    ( ROOT + 'lib/watchr/event_handlers/linux'    ).to_s
-    autoload :Unix,     ( ROOT + 'lib/watchr/event_handlers/unix'     ).to_s
+    autoload :Base,     ( ROOT/'lib/watchr/event_handlers/base'     ).to_s
+    autoload :Portable, ( ROOT/'lib/watchr/event_handlers/portable' ).to_s
+    autoload :Linux,    ( ROOT/'lib/watchr/event_handlers/linux'    ).to_s
+    autoload :Unix,     ( ROOT/'lib/watchr/event_handlers/unix'     ).to_s
   end
 end

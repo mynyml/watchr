@@ -22,8 +22,8 @@ module Watchr
       # notify that a file was modified
       # note: must notify observer with full path or path relative to Dir.pwd
       def notify(path, event = nil)
-        changed(true) #from Observable
-        notify_observers(path, event)
+        changed(true)                 #from Observable
+        notify_observers(path, event) #calls #update on each observer
       end
 
       # abstract method

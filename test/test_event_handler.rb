@@ -51,8 +51,8 @@ class TestEventHandler < Test::Unit::TestCase
       begin
         handler = Watchr.handler.new
         p = {
-          :aaa => dir + 'aaa',
-          :bbb => dir + 'bbb'
+          :aaa => (dir + 'aaa').expand_path,
+          :bbb => (dir + 'bbb').expand_path
         }
 
         observer = MockObserver.new
@@ -67,16 +67,16 @@ class TestEventHandler < Test::Unit::TestCase
         Timeout.timeout(1.5) do
           observer.reset
           #FileUtils.touch(p[:aaa]) # change of file attributes
-          p[:aaa].open('w') {|f| f << 'ohaie' } # file modified
+          p[:aaa].open('w+') {|f| f << 'ohaie' } # file modified
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:aaa].to_s), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
+          assert observer.notified_with?(p[:aaa]), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
         end
 
         Timeout.timeout(1.5) do
           observer.reset
           p[:bbb].open('w') {|f| f << 'ohaie' } # file modified
           listening.run until observer.notified?
-          assert observer.notified_with?(p[:bbb].to_s), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified.inspect}"
+          assert observer.notified_with?(p[:bbb]), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified.inspect}"
         end
       rescue Timeout::Error
         flunk("Event notification timed out. The handler either didn't pick up the file update, or it took too long to report it.")
@@ -90,8 +90,8 @@ class TestEventHandler < Test::Unit::TestCase
     with_fixtures %w( aaa bbb ) do |dir|
       handler = Watchr.handler.new
       p = {
-        :aaa => dir + 'aaa',
-        :bbb => dir + 'bbb'
+        :aaa => (dir + 'aaa').expand_path,
+        :bbb => (dir + 'bbb').expand_path
       }
 
       observer = MockObserver.new

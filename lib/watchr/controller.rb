@@ -13,10 +13,11 @@ module Watchr
     end
 
     def monitored_paths
-      Dir['**/*'].select do |path|
+      paths = Dir['**/*'].select do |path|
         @script.patterns.any? {|p| path.match(p) }
-      end.
-        push @script.path.to_s
+      end
+      paths.push(@script.path).compact!
+      paths.map {|path| Pathname(path).expand_path }
     end
 
     # callback
@@ -25,14 +26,14 @@ module Watchr
     # @see corelib, Observable
     #
     # TODO handle event types.
-    # TODO build array of recognied event types.
+    # TODO build array of recognized event types.
     #
     #   Controller.event_types = [:changed, :moved, :deleted, etc]
     #
     def update(path, event = nil)
-      path = Pathname(path)
+      path = Pathname(path).expand_path
 
-      if path.expand_path.to_s == @script.path.expand_path.to_s
+      if path == @script.path
         @script.parse!
       else
         @script.action_for(path).call

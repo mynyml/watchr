@@ -58,8 +58,9 @@ class TestScript < Test::Unit::TestCase
 
   test "file path" do
     Script.any_instance.stubs(:parse!)
-    script = Script.new(Pathname('some/file'))
-    script.path.to_s.should be('some/file')
+    path   = Pathname('some/file').expand_path
+    script = Script.new(path)
+    script.path.should be(path)
   end
 
   test "later rules take precedence" do
