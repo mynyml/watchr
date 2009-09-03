@@ -6,7 +6,6 @@ module Watchr
 end
 
 require Watchr::ROOT + 'lib/core_ext/pathname'
-#require Watchr::ROOT + 'lib/core_ext/string'
 
 module Watchr
   class << self

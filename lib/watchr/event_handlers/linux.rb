@@ -29,10 +29,7 @@ module Watchr
       private
 
       def mask
-        Inotify::MODIFY# |
-        #Inotify::ATTRIB |
-        #Inotify::CREATE |
-        #Inotify::DELETE
+        Inotify::MODIFY
       end
 
       def watch(paths)

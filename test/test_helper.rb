@@ -24,6 +24,7 @@ class Test::Unit::TestCase
 end
 
 # taken from minitest/unit.rb
+# (with modifications)
 def capture_io
   require 'stringio'
 
@@ -33,49 +34,11 @@ def capture_io
 
   yield
 
-  return captured_stdout.string, captured_stderr.string
+  return Struct.new(:stdout, :stderr).new(
+    captured_stdout.string,
+    captured_stderr.string
+  )
 ensure
   $stdout = orig_stdout
   $stderr = orig_stderr
-end
-
-__END__
-class Pathname
-  def rel
-    self.relative_path_from(Watchr::ROOT).to_s
-  end
-  def pattern
-    Regexp.escape(self.rel)
-  end
-  def touch(time = Time.now)
-    `touch -mt #{time.strftime('%Y%m%d%H%M.%S')} #{self.expand_path.to_s}`
-    self
-  end
-  def mtime=(t)
-    self.touch(t).mtime
-  end
-end
-
-class Fixture
-  DIR = Pathname(__FILE__).dirname.join('fixtures')
-
-  class << self
-    attr_accessor :files
-
-    def create(name=nil, content=nil)
-      name ||= 'a.rb'
-      file = DIR.join(name)
-      self.files ||= []
-      self.files << file
-      file.open('w+') {|f| f << (content || "fixture\n") }
-      file
-    end
-
-    def delete_all
-      DIR.entries.each do |fixture|
-        next if %w( .. . ).include?(fixture.to_s)
-        DIR.join(fixture.to_s).expand_path.delete
-      end
-    end
-  end
 end
