@@ -30,7 +30,7 @@ module Watchr
 
     def action_for(path)
       rule = rule_for(path)
-      data = path.match(rule.pattern)
+      data = path.to_s.match(rule.pattern)
       lambda { rule.action.call(data) }
     end
 
@@ -46,7 +46,7 @@ module Watchr
     private
 
     def rule_for(path)
-      @rules.detect {|rule| path.to_s.match(rule.pattern) }
+      @rules.reverse.detect {|rule| path.to_s.match(rule.pattern) }
     end
   end
 end

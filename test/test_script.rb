@@ -61,4 +61,13 @@ class TestScript < Test::Unit::TestCase
     script = Script.new(Pathname('some/file'))
     script.path.to_s.should be('some/file')
   end
+
+  test "later rules take precedence" do
+    script = Script.new
+
+    script.watch('a/(.*)\.x')   { :x }
+    script.watch('a/b/(.*)\.x') { :y }
+
+    script.action_for('a/b/c.x').call.should be(:y)
+  end
 end
