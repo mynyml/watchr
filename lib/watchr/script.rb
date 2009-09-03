@@ -46,7 +46,8 @@ module Watchr
     private
 
     def rule_for(path)
-      @rules.reverse.detect {|rule| path.to_s.match(rule.pattern) }
+      path = Pathname(path).expand_path.relative_path_from(Pathname(Dir.pwd)).to_s
+      @rules.reverse.detect {|rule| path.match(rule.pattern) }
     end
   end
 end

@@ -70,4 +70,12 @@ class TestScript < Test::Unit::TestCase
 
     script.action_for('a/b/c.x').call.should be(:y)
   end
+
+  test "rule patterns match against paths relative to pwd" do
+    script = Script.new
+
+    script.watch('^abc') { :x }
+    path = Pathname(Dir.pwd) + 'abc'
+    script.action_for(path).call.should be(:x)
+  end
 end
