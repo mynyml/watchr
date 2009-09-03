@@ -32,5 +32,5 @@ abort(usage) unless ARGV.first
 file = Pathname(ARGV.first)
 abort(%|no script found; file "#{file.to_s}" doesn't exist.|) unless file.exist?
 
-Watchr::Runner.new(file).run
+Watchr::Controller.new(Watchr::Script.new(file), Watchr.event_handler.new).run
 
