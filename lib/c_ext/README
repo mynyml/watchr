@@ -1,0 +1,7 @@
+= inotify.so
+Interface to Linux's Inotify (C version)
+
+author: aredridel
+source: http://dinhe.net/~aredridel/projects/ruby/ruby-inotify.html
+        http://raa.ruby-lang.org/project/ruby-inotify/
+license: Ruby's
