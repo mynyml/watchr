@@ -41,7 +41,7 @@ module Watchr
     end
 
     def path
-      Pathname(@file.to_s).expand_path
+      Pathname(@file.respond_to?(:to_path) ? @file.to_path : @file.to_s).expand_path
     end
 
     private
