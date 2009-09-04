@@ -31,14 +31,15 @@ watch( '^test/test_helper\.rb'               )   { run_all_tests }
 # --------------------------------------------------
 # Signal Handling
 # --------------------------------------------------
-# Ctrl-C
-Signal.trap('INT') do
-  puts " RERUNING ALL TESTS (Ctrl-\\ to quit)\n\n"
+# Ctrl-\
+Signal.trap('QUIT') do
+  puts " RERUNING ALL TESTS (Ctrl-C to quit)\n\n"
   run_all_tests
 end
 
-# Ctrl-\
-Signal.trap('QUIT') { abort("\n") }
+# Ctrl-C
+#Signal.trap('INT') { abort("\n") }
+Signal.trap('INT') { puts "\n"; exit }
 
 
 
