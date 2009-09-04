@@ -19,6 +19,10 @@ opts = OptionParser.new do |opts|
 
   opts.on('-d', '--debug', "Print extra debug info while program runs") {
     Watchr.options.debug = true
+    begin
+      require 'ruby-debug'
+    rescue LoadError, RuntimeError
+    end
   }
 
   opts.on_tail('-h', '--help', "Print inline help") { puts opts;    exit }
