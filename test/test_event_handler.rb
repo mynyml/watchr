@@ -66,15 +66,14 @@ class TestEventHandler < Test::Unit::TestCase
 
         Timeout.timeout(1.5) do
           observer.reset
-          #FileUtils.touch(p[:aaa]) # change of file attributes
-          p[:aaa].open('w+') {|f| f << 'ohaie' } # file modified
+          p[:aaa].open('w+') {|f| f << 'ohaie' }
           listening.run until observer.notified?
           assert observer.notified_with?(p[:aaa]), "expected observer to be notified with #{p[:aaa]}, got #{observer.notified.inspect}"
         end
 
         Timeout.timeout(1.5) do
           observer.reset
-          p[:bbb].open('w') {|f| f << 'ohaie' } # file modified
+          p[:bbb].open('w') {|f| f << 'ohaie' }
           listening.run until observer.notified?
           assert observer.notified_with?(p[:bbb]), "expected observer to be notified with #{p[:bbb]}, got #{observer.notified.inspect}"
         end
@@ -87,23 +86,24 @@ class TestEventHandler < Test::Unit::TestCase
   end
 
   test "ignores events on unmonitored files" do
-    with_fixtures %w( aaa bbb ) do |dir|
+    with_fixtures %w( aaa bbb ccc ) do |dir|
       handler = Watchr.handler.new
       p = {
         :aaa => (dir + 'aaa').expand_path,
-        :bbb => (dir + 'bbb').expand_path
+        :bbb => (dir + 'bbb').expand_path,
+        :ccc => (dir + 'ccc').expand_path
       }
 
       observer = MockObserver.new
       handler.add_observer(observer)
 
       listening = Thread.new {
-        handler.monitored_paths = p.values
+        handler.monitored_paths = [ p[:aaa], p[:bbb] ]
         handler.listen
       }
       listening.priority = 10
 
-      FileUtils.touch(dir + 'ccc')
+      p[:ccc].open('w') {|f| f << 'ohaie' }
       100.times { listening.run }
       sleep( handler.delay || 0.1 )
       assert !observer.notified?

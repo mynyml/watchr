@@ -9,6 +9,7 @@ module Watchr
       # @dir_map is {wd => path}, where wd == watch descriptor, following
       # (ruby-)inotify vocabulary
       def initialize
+        super
         @inotify = Inotify.new
         @dir_map = {}
       end
