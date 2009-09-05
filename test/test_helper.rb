@@ -20,6 +20,9 @@ class Test::Unit::TestCase
       define_method(name, &block)
     end
     alias :should :test
+
+    # noop
+    def xtest(*args) end
   end
 end
 

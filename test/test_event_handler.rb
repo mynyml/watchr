@@ -41,7 +41,7 @@ class TestEventHandler < Test::Unit::TestCase
     handler.should respond_to(:delay)
     handler.should respond_to(:listen)
     handler.should respond_to(:add_observer)
-    handler.should respond_to(:monitored_paths)
+    handler.should respond_to(:terminate!)
   end
 
   # TODO split into one spec for each event type
@@ -58,10 +58,7 @@ class TestEventHandler < Test::Unit::TestCase
         observer = MockObserver.new
         handler.add_observer(observer)
 
-        listening = Thread.new {
-          handler.monitored_paths = p.values
-          handler.listen
-        }
+        listening = Thread.new { handler.listen(p.values) }
         listening.priority = 10
 
         Timeout.timeout(1.5) do
@@ -97,10 +94,7 @@ class TestEventHandler < Test::Unit::TestCase
       observer = MockObserver.new
       handler.add_observer(observer)
 
-      listening = Thread.new {
-        handler.monitored_paths = [ p[:aaa], p[:bbb] ]
-        handler.listen
-      }
+      listening = Thread.new { handler.listen [ p[:aaa], p[:bbb] ] }
       listening.priority = 10
 
       p[:ccc].open('w') {|f| f << 'ohaie' }
@@ -112,6 +106,29 @@ class TestEventHandler < Test::Unit::TestCase
     end
   end
 
-  test "updates list of monitored files" do
+  require 'rr'
+  include RR::Adapters::TestUnit
+
+  test "terminates listening state" do
+    with_fixtures %w( aaa ) do |dir|
+
+      p = { :aaa => (dir + 'aaa').expand_path }
+
+      handler   = Watchr.handler.new
+      observer  = MockObserver.new
+      handler.add_observer(observer)
+
+      listening = Thread.new { handler.listen([ p[:aaa] ]) }
+      listening.priority = 10
+
+      stub(observer).update { handler.terminate! }
+      dont_allow(observer).update(p[:aaa], nil)
+
+      p[:aaa].open('w') {|f| f << 'ohaie' }
+      100.times { Thread.pass }
+      sleep( handler.delay || 0.1 )
+
+      listening.terminate
+    end
   end
 end

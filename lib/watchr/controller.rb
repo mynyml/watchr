@@ -1,15 +1,15 @@
 module Watchr
   class Controller
 
-    def initialize(script, handler = EventHandler::Portable.new)
-      @script  = script
-      @handler = handler
-      @handler.add_observer(self)
+    def initialize(script)
+      @script = script
     end
 
     def run
-      @handler.monitored_paths = monitored_paths
-      @handler.listen
+      @handler = Watchr.event_handler.new
+      @handler.add_observer(self)
+      @handler.listen(monitored_paths)
+      run
     end
 
     def monitored_paths
@@ -35,6 +35,7 @@ module Watchr
 
       if path == @script.path
         @script.parse!
+        @handler.terminate!
       else
         @script.action_for(path).call
       end

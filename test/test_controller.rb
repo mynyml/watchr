@@ -4,7 +4,8 @@ require 'observer'
 class MockEventHandler
   include Observable
   attr_accessor :monitored_paths
-  def listen() end
+  def listen(paths) end
+  def terminate()   end
 end
 
 class MockScript
@@ -22,22 +23,21 @@ class TestController < Test::Unit::TestCase
   end
 
   def setup
-    @handler = MockEventHandler.new
-    @controller = Controller.new(MockScript.new, @handler)
+    Watchr.stubs(:event_handler).returns(MockEventHandler)
+    @controller = Controller.new(MockScript.new)
   end
 
   test "observer api" do
     assert @controller.respond_to?(:update)
   end
 
-  test "adds itself as an EventHandler observer" do
-    @handler.count_observers.should be(1)
-    @handler.delete_observer(@controller)
-    @handler.count_observers.should be(0)
+  test "adds itself as an EventHandler observer on run" do
+    Watchr.event_handler.any_instance.expects(:add_observer).with(@controller).once
+    @controller.run
   end
 
-  test "run triggers handler's monitoring state" do
-    @handler.expects(:listen)
+  test "triggers handler's monitoring state on run" do
+    Watchr.event_handler.any_instance.expects(:listen).with {|*args| args.first.respond_to?(:each) }
     @controller.run
   end
 
@@ -96,6 +96,18 @@ class TestController < Test::Unit::TestCase
     MockScript.any_instance.stubs(:path).returns(path)
     MockScript.any_instance.expects(:parse!)
 
+    @controller.run
+    @controller.update('abc')
+  end
+
+  test "spawns new handler when script changes" do
+    path = to_p('abc')
+    @controller.run
+
+    Watchr.event_handler.any_instance.expects(:terminate).at_least_once
+    Watchr.event_handler.any_instance.expects(:listen   ).at_least_once
+
+    MockScript.any_instance.stubs(:path).returns(path)
     @controller.update('abc')
   end
 end

@@ -18,13 +18,19 @@ module Watchr
       #
       # @see Controller#run
       #
-      def listen
+      def listen(monitored_paths)
         watch(monitored_paths)
         @inotify.each_event do |event|
           # if event.name.nil? then it's a dir event. ignore?
           path = @dir_map[event.wd] + (event.name || '')
           notify(path) if path.exist? && monitored_paths.include?(path)
+          break if terminate?
         end
+      end
+
+      def terminate!
+        super
+        @dir_map.keys.each {|wd| @inotify.rm_watch(wd) }
       end
 
       private
