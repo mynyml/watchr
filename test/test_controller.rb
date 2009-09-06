@@ -3,9 +3,8 @@ require 'observer'
 
 class MockEventHandler
   include Observable
-  attr_accessor :monitored_paths
   def listen(paths) end
-  def terminate()   end
+  def refresh()     end
 end
 
 class MockScript
@@ -23,8 +22,9 @@ class TestController < Test::Unit::TestCase
   end
 
   def setup
-    Watchr.stubs(:event_handler).returns(MockEventHandler)
-    @controller = Controller.new(MockScript.new)
+    @script     = MockScript.new
+    @handler    = MockEventHandler.new
+    @controller = Controller.new(@script, @handler)
   end
 
   test "observer api" do
@@ -32,12 +32,11 @@ class TestController < Test::Unit::TestCase
   end
 
   test "adds itself as an EventHandler observer on run" do
-    Watchr.event_handler.any_instance.expects(:add_observer).with(@controller).once
-    @controller.run
+    @handler.instance_variable_get(:@observer_peers).should include(@controller)
   end
 
   test "triggers handler's monitoring state on run" do
-    Watchr.event_handler.any_instance.expects(:listen).with {|*args| args.first.respond_to?(:each) }
+    @handler.expects(:listen).with {|*args| args.first.respond_to?(:each) }
     @controller.run
   end
 
@@ -86,15 +85,15 @@ class TestController < Test::Unit::TestCase
 
   test "calls action for path" do
     path = to_p('abc')
-    MockScript.any_instance.expects(:action_for).with(path).returns(lambda {})
+    @script.expects(:action_for).with(path).returns(lambda {})
 
     @controller.update('abc')
   end
 
   test "reloads script" do
     path = to_p('abc')
-    MockScript.any_instance.stubs(:path).returns(path)
-    MockScript.any_instance.expects(:parse!)
+    @script.stubs(:path).returns(path)
+    @script.expects(:parse!)
 
     @controller.run
     @controller.update('abc')
@@ -104,10 +103,9 @@ class TestController < Test::Unit::TestCase
     path = to_p('abc')
     @controller.run
 
-    Watchr.event_handler.any_instance.expects(:terminate).at_least_once
-    Watchr.event_handler.any_instance.expects(:listen   ).at_least_once
+    @handler.expects(:refresh).at_least_once
 
-    MockScript.any_instance.stubs(:path).returns(path)
+    @script.stubs(:path).returns(path)
     @controller.update('abc')
   end
 end

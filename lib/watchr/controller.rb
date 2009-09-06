@@ -1,15 +1,14 @@
 module Watchr
   class Controller
 
-    def initialize(script)
-      @script = script
+    def initialize(script, handler = Watchr.event_handler.new)
+      @script  = script
+      @handler = handler
+      @handler.add_observer(self)
     end
 
     def run
-      @handler = Watchr.event_handler.new
-      @handler.add_observer(self)
       @handler.listen(monitored_paths)
-      run
     end
 
     def monitored_paths
@@ -20,10 +19,9 @@ module Watchr
       paths.map {|path| Pathname(path).expand_path }
     end
 
-    # callback
+    # EventHandler callback
     #
     # @see EventHandler#notify
-    # @see corelib, Observable
     #
     # TODO handle event types.
     # TODO build array of recognized event types.
@@ -35,7 +33,7 @@ module Watchr
 
       if path == @script.path
         @script.parse!
-        @handler.terminate!
+        @handler.refresh
       else
         @script.action_for(path).call
       end

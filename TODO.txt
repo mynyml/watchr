@@ -1,4 +1,3 @@
-o repopulate monitored files array when script is reparsed
 
 o write a few prepackaged scripts
   o post on gists
@@ -10,13 +9,13 @@ o only update on actual file change? (instead of save)
   - possible with inotify (Inotify::MODIFY), see about other handlers
 
 o use filesystem events for file monitoring (MA)
-  o linux:   inotify (ruby-inotify)
-  o osx:     fsevent (http://github.com/ymendel/fsevents/tree/master)
-  o win:     Directory Management? NTFS Change Journal? ReadDirectoryChangesW?
-  o *BSD:    kqueue? pnotify?
-  o solaris: FEM?
-  o fallback to current method when no other method is available
-  o api will also need refactoring for clearer separation of functionality
+  - linux:    inotify (ruby-inotify)
+  - win:      Directory Management
+  - *BSD/OSX: kqueue
+  - solaris:  FEM?
+  - fallback to current method when no other method is available
+  - api will also need refactoring for clearer separation of functionality
+  o libev (Rev)
 
 o document source
   o rdoc or yard?
@@ -28,3 +27,5 @@ o respond to different file events
   o deleted
   o etc.
   o watch(pattern, EVENT, &action)
+
+o memory profiling / benchmarks
