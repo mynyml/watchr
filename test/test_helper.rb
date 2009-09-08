@@ -1,5 +1,4 @@
 require 'pathname'
-#require 'tmpdir'
 require 'test/unit'
 require 'matchy'
 require 'mocha'
@@ -49,16 +48,3 @@ ensure
   $stdout = orig_stdout
   $stderr = orig_stderr
 end
-
-## names must represent paths to files, not directories
-## directories will be created automatically
-#def with_fixtures(names=[], &block)
-#  Dir.mktmpdir('watchr-') do |dir|
-#    dir = Pathname(dir)
-#    names.each do |name|
-#      (dir + name).dirname.mkpath
-#      (dir + name).open('w') {|f| f << "fixture\n" }
-#    end
-#    block.call(dir)
-#  end
-#end
