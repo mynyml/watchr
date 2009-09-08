@@ -26,6 +26,12 @@ module Watchr
 
       @rules.clear
       instance_eval(@file.read)
+
+    rescue Errno::ENOENT
+      # TODO figure out why this is happening. still can't reproduce
+      Watchr.debug('script file "not found". wth')
+      sleep(0.3) #enough?
+      instance_eval(@file.read)
     end
 
     def action_for(path)
