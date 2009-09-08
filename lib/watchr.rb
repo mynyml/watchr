@@ -1,11 +1,11 @@
 require 'pathname'
 require 'rbconfig'
 
-module Watchr
-  ROOT = Pathname(__FILE__).dirname.parent
-end
+require 'rev'
 
-require Watchr::ROOT + 'lib/core_ext/pathname'
+require 'watchr/core_ext/pathname'
+require 'watchr/script'
+require 'watchr/controller'
 
 module Watchr
   class << self
@@ -20,8 +20,5 @@ module Watchr
     def debug(str)
       puts "[debug] #{str}" if options.debug
     end
-
-  autoload :Script,     ( ROOT/'lib/watchr/script'     ).to_s
-  autoload :Controller, ( ROOT/'lib/watchr/controller' ).to_s
   end
 end

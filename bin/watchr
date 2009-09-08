@@ -2,9 +2,9 @@
 
 require 'pathname'
 require 'optparse'
-root  = Pathname(__FILE__).dirname.parent
-require root.join('lib/watchr')
-require root.join('lib/watchr/version')
+
+require 'watchr'
+require 'watchr/version'
 
 def usage
   "Usage: watchr [opts] path/to/script"

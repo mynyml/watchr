@@ -1,5 +1,3 @@
-require 'rev'
-
 module Watchr
   class SingleFileWatcher < Rev::StatWatcher
     class << self
