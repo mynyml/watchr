@@ -5,6 +5,10 @@
 * fix issue with Script#parse!
   * only accept paths in initialize?
 
+* sometimes an action is fired without a file being saved
+  * buffer flushing issue?
+  * libev issue?
+
 * test on other platforms
   * mswin
   * bsd
