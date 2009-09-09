@@ -3,7 +3,6 @@ require 'rbconfig'
 
 require 'rev'
 
-require 'watchr/core_ext/pathname'
 require 'watchr/script'
 require 'watchr/controller'
 

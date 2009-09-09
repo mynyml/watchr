@@ -2,7 +2,6 @@
 * bump version
 * generate gemspec
 
-* remove core_ext/pathname.rb if not used
 * fix issue with Script#parse!
   * only accept paths in initialize?
 
