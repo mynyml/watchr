@@ -6,6 +6,10 @@ require 'rake/rdoctask'
 require 'pathname'
 require 'yaml'
 require 'lib/watchr/version'
+begin
+  require 'yard'
+rescue LoadError, RuntimeError
+end
 
 RUBY_1_9  = RUBY_VERSION =~ /^1\.9/
 WIN       = (RUBY_PLATFORM =~ /mswin|cygwin/)
@@ -34,6 +38,8 @@ spec = Gem::Specification.new do |s|
   s.bindir          = "bin"
   s.executables     = "watchr"
   s.files           = all_except %w( ^doc ^pkg ^test/fixtures )
+ #s.add_dependency 'every', '>= 1.0'
+  s.add_dependency 'rev',   '>= 0.3.0'
 end
 
 desc "Generate rdoc documentation."
@@ -44,8 +50,17 @@ Rake::RDocTask.new(:rdoc => 'rdoc', :clobber_rdoc => 'rdoc:clean', :rerdoc => 'r
   rdoc.options << '--charset' << 'utf-8'
   rdoc.main = 'README.rdoc'
   rdoc.rdoc_files.include('README.rdoc')
+  rdoc.rdoc_files.include('TODO.txt')
+  rdoc.rdoc_files.include('LICENSE')
   rdoc.rdoc_files.include('lib/**/*.rb')
 }
+
+if defined? YARD
+  YARD::Rake::YardocTask.new do |t|
+    t.files   = %w( lib/**/*.rb )
+    t.options = %w( -o doc/yard --readme README.rdoc --files LICENSE,TODO.txt )
+  end
+end
 
 Rake::GemPackageTask.new(spec) do |p|
   p.gem_spec = spec

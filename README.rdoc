@@ -2,7 +2,7 @@
 
 Agile development tool that monitors a directory recursively, and triggers a
 user defined action whenever an observed file is modified. Its most typical use
-is continious testing, and as such it is a more flexible alternative to
+is continuous testing, and as such it is a more flexible alternative to
 autotest.
 
 
@@ -20,7 +20,7 @@ Most importantly it allows running tests in an environment that is *agnostic* to
 
 * Web frameworks        ( rails, merb, sinatra, camping, invisible, ... )
 * Test frameworks       ( test/unit, minitest, rspec, test/spec, expectations, ... )
-* Ruby interpreters     ( ruby1.8, ruby1.9, MRI, JRuby, ... )
+* Ruby interpreters     ( ruby1.8, ruby1.9, MRI, JRuby, Rubinius, ... )
 * Package frameworks    ( rubygems, rip, ... )
 
 
@@ -47,7 +47,7 @@ So for example,
 
 will match any test file and run it whenever it is saved.
 
-A continious testing script for a basic project could be
+A continuous testing script for a basic project could be
 
   watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
   watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
@@ -57,7 +57,8 @@ lib file's associated test. This mimics the equivalent autotest behaviour.
 
 It's easy to see why watchr is so flexible, since the whole command is custom.
 And remember the scripts are pure ruby, so feel free to add methods,
-Signal#trap calls, etc.
+Signal#trap calls, etc. Updates to script files are picked up on the fly (no
+need to restart watchr) so experimenting is painless.
 
 The wiki[http://wiki.github.com/mynyml/watchr] has more details and examples.
 You can also take a look at watchr's own specs.watchr script it the root dir.
@@ -80,3 +81,6 @@ source::      http://github.com/mynyml/watchr
 rdocs::  http://docs.github.com/mynyml/watchr
 wiki::   http://wiki.github.com/mynyml/watchr
 
+==== Acknowledgement
+
+* macournoyer[http://github.com/macournoyer] for the evented backend idea

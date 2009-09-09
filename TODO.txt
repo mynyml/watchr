@@ -1,31 +1,29 @@
 
-o write a few prepackaged scripts
-  o post on gists
-  o post links on wiki
-  o post main links in readme
+* bump version
+* generate gemspec
 
-o run script within own context?
-o only update on actual file change? (instead of save)
-  - possible with inotify (Inotify::MODIFY), see about other handlers
+* remove core_ext/pathname.rb if not used
+* fix issue with Script#parse!
+  * only accept paths in initialize?
 
-o use filesystem events for file monitoring (MA)
-  - linux:    inotify (ruby-inotify)
-  - win:      Directory Management
-  - *BSD/OSX: kqueue
-  - solaris:  FEM?
-  - fallback to current method when no other method is available
-  - api will also need refactoring for clearer separation of functionality
-  o libev (Rev)
+* test on other platforms
+  * mswin
+  * bsd
+  * osx
+  * solaris
 
-o document source
-  o rdoc or yard?
-o single docs.watchr script for both rdoc and yard (just generate both always)
+* write a few prepackaged scripts
+  * post on gists
+  * post links on wiki
+  * post main links in readme
 
-o respond to different file events
-  o modified
-  o created
-  o deleted
-  o etc.
-  o watch(pattern, EVENT, &action)
+* eval script within own context?
 
-o memory profiling / benchmarks
+* respond to different file events?
+  * modified
+  * created
+  * deleted
+  * etc.
+  * watch(pattern, EVENT, &action)
+
+* memory profiling / benchmarks

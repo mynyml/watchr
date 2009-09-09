@@ -9,7 +9,6 @@ require 'watchr/version'
 def usage
   "Usage: watchr [opts] path/to/script"
 end
-
 def version
   "watchr version: %s" % Watchr.version
 end

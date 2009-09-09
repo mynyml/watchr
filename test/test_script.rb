@@ -16,6 +16,12 @@ class TestScript < Test::Unit::TestCase
 
   ## functionality
 
+  test "rule object" do
+    rule = Script.new.watch('pattern') { nil }
+    rule.pattern.should be('pattern')
+    rule.action.call.should be(nil)
+  end
+
   test "finds action for path" do
     script = Script.new
     script.watch('abc') { :x }

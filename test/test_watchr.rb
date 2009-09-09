@@ -19,7 +19,7 @@ class TestWatchr < Test::Unit::TestCase
   test "debug" do
     capture_io { Watchr.debug('abc') }.stdout.should be('')
     Watchr.options.debug = true
-    capture_io { Watchr.debug('abc') }.stdout.should be("[debug] abc\n")
+    capture_io { Watchr.debug('abc') }.stdout.should be("[watchr debug] abc\n")
   end
 end
 
