@@ -56,11 +56,12 @@ lib file's associated test. This mimics the equivalent autotest behaviour.
 
 It's easy to see why watchr is so flexible, since the whole command is custom.
 The above actions could just as easily call "jruby", "ruby --rubygems", "ruby
--Ilib", "specrb", "rbx", etc. autotest, on the other hand, runs with:
+-Ilib", "specrb", "rbx", ..., or any combination of these. For the sake of
+comparison, autotest runs with:
 
   /usr/bin/ruby1.8 -I.:lib:test -rubygems -e "%w[test/unit test/test_helper.rb test/test_watchr.rb].each { |f| require f }"
 
-locking the environment into ruby1.8, rubygems and test/unit.
+locking the environment into ruby1.8, rubygems and test/unit for all tests.
 
 And remember the scripts are pure ruby, so feel free to add methods,
 Signal#trap calls, etc. Updates to script files are picked up on the fly (no
