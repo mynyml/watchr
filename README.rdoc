@@ -1,9 +1,8 @@
 === Summary
 
-Agile development tool that monitors a directory recursively, and triggers a
-user defined action whenever an observed file is modified. Its most typical use
-is continuous testing, and as such it is a more flexible alternative to
-autotest.
+Agile development tool that monitors a directory tree, and triggers a user
+defined action whenever an observed file is modified. Its most typical use is
+continuous testing, and as such it is a more flexible alternative to autotest.
 
 
 === Features
@@ -30,8 +29,8 @@ On the command line,
 
   $ watchr path/to/script.file
 
-will monitor files from within the current directory and below it recursively,
-and react to events on those files in accordance with the script.
+will monitor files in the current directory tree, and react to events on those
+files in accordance with the script.
 
 
 === Scripts
@@ -56,12 +55,20 @@ which, in addition to running any saved test file as above, will also run a
 lib file's associated test. This mimics the equivalent autotest behaviour.
 
 It's easy to see why watchr is so flexible, since the whole command is custom.
+The above actions could just as easily call "jruby", "ruby --rubygems", "ruby
+-Ilib", "specrb", "rbx", etc. autotest, on the other hand, runs with:
+
+  /usr/bin/ruby1.8 -I.:lib:test -rubygems -e "%w[test/unit test/test_helper.rb test/test_watchr.rb].each { |f| require f }"
+
+locking the environment into ruby1.8, rubygems and test/unit.
+
 And remember the scripts are pure ruby, so feel free to add methods,
 Signal#trap calls, etc. Updates to script files are picked up on the fly (no
 need to restart watchr) so experimenting is painless.
 
 The wiki[http://wiki.github.com/mynyml/watchr] has more details and examples.
-You can also take a look at watchr's own specs.watchr script it the root dir.
+You can also take a look at watchr's own specs.watchr script it the root dir,
+as well as docs.watchr
 
 
 === Install
