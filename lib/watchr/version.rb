@@ -1,7 +1,7 @@
 module Watchr
   module VERSION #:nodoc:
     MAJOR = 0
-    MINOR = 3
+    MINOR = 5
     TINY  = 0
   end
 

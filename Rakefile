@@ -37,7 +37,7 @@ spec = Gem::Specification.new do |s|
   s.require_path    = "lib"
   s.bindir          = "bin"
   s.executables     = "watchr"
-  s.files           = all_except %w( ^doc ^pkg ^test/fixtures )
+  s.files           = all_except %w( ^doc/ ^doc$ ^pkg ^bk ^\.wiki ^\.yardoc )
  #s.add_dependency 'every', '>= 1.0'
   s.add_dependency 'rev',   '>= 0.3.0'
 end
