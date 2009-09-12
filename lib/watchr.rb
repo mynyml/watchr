@@ -7,6 +7,7 @@ require 'watchr/script'
 require 'watchr/controller'
 require 'watchr/event_handlers/base'
 require 'watchr/event_handlers/unix'
+require 'watchr/event_handlers/portable'
 
 # Agile development tool that monitors a directory recursively, and triggers a
 # user defined action whenever an observed file is modified. Its most typical
@@ -22,6 +23,7 @@ require 'watchr/event_handlers/unix'
 module Watchr
   class << self
     attr_accessor :options
+    attr_accessor :handler
 
     # Options proxy.
     #
@@ -55,6 +57,19 @@ module Watchr
     #
     def debug(str)
       puts "[watchr debug] #{str}" if options.debug
+    end
+
+    def handler
+      @handler ||=
+       #case ENV['HANDLER'] || RUBY_PLATFORM
+        case ENV['HANDLER'] || Config::CONFIG['host_os']
+          when /mswin|windows|cygwin/i
+            Watchr::EventHandler::Portable
+          when /bsd|sunos|solaris|darwin|osx|mach|linux/i, 'unix'
+            Watchr::EventHandler::Unix
+          else
+            Watchr::EventHandler::Portable
+        end
     end
   end
 end
