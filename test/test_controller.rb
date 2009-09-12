@@ -1,4 +1,11 @@
 require 'test/test_helper'
+require 'observer'
+
+class MockHandler
+  include Observable
+  def listen(paths)  end
+  def refresh(paths) end
+end
 
 class TestController < Test::Unit::TestCase
   include Watchr
@@ -8,20 +15,21 @@ class TestController < Test::Unit::TestCase
   end
 
   def setup
-    @loop       = Rev::Loop.default
     @script     = Script.new
-    @controller = Controller.new(@script)
-    @loop.stubs(:run)
-  end
-
-  def teardown
-    SingleFileWatcher.controller = nil
-    Rev::Loop.default.watchers.every.detach
+    @handler    = MockHandler.new
+    @controller = Controller.new(@script, @handler)
   end
 
   test "triggers listening state on run" do
-    @loop.expects(:run)
+    @controller.stubs(:monitored_paths).returns %w( foo bar )
+    @handler.expects(:listen).with %w( foo bar )
     @controller.run
+  end
+
+  test "adds itself as handler observer" do
+    @handler.count_observers.should be(1)
+    @handler.delete_observer(@controller)
+    @handler.count_observers.should be(0)
   end
 
   ## monitored paths list
@@ -36,7 +44,7 @@ class TestController < Test::Unit::TestCase
     script = Script.new
     script.watch('.\.z') { :x }
 
-    contrl = Controller.new(script)
+    contrl = Controller.new(script, MockHandler.new)
     contrl.monitored_paths.should include(to_p('b/x.z'))
     contrl.monitored_paths.should include(to_p('b/c/y.z'))
   end
@@ -51,7 +59,7 @@ class TestController < Test::Unit::TestCase
     script = Script.new
     script.watch('.\.z') { :x }
 
-    contrl = Controller.new(script)
+    contrl = Controller.new(script, MockHandler.new)
     contrl.monitored_paths.should exclude(to_p('a'))
     contrl.monitored_paths.should exclude(to_p('b/c'))
     contrl.monitored_paths.should exclude(to_p('p/q.z'))
@@ -63,7 +71,7 @@ class TestController < Test::Unit::TestCase
 
     path   = to_p('some/file')
     script = Script.new(path)
-    contrl = Controller.new(script)
+    contrl = Controller.new(script, MockHandler.new)
     contrl.monitored_paths.should include(path)
   end
 
@@ -76,57 +84,21 @@ class TestController < Test::Unit::TestCase
     @controller.update('abc')
   end
 
-  test "reloads script" do
+  test "parses script on script file update" do
     path = to_p('abc')
     @script.stubs(:path).returns(path)
     @script.expects(:parse!)
 
-    @controller.run
     @controller.update('abc')
   end
 
-  ## monitoring file events
-
-  test "listens for events on monitored files" do
-    @controller.stubs(:monitored_paths).returns %w{ foo bar }
-    @controller.run
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('foo', 'bar')
-    @loop.watchers.every.class.uniq.should be([SingleFileWatcher])
-  end
-
-  test "file event updates controller" do
-    watcher = SingleFileWatcher.new('foo/bar')
-    watcher.stubs(:path).returns('foo/bar')
-
-    @controller.expects(:update).with('foo/bar', :changed)
-    watcher.on_change
-  end
-
-  ## on the fly updates of monitored files list
-
-  test "refreshes on script file update" do
+  test "refreshes handler on script file update" do
     path = to_p('abc')
     @script.stubs(:path).returns(path)
+    @controller.stubs(:monitored_paths).returns %w( foo bar )
 
-    @controller.expects(:refresh)
+    @handler.expects(:refresh).with %w( foo bar )
     @controller.update('abc')
-  end
-
-  test "reattaches to new monitored files" do
-    @controller.stubs(:monitored_paths).returns %w{ foo bar }
-    @controller.run
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('foo')
-    @loop.watchers.every.path.should include('bar')
-
-    @controller.stubs(:monitored_paths).returns %w{ baz bax }
-    @controller.refresh
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('baz')
-    @loop.watchers.every.path.should include('bax')
-    @loop.watchers.every.path.should exclude('foo')
-    @loop.watchers.every.path.should exclude('bar')
   end
 end
 

@@ -5,6 +5,8 @@ require 'rev'
 
 require 'watchr/script'
 require 'watchr/controller'
+require 'watchr/event_handlers/base'
+require 'watchr/event_handlers/unix'
 
 # Agile development tool that monitors a directory recursively, and triggers a
 # user defined action whenever an observed file is modified. Its most typical
