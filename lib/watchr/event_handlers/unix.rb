@@ -1,3 +1,5 @@
+require 'rev'
+
 module Watchr
   module EventHandler
     class Unix

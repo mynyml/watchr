@@ -1,8 +1,6 @@
 require 'pathname'
 require 'rbconfig'
 
-require 'rev'
-
 # Agile development tool that monitors a directory recursively, and triggers a
 # user defined action whenever an observed file is modified. Its most typical
 # use is continuous testing.
