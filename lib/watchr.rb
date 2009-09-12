@@ -3,12 +3,6 @@ require 'rbconfig'
 
 require 'rev'
 
-require 'watchr/script'
-require 'watchr/controller'
-require 'watchr/event_handlers/base'
-require 'watchr/event_handlers/unix'
-require 'watchr/event_handlers/portable'
-
 # Agile development tool that monitors a directory recursively, and triggers a
 # user defined action whenever an observed file is modified. Its most typical
 # use is continuous testing.
@@ -21,6 +15,15 @@ require 'watchr/event_handlers/portable'
 # See README for more details
 #
 module Watchr
+  autoload :Script,     'watchr/script'
+  autoload :Controller, 'watchr/controller'
+
+  module EventHandler
+    autoload :Base,     'watchr/event_handlers/base'
+    autoload :Unix,     'watchr/event_handlers/unix'
+    autoload :Portable, 'watchr/event_handlers/portable'
+  end
+
   class << self
     attr_accessor :options
     attr_accessor :handler

@@ -3,7 +3,6 @@
 * generate gemspec
 
 * rev dependency should be conditional on OS
-* autoload handlers
 
 * fix issue with Script#parse!
   * only accept paths in initialize?
