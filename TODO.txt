@@ -2,6 +2,8 @@
 * bump version
 * generate gemspec
 
+* rev dependency should be conditional on OS
+
 * fix issue with Script#parse!
   * only accept paths in initialize?
 

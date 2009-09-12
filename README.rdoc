@@ -1,4 +1,4 @@
-==== Summary
+=== Summary
 
 Agile development tool that monitors a directory recursively, and triggers a
 user defined action whenever an observed file is modified. Its most typical use
@@ -6,7 +6,7 @@ is continuous testing, and as such it is a more flexible alternative to
 autotest.
 
 
-==== Features
+=== Features
 
 watchr is:
 
@@ -24,7 +24,7 @@ Most importantly it allows running tests in an environment that is *agnostic* to
 * Package frameworks    ( rubygems, rip, ... )
 
 
-==== Usage
+=== Usage
 
 On the command line,
 
@@ -34,7 +34,7 @@ will monitor files from within the current directory and below it recursively,
 and react to events on those files in accordance with the script.
 
 
-==== Scripts
+=== Scripts
 
 The script contains a set of simple rules that map observed files to an action.
 Its DSL is a single method: watch(pattern, &action)
@@ -64,23 +64,23 @@ The wiki[http://wiki.github.com/mynyml/watchr] has more details and examples.
 You can also take a look at watchr's own specs.watchr script it the root dir.
 
 
-==== Install
+=== Install
 
   gem install mynyml-watchr --source http://gems.github.com/
 
 
-==== See Also
+=== See Also
 
 redgreen[http://github.com/mynyml/redgreen]:: Standalone redgreen eye candy for test results, ala autotest.
 phocus[http://github.com/mynyml/phocus]::     Run focused tests when running the whole file/suite is unnecessary.
 
 
-==== Links
+=== Links
 
 source::      http://github.com/mynyml/watchr
 rdocs::  http://docs.github.com/mynyml/watchr
 wiki::   http://wiki.github.com/mynyml/watchr
 
-==== Acknowledgement
+=== Acknowledgement
 
-* macournoyer[http://github.com/macournoyer] for the evented backend idea
+* Thanks to macournoyer[http://github.com/macournoyer] for the evented backend idea

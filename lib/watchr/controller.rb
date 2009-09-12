@@ -1,21 +1,5 @@
 module Watchr
 
-  # Used by Rev. Wraps a monitored path, and Rev::Loop will call its callback
-  # on file events.
-  class SingleFileWatcher < Rev::StatWatcher #:nodoc:
-    class << self
-      # Stores a reference back to controller so we can call its #update method
-      # with file event info
-      attr_accessor :controller
-    end
-
-    # Callback. Called on file change event
-    # Delegates to Controller#update, passing in path and event type
-    def on_change
-      self.class.controller.update(path, :changed)
-    end
-  end
-
   # The controller contains the app's core logic.
   #
   # ===== Examples
@@ -38,9 +22,12 @@ module Watchr
     # ===== Parameters
     # script<Script>:: The script object
     #
-    def initialize(script)
-      @script = script
-      SingleFileWatcher.controller = self
+    def initialize(script, handler)
+      @script  = script
+      @handler = handler
+      @handler.add_observer(self)
+
+      Watchr.debug "using %s handler" % handler.class.name
     end
 
     # Enters listening loop.
@@ -48,8 +35,7 @@ module Watchr
     # Will block control flow until application is explicitly stopped/killed.
     #
     def run
-      attach
-      Rev::Loop.default.run
+      @handler.listen(monitored_paths)
     end
 
     # Callback for file events.
@@ -67,7 +53,7 @@ module Watchr
 
       if path == @script.path
         @script.parse!
-        refresh
+        @handler.refresh(monitored_paths)
       else
         @script.action_for(path).call
       end
@@ -87,31 +73,6 @@ module Watchr
       end
       paths.push(@script.path).compact!
       paths.map {|path| Pathname(path).expand_path }
-    end
-
-    # Rebuilds file bindings.
-    #
-    # Will detach all current bindings, and reattach the <tt>monitored_paths</tt>
-    #
-    # see:: #attach
-    # see:: #detach
-    # see:: #monitored_paths
-    #
-    def refresh
-      detach
-      attach
-    end
-
-    private
-
-    # Binds all <tt>monitored_paths</tt> to the listening loop.
-    def attach
-      monitored_paths.each {|path| SingleFileWatcher.new(path.to_s).attach(Rev::Loop.default) }
-    end
-
-    # Unbinds all paths currently attached to listening loop.
-    def detach
-      Rev::Loop.default.watchers.each {|watcher| watcher.detach }
     end
   end
 end
