@@ -26,6 +26,8 @@ module Watchr
       @script  = script
       @handler = handler
       @handler.add_observer(self)
+
+      Watchr.debug "using %s handler" % handler.class.name
     end
 
     # Enters listening loop.
