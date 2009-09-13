@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: watchr
 version: !ruby/object:Gem::Version 
-  version: 0.5.0
+  version: 0.5.1
 platform: ruby
 authors: 
 - Martin Aumont
