@@ -1,7 +1,7 @@
 --- !ruby/object:Gem::Specification 
 name: watchr
 version: !ruby/object:Gem::Version 
-  version: 0.5.1
+  version: 0.5.2
 platform: ruby
 authors: 
 - Martin Aumont
@@ -22,7 +22,7 @@ dependencies:
       - !ruby/object:Gem::Version 
         version: 0.3.0
     version: 
-description: Continious anything; project files observer/trigger.
+description: Modern continious testing (flexible alternative to autotest)
 email: mynyml@gmail.com
 executables: 
 - watchr
@@ -60,7 +60,7 @@ files:
 - specs.watchr
 - watchr.gemspec
 has_rdoc: true
-homepage: ""
+homepage: github.com/mynyml/watchr
 licenses: []
 
 post_install_message: 
@@ -86,6 +86,6 @@ rubyforge_project:
 rubygems_version: 1.3.5
 signing_key: 
 specification_version: 3
-summary: Continious anything
+summary: Modern continious testing (flexible alternative to autotest)
 test_files: []
 

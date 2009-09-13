@@ -74,7 +74,7 @@ as well as docs.watchr
 
 === Install
 
-  gem install mynyml-watchr --source http://gems.github.com/
+  gem install watchr --source http://gemcutter.org
 
 
 === See Also

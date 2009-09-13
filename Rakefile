@@ -28,11 +28,11 @@ end
 spec = Gem::Specification.new do |s|
   s.name            = 'watchr'
   s.version         =  Watchr.version
-  s.summary         = "Continious anything"
-  s.description     = "Continious anything; project files observer/trigger."
+  s.summary         = "Modern continious testing (flexible alternative to autotest)"
+  s.description     = "Modern continious testing (flexible alternative to autotest)"
   s.author          = "Martin Aumont"
   s.email           = 'mynyml@gmail.com'
-  s.homepage        = ''
+  s.homepage        = 'github.com/mynyml/watchr'
   s.has_rdoc        = true
   s.require_path    = "lib"
   s.bindir          = "bin"
