@@ -1,12 +1,13 @@
 
-* rev dependency should be conditional on OS
-
-* fix issue with Script#parse!
+* refactor Script#parse!
   * only accept paths in initialize?
 
 * sometimes an action is fired without a file being saved
   * buffer flushing issue?
   * libev issue?
+
+* when a file is saved twice quickly, subsequent events are ignored.
+  * seems like rev/libev drops the file watch
 
 * test on other platforms
   * mswin
