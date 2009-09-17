@@ -68,8 +68,11 @@ Signal#trap calls, etc. Updates to script files are picked up on the fly (no
 need to restart watchr) so experimenting is painless.
 
 The wiki[http://wiki.github.com/mynyml/watchr] has more details and examples.
-You can also take a look at watchr's own specs.watchr script in the root dir,
-as well as docs.watchr
+You might also want to take a look at watchr's own scripts,
+specs.watchr[http://github.com/mynyml/watchr/blob/master/specs.watchr],
+docs.watchr[http://github.com/mynyml/watchr/blob/master/docs.watchr] and
+gem.watchr[http://github.com/mynyml/watchr/blob/master/gem.watchr], to get you
+started.
 
 
 === Install
