@@ -7,7 +7,12 @@
 # --------------------------------------------------
 def build(gemspec)
   system "gem build %s" % gemspec
+  move
   puts
+end
+
+def move
+  FileUtils.mv Dir['watchr-*.gem'], 'pkg/'
 end
 
 # --------------------------------------------------

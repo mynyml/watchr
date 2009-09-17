@@ -2,7 +2,7 @@ module Watchr
   module VERSION #:nodoc:
     MAJOR = 0
     MINOR = 5
-    TINY  = 2
+    TINY  = 3
   end
 
   def self.version #:nodoc:

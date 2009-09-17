@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name              = 'watchr'
-  s.version           = '0.5.2'
+  s.version           = '0.5.3'
   s.date              = '2009-09-17'
   s.summary           = "Modern continious testing (flexible alternative to autotest)"
   s.description       = "Modern continious testing (flexible alternative to autotest)."
