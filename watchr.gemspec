@@ -1,91 +1,62 @@
---- !ruby/object:Gem::Specification 
-name: watchr
-version: !ruby/object:Gem::Version 
-  version: 0.5.2
-platform: ruby
-authors: 
-- Martin Aumont
-autorequire: 
-bindir: bin
-cert_chain: []
+require 'rbconfig'
+require 'lib/watchr/version'
 
-date: 2009-09-12 00:00:00 -04:00
-default_executable: 
-dependencies: 
-- !ruby/object:Gem::Dependency 
-  name: rev
-  type: :runtime
-  version_requirement: 
-  version_requirements: !ruby/object:Gem::Requirement 
-    requirements: 
-    - - ">="
-      - !ruby/object:Gem::Version 
-        version: 0.3.0
-    version: 
-description: Modern continious testing (flexible alternative to autotest)
-email: mynyml@gmail.com
-executables: 
-- watchr
-extensions: []
+Gem::Specification.new do |s|
+  s.name              = 'watchr'
+  s.version           =  Watchr.version
+  s.date              = '2009-09-17'
+  s.summary           = "Modern continious testing (flexible alternative to autotest)"
+  s.description       = "Modern continious testing (flexible alternative to autotest)."
+  s.author            = "mynyml"
+  s.email             = 'mynyml@gmail.com'
+  s.homepage          = 'http://mynyml.com/ruby/flexible-continuous-testing'
+  s.has_rdoc          = true
+  s.rdoc_options      = %w( --main README.rdoc )
+  s.extra_rdoc_files  = %w( README.rdoc )
+  s.require_path      = "lib"
+  s.bindir            = "bin"
+  s.executables       = "watchr"
+  s.files = %w[
+    README.rdoc
+    LICENSE
+    TODO.txt
+    Rakefile
+    bin/watchr
+    lib/watchr.rb
+    lib/watchr/version.rb
+    lib/watchr/script.rb
+    lib/watchr/controller.rb
+    lib/watchr/event_handlers/base.rb
+    lib/watchr/event_handlers/unix.rb
+    lib/watchr/event_handlers/portable.rb
+    test/test_helper.rb
+    test/test_watchr.rb
+    test/test_script.rb
+    test/test_controller.rb
+    test/event_handlers/test_base.rb
+    test/event_handlers/test_unix.rb
+    test/event_handlers/test_portable.rb
+    specs.watchr
+    docs.watchr
+    watchr.gemspec
+  ]
+  s.test_files = %w[
+    test/test_helper.rb
+    test/test_watchr.rb
+    test/test_script.rb
+    test/test_controller.rb
+    test/event_handlers/test_base.rb
+    test/event_handlers/test_unix.rb
+    test/event_handlers/test_portable.rb
+  ]
 
-extra_rdoc_files: []
+  unless Config::CONFIG['host_os'] =~ /mswin|windows|cygwin/i
+    s.add_dependency 'rev', '>= 0.3.0'
+  end
 
-files: 
-- Rakefile
-- test
-- test/event_handlers
-- test/event_handlers/test_portable.rb
-- test/event_handlers/test_base.rb
-- test/event_handlers/test_unix.rb
-- test/test_controller.rb
-- test/test_watchr.rb
-- test/test_helper.rb
-- test/test_script.rb
-- TODO.txt
-- bin
-- bin/watchr
-- lib
-- lib/watchr
-- lib/watchr/version.rb
-- lib/watchr/event_handlers
-- lib/watchr/event_handlers/portable.rb
-- lib/watchr/event_handlers/base.rb
-- lib/watchr/event_handlers/unix.rb
-- lib/watchr/script.rb
-- lib/watchr/controller.rb
-- lib/watchr.rb
-- README.rdoc
-- LICENSE
-- docs.watchr
-- specs.watchr
-- watchr.gemspec
-has_rdoc: true
-homepage: github.com/mynyml/watchr
-licenses: []
-
-post_install_message: 
-rdoc_options: []
-
-require_paths: 
-- lib
-required_ruby_version: !ruby/object:Gem::Requirement 
-  requirements: 
-  - - ">="
-    - !ruby/object:Gem::Version 
-      version: "0"
-  version: 
-required_rubygems_version: !ruby/object:Gem::Requirement 
-  requirements: 
-  - - ">="
-    - !ruby/object:Gem::Version 
-      version: "0"
-  version: 
-requirements: []
-
-rubyforge_project: 
-rubygems_version: 1.3.5
-signing_key: 
-specification_version: 3
-summary: Modern continious testing (flexible alternative to autotest)
-test_files: []
-
+  s.add_development_dependency 'mocha'
+  s.add_development_dependency 'jeremymcanally-matchy'
+  s.add_development_dependency 'jeremymcanally-pending'
+  s.add_development_dependency 'mynyml-every'
+  s.add_development_dependency 'mynyml-redgreen'
+end
