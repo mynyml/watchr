@@ -1,9 +1,7 @@
-require 'rbconfig'
-require 'lib/watchr/version'
 
 Gem::Specification.new do |s|
   s.name              = 'watchr'
-  s.version           =  Watchr.version
+  s.version           = '0.5.2'
   s.date              = '2009-09-17'
   s.summary           = "Modern continious testing (flexible alternative to autotest)"
   s.description       = "Modern continious testing (flexible alternative to autotest)."
@@ -50,7 +48,9 @@ Gem::Specification.new do |s|
     test/event_handlers/test_portable.rb
   ]
 
-  unless Config::CONFIG['host_os'] =~ /mswin|windows|cygwin/i
+ #require 'rbconfig'
+ #unless Config::CONFIG['host_os'] =~ /mswin|windows|cygwin/i
+  unless RUBY_PLATFORM =~ /mswin|windows|cygwin/i
     s.add_dependency 'rev', '>= 0.3.0'
   end
 
