@@ -30,16 +30,23 @@ spec = Gem::Specification.new do |s|
   s.version         =  Watchr.version
   s.summary         = "Modern continious testing (flexible alternative to autotest)"
   s.description     = "Modern continious testing (flexible alternative to autotest)"
-  s.author          = "Martin Aumont"
+  s.author          = "mynyml"
   s.email           = 'mynyml@gmail.com'
-  s.homepage        = 'http://github.com/mynyml/watchr'
+  s.homepage        = 'http://mynyml.com/ruby/flexible-continuous-testing'
   s.has_rdoc        = true
   s.require_path    = "lib"
   s.bindir          = "bin"
   s.executables     = "watchr"
   s.files           = all_except %w( ^doc/ ^doc$ ^pkg ^bk ^\.wiki ^\.yardoc )
+
  #s.add_dependency 'every', '>= 1.0'
   s.add_dependency 'rev',   '>= 0.3.0'
+
+  s.add_development_dependency, 'mocha'
+  s.add_development_dependency, 'jeremymcanally-matchy'
+  s.add_development_dependency, 'jeremymcanally-pending'
+  s.add_development_dependency, 'mynyml-every'
+  s.add_development_dependency, 'mynyml-redgreen'
 end
 
 desc "Generate rdoc documentation."

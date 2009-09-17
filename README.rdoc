@@ -85,9 +85,10 @@ phocus[http://github.com/mynyml/phocus]::     Run focused tests when running the
 
 === Links
 
-source::      http://github.com/mynyml/watchr
-rdocs::  http://docs.github.com/mynyml/watchr
+source:: http://github.com/mynyml/watchr
+docs::   http://docs.github.com/mynyml/watchr
 wiki::   http://wiki.github.com/mynyml/watchr
+bugs::   http://github.com/mynyml/watchr/issues
 
 === Acknowledgement
 
