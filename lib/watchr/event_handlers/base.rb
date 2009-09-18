@@ -2,7 +2,8 @@ require 'observer'
 
 module Watchr
   module EventHandler
-    class AbstractMethod < Exception; end
+    class AbstractMethod < Exception #:nodoc:
+    end
 
     # Base functionality mixin meant to be included in specific event handlers.
     module Base
