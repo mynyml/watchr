@@ -1,3 +1,4 @@
+=begin
 require 'test/test_helper'
 
 class UnixEventHandlerTest < Test::Unit::TestCase
@@ -54,3 +55,4 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     @loop.watchers.every.path.should exclude('bar')
   end
 end
+=end
