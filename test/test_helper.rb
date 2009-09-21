@@ -5,9 +5,9 @@ require 'mocha'
 require 'every'
 require 'pending'
 begin
-  require 'ruby-debug'
   require 'redgreen'
   require 'phocus'
+  require 'ruby-debug'
 rescue LoadError, RuntimeError
 end
 
