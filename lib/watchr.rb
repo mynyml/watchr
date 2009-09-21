@@ -62,6 +62,9 @@ module Watchr
 
     # Detect current OS and return appropriate handler.
     #
+    # NOTE temporarily returns Portable handler for all platforms, until
+    # issue #1 is fixed
+    #
     # ===== Examples
     #
     #   Config::CONFIG['host_os'] #=> 'linux-gnu'
@@ -85,8 +88,9 @@ module Watchr
         case ENV['HANDLER'] || Config::CONFIG['host_os']
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
-          when /bsd|sunos|solaris|darwin|osx|mach|linux/i, 'unix'
-            Watchr::EventHandler::Unix
+          when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
+            #Watchr::EventHandler::Unix
+            Watchr::EventHandler::Portable
           else
             Watchr::EventHandler::Portable
         end

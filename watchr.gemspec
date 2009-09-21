@@ -1,7 +1,7 @@
 
 Gem::Specification.new do |s|
   s.name              = 'watchr'
-  s.version           = '0.5.3'
+  s.version           = '0.5.4'
   s.date              = '2009-09-17'
   s.summary           = "Modern continious testing (flexible alternative to autotest)"
   s.description       = "Modern continious testing (flexible alternative to autotest)."
@@ -50,9 +50,9 @@ Gem::Specification.new do |s|
 
  #require 'rbconfig'
  #unless Config::CONFIG['host_os'] =~ /mswin|windows|cygwin/i
-  unless RUBY_PLATFORM =~ /mswin|windows|cygwin/i
-    s.add_dependency 'rev', '>= 0.3.0'
-  end
+  #unless RUBY_PLATFORM =~ /mswin|windows|cygwin/i
+  #  s.add_dependency 'rev', '>= 0.3.0'
+  #end
 
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'jeremymcanally-matchy'

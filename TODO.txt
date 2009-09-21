@@ -1,4 +1,6 @@
 
+* use VERSION file
+
 * refactor Script#parse!
   * only accept paths in initialize?
 
