@@ -60,6 +60,25 @@ module Watchr
       puts "[watchr debug] #{str}" if options.debug
     end
 
+    # Detect current OS and return appropriate handler.
+    #
+    # ===== Examples
+    #
+    #   Config::CONFIG['host_os'] #=> 'linux-gnu'
+    #   Watchr.handler #=> Watchr::EventHandler::Unix
+    #
+    #   Config::CONFIG['host_os'] #=> 'cygwin'
+    #   Watchr.handler #=> Watchr::EventHandler::Portable
+    #
+    #   ENV['HANDLER'] #=> 'unix'
+    #   Watchr.handler #=> Watchr::EventHandler::Unix
+    #
+    #   ENV['HANDLER'] #=> 'portable'
+    #   Watchr.handler #=> Watchr::EventHandler::Portable
+    #
+    # ===== Returns
+    # handler<Class>:: handler class for current architecture
+    #
     def handler
       @handler ||=
        #case ENV['HANDLER'] || RUBY_PLATFORM
