@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-class UnixEventHandlerTest < Test::Unit::TestCase
+class PortableEventHandlerTest < Test::Unit::TestCase
   include Watchr
 
   def setup
