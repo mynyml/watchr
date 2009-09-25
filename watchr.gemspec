@@ -1,7 +1,8 @@
+require 'pathname'
 
 Gem::Specification.new do |s|
   s.name              = 'watchr'
-  s.version           = '0.5.4'
+  s.version           =  Pathname(__FILE__).dirname.join('lib/watchr/VERSION').read.strip
   s.date              = '2009-09-17'
   s.summary           = "Modern continious testing (flexible alternative to autotest)"
   s.description       = "Modern continious testing (flexible alternative to autotest)."
@@ -20,8 +21,8 @@ Gem::Specification.new do |s|
     TODO.txt
     Rakefile
     bin/watchr
+    lib/watchr/VERSION
     lib/watchr.rb
-    lib/watchr/version.rb
     lib/watchr/script.rb
     lib/watchr/controller.rb
     lib/watchr/event_handlers/base.rb

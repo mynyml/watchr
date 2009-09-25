@@ -4,7 +4,6 @@ require 'pathname'
 require 'optparse'
 
 require 'watchr'
-require 'watchr/version'
 
 def usage
   "Usage: watchr [opts] path/to/script"

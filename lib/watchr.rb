@@ -26,6 +26,10 @@ module Watchr
     attr_accessor :options
     attr_accessor :handler
 
+    def version
+      Pathname(__FILE__).dirname.join('watchr/VERSION').read.strip
+    end
+
     # Options proxy.
     #
     # Currently supported options:
