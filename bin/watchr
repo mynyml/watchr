@@ -9,7 +9,7 @@ def usage
   "Usage: watchr [opts] path/to/script"
 end
 def version
-  "watchr version: %s" % Watchr.version
+  "watchr version: %s" % Watchr::VERSION
 end
 
 opts = OptionParser.new do |opts|

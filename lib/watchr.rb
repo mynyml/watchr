@@ -22,12 +22,15 @@ module Watchr
     autoload :Portable, 'watchr/event_handlers/portable'
   end
 
+  VERSION = '0.5.4'
+
   class << self
     attr_accessor :options
     attr_accessor :handler
 
-    def version
-      Pathname(__FILE__).dirname.join('watchr/VERSION').read.strip
+    # backwards compatibility
+    def version #:nodoc:
+      Watchr::VERSION
     end
 
     # Options proxy.

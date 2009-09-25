@@ -56,10 +56,5 @@ class TestWatchr < Test::Unit::TestCase
     ENV['HANDLER'] = 'other'
     Watchr.handler.should be(Watchr::EventHandler::Portable)
   end
-
-  test "version" do
-    Pathname.any_instance.stubs(:read).returns('0.0.1')
-    Watchr.version.should be('0.0.1')
-  end
 end
 
