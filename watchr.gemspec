@@ -48,12 +48,6 @@ Gem::Specification.new do |s|
     test/event_handlers/test_portable.rb
   ]
 
- #require 'rbconfig'
- #unless Config::CONFIG['host_os'] =~ /mswin|windows|cygwin/i
-  #unless RUBY_PLATFORM =~ /mswin|windows|cygwin/i
-  #  s.add_dependency 'rev', '>= 0.3.0'
-  #end
-
   s.add_development_dependency 'mocha'
   s.add_development_dependency 'jeremymcanally-matchy'
   s.add_development_dependency 'jeremymcanally-pending'

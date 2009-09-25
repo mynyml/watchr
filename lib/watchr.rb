@@ -84,13 +84,16 @@ module Watchr
     #
     def handler
       @handler ||=
-       #case ENV['HANDLER'] || RUBY_PLATFORM
         case ENV['HANDLER'] || Config::CONFIG['host_os']
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
           when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            #Watchr::EventHandler::Unix
-            Watchr::EventHandler::Portable
+            begin
+              require 'rev'
+              Watchr::EventHandler::Unix
+            rescue LoadError, RuntimeError
+              Watchr::EventHandler::Portable
+            end
           else
             Watchr::EventHandler::Portable
         end

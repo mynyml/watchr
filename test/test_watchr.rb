@@ -24,42 +24,21 @@ class TestWatchr < Test::Unit::TestCase
 
   test "picking handler" do
 
-    # temporary workaround to issue #1
-    # http://github.com/mynyml/watchr/issues#issue/1
-
-    #Watchr.handler = nil
-    #ENV['HANDLER'] = 'linux'
-    #Watchr.handler.should be(Watchr::EventHandler::Unix)
-
-    #Watchr.handler = nil
-    #ENV['HANDLER'] = 'bsd'
-    #Watchr.handler.should be(Watchr::EventHandler::Unix)
-
-    #Watchr.handler = nil
-    #ENV['HANDLER'] = 'darwin'
-    #Watchr.handler.should be(Watchr::EventHandler::Unix)
-
-    #Watchr.handler = nil
-    #ENV['HANDLER'] = 'unix'
-    #Watchr.handler.should be(Watchr::EventHandler::Unix)
-
     Watchr.handler = nil
     ENV['HANDLER'] = 'linux'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    Watchr.handler.should be(Watchr::EventHandler::Unix)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'bsd'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    Watchr.handler.should be(Watchr::EventHandler::Unix)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'darwin'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    Watchr.handler.should be(Watchr::EventHandler::Unix)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'unix'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
-    # end temporary workaround
-
+    Watchr.handler.should be(Watchr::EventHandler::Unix)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'mswin'
