@@ -1,29 +1,30 @@
-require 'rev'
+require 'eventmachine'
 
 module Watchr
   module EventHandler
     class Unix
       include Base
 
-      # Used by Rev. Wraps a monitored path, and Rev::Loop will call its
-      # callback on file events.
-      class SingleFileWatcher < Rev::StatWatcher #:nodoc:
-        class << self
-          # Stores a reference back to handler so we can call its #nofity
-          # method with file event info
-          attr_accessor :handler
+      # Used by EventMachine. Wraps a monitored path, and EM will call its
+      # callbacks on file events.
+      class SingleFileWatcher < EM::FileWatch #:nodoc:
+
+        # ===== Parameters
+        # handler<EventHandler::Base>:: a handler object to notify
+        #
+        def initialize(handler)
+          @handler = handler
         end
 
         # Callback. Called on file change event
         # Delegates to Controller#update, passing in path and event type
-        def on_change
-          self.class.handler.notify(path, :changed)
+        def file_modified
+          @handler.notify(path, :changed)
         end
       end
 
-      def initialize
-        SingleFileWatcher.handler = self
-        @loop = Rev::Loop.default
+      def initialize #:nodoc:
+        @watchers = []
       end
 
       # Enters listening loop.
@@ -32,8 +33,7 @@ module Watchr
       #
       def listen(monitored_paths)
         @monitored_paths = monitored_paths
-        attach
-        @loop.run
+        EM.run { attach }
       end
 
       # Rebuilds file bindings.
@@ -42,20 +42,20 @@ module Watchr
       #
       def refresh(monitored_paths)
         @monitored_paths = monitored_paths
-        detach
-        attach
+        EM.next_tick { detach; attach }
       end
 
       private
 
       # Binds all <tt>monitored_paths</tt> to the listening loop.
       def attach
-        @monitored_paths.each {|path| SingleFileWatcher.new(path.to_s).attach(@loop) }
+        @monitored_paths.each {|p| @watchers << EM.watch_file(p.to_s, SingleFileWatcher, self) }
       end
 
       # Unbinds all paths currently attached to listening loop.
       def detach
-        @loop.watchers.each {|watcher| watcher.detach }
+        @watchers.each {|w| w.stop_watching }
+        @watchers.clear
       end
     end
   end

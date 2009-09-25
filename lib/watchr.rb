@@ -89,8 +89,7 @@ module Watchr
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
           when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            #Watchr::EventHandler::Unix
-            Watchr::EventHandler::Portable
+            Watchr::EventHandler::Unix
           else
             Watchr::EventHandler::Portable
         end
