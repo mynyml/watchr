@@ -79,6 +79,12 @@ started.
 
   gem install watchr --source http://gemcutter.org
 
+If you're on *nix and have the rev[http://github.com/tarcieri/rev/] gem
+installed, Watchr will detect it and use it automatically. This will make
+Watchr evented.
+
+  gem install rev
+
 
 === See Also
 
