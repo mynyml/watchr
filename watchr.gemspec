@@ -1,8 +1,7 @@
-require 'pathname'
 
 Gem::Specification.new do |s|
   s.name              = 'watchr'
-  s.version           =  Pathname(__FILE__).dirname.join('lib/watchr/VERSION').read.strip
+  s.version           =  File.read(File.join(File.dirname(__FILE__), 'lib/watchr/VERSION')).strip
   s.date              = '2009-09-17'
   s.summary           = "Modern continious testing (flexible alternative to autotest)"
   s.description       = "Modern continious testing (flexible alternative to autotest)."
