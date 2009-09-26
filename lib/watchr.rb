@@ -96,6 +96,7 @@ module Watchr
               require 'rev'
               Watchr::EventHandler::Unix
             rescue LoadError, RuntimeError
+              Watchr.debug "rev not found. `gem install rev` to get evented handler"
               Watchr::EventHandler::Portable
             end
           else
