@@ -15,7 +15,8 @@ class TestController < Test::Unit::TestCase
   end
 
   def setup
-    @script     = Script.new
+    tmpfile     = Tempfile.new('foo')
+    @script     = Script.new( Pathname.new( tmpfile.path ) )
     @handler    = MockHandler.new
     @controller = Controller.new(@script, @handler)
   end
@@ -41,10 +42,9 @@ class TestController < Test::Unit::TestCase
       b/c
       b/c/y.z
     ))
-    script = Script.new
-    script.watch('.\.z') { :x }
+    @script.watch('.\.z') { :x }
 
-    contrl = Controller.new(script, MockHandler.new)
+    contrl = Controller.new(@script, MockHandler.new)
     contrl.monitored_paths.should include(to_p('b/x.z'))
     contrl.monitored_paths.should include(to_p('b/c/y.z'))
   end
@@ -56,10 +56,9 @@ class TestController < Test::Unit::TestCase
       b/c
       b/c/y.z
     ))
-    script = Script.new
-    script.watch('.\.z') { :x }
+    @script.watch('.\.z') { :x }
 
-    contrl = Controller.new(script, MockHandler.new)
+    contrl = Controller.new(@script, MockHandler.new)
     contrl.monitored_paths.should exclude(to_p('a'))
     contrl.monitored_paths.should exclude(to_p('b/c'))
     contrl.monitored_paths.should exclude(to_p('p/q.z'))

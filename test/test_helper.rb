@@ -1,5 +1,7 @@
 require 'pathname'
+require 'tempfile'
 require 'test/unit'
+
 require 'matchy'
 require 'mocha'
 require 'every'

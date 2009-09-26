@@ -23,23 +23,16 @@ module Watchr
     class API #:nodoc:
     end
 
-    # Creates a script object for <tt>file</tt>.
+    # Creates a script object for <tt>path</tt>.
     #
     # Will also immediatly parse the script so it is ready to be passed to a
     # controller.
     #
     # ===== Parameters
-    # file<Pathname>:: the path to the script
+    # path<Pathname>:: the path to the script
     #
-    # ===== TODO
-    # * only accept Pathname/String
-    #
-    #--
-    # see issue with #parse!
-    # (update class example when fixed)
-    #
-    def initialize(file = StringIO.new)
-      @file  = file
+    def initialize(path)
+      @path  = path
       @rules = []
       @default_action = lambda {}
       parse!
@@ -113,19 +106,18 @@ module Watchr
 
     # Eval content of script file.
     #--
-    # TODO @file.read will only work with Pathname objects!
     # TODO fix script file not found error
     def parse!
-      Watchr.debug('loading script file %s' % @file.to_s.inspect)
+      Watchr.debug('loading script file %s' % @path.to_s.inspect)
 
       @rules.clear
-      instance_eval(@file.read)
+      instance_eval(@path.read)
 
     rescue Errno::ENOENT
       # TODO figure out why this is happening. still can't reproduce
       Watchr.debug('script file "not found". wth')
       sleep(0.3) #enough?
-      instance_eval(@file.read)
+      instance_eval(@path.read)
     end
 
     # Find an action corresponding to a path. The returned action is actually a
@@ -159,7 +151,7 @@ module Watchr
     # path<Pathname>:: path to script file
     #
     def path
-      Pathname(@file.respond_to?(:to_path) ? @file.to_path : @file.to_s).expand_path
+      Pathname(@path.respond_to?(:to_path) ? @path.to_path : @path.to_s).expand_path
     end
 
     private
