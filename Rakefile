@@ -29,7 +29,9 @@ namespace(:test) do
   desc "Run all tests"
   task(:all) do
     tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
-    system "ruby -rubygems -Ilib -e'%w( #{tests.join(' ')} ).each {|file| require file }'"
+    cmd = "ruby -rubygems -Ilib -e'%w( #{tests.join(' ')} ).each {|file| require file }'"
+    puts cmd if ENV['VERBOSE']
+    system cmd
   end
 
   desc "Run all tests on multiple ruby versions (requires rvm with 1.8.6 and 1.8.7)"

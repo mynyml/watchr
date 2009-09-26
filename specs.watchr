@@ -5,18 +5,14 @@
 # --------------------------------------------------
 # Convenience Methods
 # --------------------------------------------------
-def all_test_files
-  Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
-end
-
 def run(cmd)
   puts(cmd)
   system(cmd)
 end
 
 def run_all_tests
-  cmd = "ruby -rubygems -Ilib -e'%w( #{all_test_files.join(' ')} ).each {|file| require file }'"
-  run(cmd)
+  # see Rakefile for the definition of the test task
+  system( "rake -s test:all VERBOSE=true" )
 end
 
 # --------------------------------------------------
@@ -39,5 +35,3 @@ end
 # Ctrl-C
 Signal.trap('INT') { abort("\n") }
 
-
-# vim:ft=ruby
