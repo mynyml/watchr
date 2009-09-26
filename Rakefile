@@ -25,9 +25,23 @@ if defined? YARD
 end
 
 namespace(:test) do
+
   desc "Run all tests"
   task(:all) do
     tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
     system "ruby -rubygems -Ilib -e'%w( #{tests.join(' ')} ).each {|file| require file }'"
+  end
+
+  desc "Run all tests on multiple ruby versions (requires rvm with 1.8.6 and 1.8.7)"
+  task(:portability) do
+    versions = %w( 1.8.6  1.8.7 )
+    versions.each do |version|
+      system <<-BASH
+        bash -c 'source ~/.rvm/scripts/rvm;
+                 rvm use #{version};
+                 echo "--------- `ruby -v` ----------\n";
+                 rake -s test:all'
+      BASH
+    end
   end
 end
