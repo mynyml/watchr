@@ -1,4 +1,11 @@
 
+* search path for scripts
+  * allows gems/plugins to bundle own scripts
+  * use case: foca-protest gem includes /lib/protest.watchr
+    -> $ watchr protest.watchr # will pick it up
+
+* 1.9 compatibility
+
 * refactor Script#parse!
   * only accept paths in initialize?
 
@@ -10,7 +17,8 @@
   * seems like rev/libev drops the file watch
 
 * test on other platforms
-  * mswin
+  x mswin
+  x cygwin
   * bsd
   * osx
   * solaris
@@ -21,6 +29,7 @@
   * post main links in readme
 
 * eval script within own context?
+  * use case: using <tt>path</tt> within script accesses Script#path
 
 * respond to different file events?
   * modified
@@ -28,5 +37,7 @@
   * deleted
   * etc.
   * watch(pattern, EVENT, &action)
+  * use case: a script updates a manifest file when a file is deleted
 
 * memory profiling / benchmarks
+
