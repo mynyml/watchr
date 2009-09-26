@@ -23,3 +23,11 @@ if defined? YARD
     t.options = %w( -o doc/yard --readme README.rdoc --files LICENSE,TODO.txt )
   end
 end
+
+namespace(:test) do
+  desc "Run all tests"
+  task(:all) do
+    tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
+    system "ruby -rubygems -Ilib -e'%w( #{tests.join(' ')} ).each {|file| require file }'"
+  end
+end
