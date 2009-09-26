@@ -69,9 +69,6 @@ module Watchr
 
     # Detect current OS and return appropriate handler.
     #
-    # NOTE temporarily returns Portable handler for all platforms, until
-    # issue #1 is fixed
-    #
     # ===== Examples
     #
     #   Config::CONFIG['host_os'] #=> 'linux-gnu'
