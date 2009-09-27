@@ -26,19 +26,19 @@ class TestWatchr < Test::Unit::TestCase
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'linux'
-    Watchr.handler.should be(Watchr::EventHandler::Unix)
+    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'bsd'
-    Watchr.handler.should be(Watchr::EventHandler::Unix)
+    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'darwin'
-    Watchr.handler.should be(Watchr::EventHandler::Unix)
+    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'unix'
-    Watchr.handler.should be(Watchr::EventHandler::Unix)
+    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'mswin'

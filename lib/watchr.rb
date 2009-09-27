@@ -13,12 +13,19 @@ require 'rbconfig'
 # See README for more details
 #
 module Watchr
+  begin
+    require 'rev'
+    HAVE_REV = true
+  rescue LoadError, RuntimeError
+    HAVE_REV = false
+  end
+
   autoload :Script,     'watchr/script'
   autoload :Controller, 'watchr/controller'
 
   module EventHandler
     autoload :Base,     'watchr/event_handlers/base'
-    autoload :Unix,     'watchr/event_handlers/unix'
+    autoload :Unix,     'watchr/event_handlers/unix' if ::Watchr::HAVE_REV
     autoload :Portable, 'watchr/event_handlers/portable'
   end
 
@@ -92,10 +99,9 @@ module Watchr
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
           when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            begin
-              require 'rev'
+            if ::Watchr::HAVE_REV
               Watchr::EventHandler::Unix
-            rescue LoadError, RuntimeError
+            else
               Watchr.debug "rev not found. `gem install rev` to get evented handler"
               Watchr::EventHandler::Portable
             end
