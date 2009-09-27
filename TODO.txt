@@ -4,6 +4,11 @@
   * use case: foca-protest gem includes /lib/protest.watchr
     -> $ watchr protest.watchr # will pick it up
 
+* namespace global methods in bin/watchr
+
+* reset default_action when reparsing script
+  * def reset
+
 * 1.9 compatibility
 
 * sometimes an action is fired without a file being saved
