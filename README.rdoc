@@ -101,4 +101,6 @@ bugs::   http://github.com/mynyml/watchr/issues
 
 === Acknowledgement
 
-* Thanks to macournoyer[http://github.com/macournoyer] for the evented backend idea
+* macournoyer[http://github.com/macournoyer] for the evented backend idea
+* foca[http://github.com/foca] for suggesting automatically picking up watchr
+  scripts bundled in gems
