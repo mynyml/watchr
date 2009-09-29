@@ -1,9 +1,4 @@
 
-* search path for scripts
-  * allows gems/plugins to bundle own scripts
-  * use case: foca-protest gem includes /lib/protest.watchr
-    -> $ watchr protest.watchr # will pick it up
-
 * namespace global methods in bin/watchr
 
 * reset default_action when reparsing script
