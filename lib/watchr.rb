@@ -29,7 +29,7 @@ module Watchr
     autoload :Portable, 'watchr/event_handlers/portable'
   end
 
-  VERSION = '0.5.5'
+  VERSION = '0.5.6'
 
   class << self
     attr_accessor :options
