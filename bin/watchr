@@ -5,15 +5,56 @@ require 'optparse'
 
 require 'watchr'
 
-def usage
-  "Usage: watchr [opts] path/to/script"
-end
-def version
-  "watchr version: %s" % Watchr::VERSION
+module Watchr
+  # Namespaced to avoid defining global methods
+  module Bin #:nodoc:
+    extend self
+
+    def usage
+      "Usage: watchr [opts] path/to/script"
+    end
+
+    def version
+      "watchr version: %s" % Watchr::VERSION
+    end
+
+    # Find a partial path name in load path
+    #
+    # ===== Params
+    # path<Pathname>:: partial pathname
+    #
+    # ===== Returns
+    # <Pathname>::
+    #   absolute path of first occurence of partial path in load path, or nil if not found
+    #
+    def find_in_load_path(path)
+      dir = potentially_with_gem( path.basename('.watchr') ) do
+        $LOAD_PATH.detect {|p| Pathname(p).join(path).exist? }
+      end
+      dir ? path.expand_path(dir) : nil
+    end
+
+    private
+
+    # If the block returns nil, requires gem <tt>name</tt> and tries running the
+    # block again. If all fails, returns nil
+    #
+    # ===== Params
+    # name<Pathname,String>:: name of gem to require
+    #
+    # ===== Returns
+    # block's value or nil if gem <tt>name</tt> doesn't exist
+    #
+    def potentially_with_gem(name)
+      yield || (require(name) && yield)
+    rescue LoadError
+      nil
+    end
+  end
 end
 
 opts = OptionParser.new do |opts|
-  opts.banner = usage
+  opts.banner = Watchr::Bin.usage
 
   opts.on('-d', '--debug', "Print extra debug info while program runs") {
     Watchr.options.debug = true
@@ -23,45 +64,14 @@ opts = OptionParser.new do |opts|
     end
   }
 
-  opts.on_tail('-h', '--help', "Print inline help") { puts opts;    exit }
-  opts.on_tail('-v', '--version', "Print version" ) { puts version; exit }
+  opts.on_tail('-h', '--help', "Print inline help") { puts opts; exit }
+  opts.on_tail('-v', '--version', "Print version" ) { puts Watchr::Bin.version; exit }
 
   opts.parse! ARGV
 end
 
-# Find a partial path name in load path
-#
-# ===== Params
-# path<Pathname>:: partial pathname
-#
-# ===== Returns
-# <Pathname>::
-#   absolute path of first occurence of partial path in load path, or nil if not found
-#
-def find_in_load_path(path)
-  dir = potentially_with_gem( path.basename('.watchr') ) do
-    $LOAD_PATH.detect {|p| Pathname(p).join(path).exist? }
-  end
-  dir ? path.expand_path(dir) : nil
-end
-
-# If the block returns nil, requires gem <tt>name</tt> and tries running the
-# block again. If all fails, returns nil
-#
-# ===== Params
-# name<Pathname,String>:: name of gem to require
-#
-# ===== Returns
-# block's value or nil if gem <tt>name</tt> doesn't exist
-#
-def potentially_with_gem(name)
-  yield || (require(name) && yield)
-rescue LoadError
-  nil
-end
-
-relative_path = Pathname( ARGV.first )           rescue abort(usage)
-absolute_path = find_in_load_path(relative_path)     or abort("no script found; file #{relative_path.to_s.inspect} is not in path.")
+relative_path = Pathname( ARGV.first )                   rescue abort(Watchr::Bin.usage)
+absolute_path = Watchr::Bin.find_in_load_path(relative_path) or abort("no script found; file #{relative_path.to_s.inspect} is not in path.")
 
 Watchr::Controller.new(Watchr::Script.new(absolute_path), Watchr.handler.new).run
 

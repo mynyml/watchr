@@ -1,6 +1,4 @@
 
-* namespace global methods in bin/watchr
-
 * reset default_action when reparsing script
   * def reset
 
