@@ -1,11 +1,5 @@
 
-* reset default_action when reparsing script
-  * def reset
-
 * 1.9 compatibility
-
-* version.watchr
-  * sync versions (gemspec & Watchr::VERSION)
 
 * sometimes an action is fired without a file being saved
   * buffer flushing issue?
@@ -38,4 +32,7 @@
   * use case: a script updates a manifest file when a file is deleted
 
 * memory profiling / benchmarks
+
+* version.watchr
+  * sync versions (gemspec & Watchr::VERSION)
 

@@ -49,6 +49,21 @@ class TestScript < Test::Unit::TestCase
     script.action_for('abc').call.should be(:x)
   end
 
+  test "resets state" do
+    @script.default_action { 'x' }
+    @script.watch('foo') { 'bar' }
+    @script.reset
+    @script.instance_variable_get(:@default_action).should be_kind_of(Proc)
+    @script.instance_variable_get(:@default_action).call.should be(nil)
+    @script.instance_variable_get(:@rules).should be([])
+  end
+
+  test "resets state on parse" do
+    @script.stubs(:instance_eval)
+    @script.expects(:reset)
+    @script.parse!
+  end
+
   test "actions receive a MatchData object" do
     @script.watch('de(.)') {|m| [m[0], m[1]] }
     @script.action_for('def').call.should be(%w( def f ))

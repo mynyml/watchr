@@ -110,7 +110,7 @@ module Watchr
     def parse!
       Watchr.debug('loading script file %s' % @path.to_s.inspect)
 
-      @rules.clear
+      reset
       instance_eval(@path.read)
 
     rescue Errno::ENOENT
@@ -118,6 +118,11 @@ module Watchr
       Watchr.debug('script file "not found". wth')
       sleep(0.3) #enough?
       instance_eval(@path.read)
+    end
+
+    def reset
+      @default_action = lambda {}
+      @rules.clear
     end
 
     # Find an action corresponding to a path. The returned action is actually a
