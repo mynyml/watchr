@@ -17,7 +17,7 @@ module Watchr
     #   rule.pattern      #=> 'lib/.*\.rb'
     #   rule.action.call  #=> 'ohaie'
     #
-    Rule = Struct.new(:pattern, :action)
+    Rule = Struct.new(:pattern, :events, :action)
 
     # TODO eval context
     class API #:nodoc:
@@ -35,6 +35,7 @@ module Watchr
       @path  = path
       @rules = []
       @default_action = lambda {}
+      @default_events = nil
       parse!
     end
 
@@ -74,8 +75,8 @@ module Watchr
     # ===== Returns
     # rule<Rule>:: rule created by the method
     #
-    def watch(pattern, &action)
-      @rules << Rule.new(pattern, action || @default_action)
+    def watch(pattern, events = nil, &action)
+      @rules << Rule.new(pattern, events || @default_events, action || @default_action)
       @rules.last
     end
 
@@ -103,6 +104,32 @@ module Watchr
     def default_action(&action)
       @default_action = action
     end
+    
+    # Convenience method. Define default events that trigger an action when a 
+    # rule has none specified. Please use an enumerable.
+    # Currently handle only the standard Unix *time stamps: 
+    # atime (:accessed), ctime (:changed), mtime (:modified)
+    # ===== Examples
+    #
+    #   # in script file
+    #
+    #   default_events = [:modified, :changed]
+    #
+    #   watch( 'lib/.*\.rb'  )
+    #   watch( 'README.rdoc' )
+    #   watch( 'TODO.txt'    )
+    #   watch( 'LICENSE'     )
+    #
+    #   # equivalent to:
+    #
+    #   watch( 'lib/.*\.rb',  [:modified, :changed] ) 
+    #   watch( 'README.rdoc', [:modified, :changed] ) 
+    #   watch( 'TODO.txt',    [:modified, :changed] ) 
+    #   watch( 'LICENSE',     [:modified, :changed] )
+    #
+    def default_events(events)
+      @default_events = events
+    end
 
     # Eval content of script file.
     #--
@@ -122,6 +149,7 @@ module Watchr
 
     def reset
       @default_action = lambda {}
+      @default_events = nil
       @rules.clear
     end
 
@@ -138,6 +166,12 @@ module Watchr
       rule = rule_for(path)
       data = path.match(rule.pattern)
       lambda { rule.action.call(data) }
+    end
+    
+    def events_for(path)
+      path = rel_path(path).to_s
+      rule = rule_for(path)
+      rule.events
     end
 
     # Collection of all patterns defined in script.

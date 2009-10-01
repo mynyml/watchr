@@ -3,3 +3,5 @@ pkg/
 bk/
 .wiki
 .yardoc
+dev.watchr
+bin/test_watchr
