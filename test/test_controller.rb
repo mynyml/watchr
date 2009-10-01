@@ -73,7 +73,7 @@ class TestController < Test::Unit::TestCase
     contrl = Controller.new(script, MockHandler.new)
     contrl.monitored_paths.should include(path)
   end
-  
+
   test "event conditions satisfied" do
     path = to_p('abc')
     events = [:modified]
@@ -88,12 +88,12 @@ class TestController < Test::Unit::TestCase
     @script.expects(:events_for).with(path).returns(nil)
     @script.expects(:action_for).with(path).returns(lambda {})
     @controller.update(path) # no thrown events
-    
+
     @script.expects(:events_for).with(path).returns(nil)
     @script.expects(:action_for).with(path).returns(lambda {})
     @controller.update(path, [:modified]) # thrown events
   end
-  
+
   test "calls action only if the rule's events include one of the thrown events" do
     path = to_p('abc')
     @script.expects(:events_for).with(path).returns([:modified,:changed])
@@ -105,7 +105,7 @@ class TestController < Test::Unit::TestCase
     path = to_p('abc')
     @script.stubs(:path).returns(path)
     @script.expects(:parse!)
-    
+
     @controller.send(:is_current_script?, 'abc').should be(true)
     @controller.update('abc')
   end

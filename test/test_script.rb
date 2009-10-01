@@ -85,12 +85,12 @@ class TestScript < Test::Unit::TestCase
     @script.watch('def')
     @script.action_for('def').call.should be(:x)
   end
-  
+
   test "rule's default events" do
     @script.watch('abc')
     @script.events_for('abc').should be(nil)
     @script.default_events [:modified]
-    
+
     @script.watch('abc')
     @script.events_for('abc').should be([:modified])
   end

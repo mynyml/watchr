@@ -72,13 +72,13 @@ module Watchr
       paths.push(@script.path).compact!
       paths.map {|path| Pathname(path).expand_path }
     end
-    
+
   private
     def is_current_script? path
       expanded = Pathname(path.respond_to?(:to_path) ? path.to_path : path.to_s).expand_path
       expanded == @script.path
     end
-    
+
     # satisfied if:
     #   - one of the thrown events matches one of the rule events
     #   - thereare no rule events (none set in script, no default)

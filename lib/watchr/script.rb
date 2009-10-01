@@ -104,10 +104,10 @@ module Watchr
     def default_action(&action)
       @default_action = action
     end
-    
-    # Convenience method. Define default events that trigger an action when a 
+
+    # Convenience method. Define default events that trigger an action when a
     # rule has none specified. Please use an enumerable.
-    # Currently handle only the standard Unix *time stamps: 
+    # Currently handle only the standard Unix *time stamps:
     # atime (:accessed), ctime (:changed), mtime (:modified)
     # ===== Examples
     #
@@ -122,9 +122,9 @@ module Watchr
     #
     #   # equivalent to:
     #
-    #   watch( 'lib/.*\.rb',  [:modified, :changed] ) 
-    #   watch( 'README.rdoc', [:modified, :changed] ) 
-    #   watch( 'TODO.txt',    [:modified, :changed] ) 
+    #   watch( 'lib/.*\.rb',  [:modified, :changed] )
+    #   watch( 'README.rdoc', [:modified, :changed] )
+    #   watch( 'TODO.txt',    [:modified, :changed] )
     #   watch( 'LICENSE',     [:modified, :changed] )
     #
     def default_events(events)
@@ -167,7 +167,7 @@ module Watchr
       data = path.match(rule.pattern)
       lambda { rule.action.call(data) }
     end
-    
+
     def events_for(path)
       path = rel_path(path).to_s
       rule = rule_for(path)
