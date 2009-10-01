@@ -1,6 +1,6 @@
-if Watchr::HAVE_REV
-
 require 'test/test_helper'
+
+if Watchr::HAVE_REV
 
 class UnixEventHandlerTest < Test::Unit::TestCase
   include Watchr
