@@ -35,7 +35,6 @@ module Watchr
       @path  = path
       @rules = []
       @default_action = lambda {}
-      @default_events = nil
       parse!
     end
 
@@ -75,8 +74,8 @@ module Watchr
     # ===== Returns
     # rule<Rule>:: rule created by the method
     #
-    def watch(pattern, events = nil, &action)
-      @rules << Rule.new(pattern, events || @default_events, action || @default_action)
+    def watch(pattern, events = [], &action)
+      @rules << Rule.new(pattern, events, action || @default_action)
       @rules.last
     end
 
@@ -105,32 +104,6 @@ module Watchr
       @default_action = action
     end
 
-    # Convenience method. Define default events that trigger an action when a
-    # rule has none specified. Please use an enumerable.
-    # Currently handle only the standard Unix *time stamps:
-    # atime (:accessed), ctime (:changed), mtime (:modified)
-    # ===== Examples
-    #
-    #   # in script file
-    #
-    #   default_events = [:modified, :changed]
-    #
-    #   watch( 'lib/.*\.rb'  )
-    #   watch( 'README.rdoc' )
-    #   watch( 'TODO.txt'    )
-    #   watch( 'LICENSE'     )
-    #
-    #   # equivalent to:
-    #
-    #   watch( 'lib/.*\.rb',  [:modified, :changed] )
-    #   watch( 'README.rdoc', [:modified, :changed] )
-    #   watch( 'TODO.txt',    [:modified, :changed] )
-    #   watch( 'LICENSE',     [:modified, :changed] )
-    #
-    def default_events(events)
-      @default_events = events
-    end
-
     # Eval content of script file.
     #--
     # TODO fix script file not found error
@@ -149,7 +122,6 @@ module Watchr
 
     def reset
       @default_action = lambda {}
-      @default_events = nil
       @rules.clear
     end
 

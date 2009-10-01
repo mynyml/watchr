@@ -12,7 +12,7 @@ class TestScript < Test::Unit::TestCase
 
   test "watch" do
     @script.watch('pattern')
-    @script.watch('pattern', [:modified])
+    @script.watch('pattern', [:event_types])
     @script.watch('pattern') { nil }
   end
 
@@ -20,16 +20,12 @@ class TestScript < Test::Unit::TestCase
     @script.default_action { nil }
   end
 
-  test "default events" do
-    @script.default_events [:modified]
-  end
-
   ## functionality
 
   test "rule object" do
     rule = @script.watch('pattern') { nil }
     rule.pattern.should be('pattern')
-    rule.events.should be(nil)
+    rule.events.should be([])
     rule.action.call.should be(nil)
   end
 
@@ -57,12 +53,9 @@ class TestScript < Test::Unit::TestCase
 
   test "resets state" do
     @script.default_action { 'x' }
-    @script.default_events [:modified]
     @script.watch('foo') { 'bar' }
     @script.reset
-    @script.instance_variable_get(:@default_action).should be_kind_of(Proc)
     @script.instance_variable_get(:@default_action).call.should be(nil)
-    @script.instance_variable_get(:@default_events).should be(nil)
     @script.instance_variable_get(:@rules).should be([])
   end
 
@@ -84,15 +77,6 @@ class TestScript < Test::Unit::TestCase
 
     @script.watch('def')
     @script.action_for('def').call.should be(:x)
-  end
-
-  test "rule's default events" do
-    @script.watch('abc')
-    @script.events_for('abc').should be(nil)
-    @script.default_events [:modified]
-
-    @script.watch('abc')
-    @script.events_for('abc').should be([:modified])
   end
 
   test "file path" do
