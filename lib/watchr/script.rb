@@ -69,13 +69,18 @@ module Watchr
     #
     # ===== Parameters
     # pattern<~#match>:: pattern to match targetted paths
+    # event_types<Array>::
+    #   Rule will only match events of these types. Accepted types are
+    #   :accessed, :modified, :changed and :delete, where the first three
+    #   correspond to atime, mtime and ctime respectively. Defaults to
+    #   :modified.
     # action<Block>:: action to trigger
     #
     # ===== Returns
     # rule<Rule>:: rule created by the method
     #
-    def watch(pattern, events = [], &action)
-      @rules << Rule.new(pattern, events, action || @default_action)
+    def watch(pattern, event_types = [:modified], &action)
+      @rules << Rule.new(pattern, Array(event_types), action || @default_action)
       @rules.last
     end
 
