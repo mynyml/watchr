@@ -48,12 +48,14 @@ module Watchr
     # path<Pathname, String>:: path that triggered event
     # event<Symbol>:: event type (ignored for now)
     #
-    def update(path, events = [])
-      if is_current_script?(path)
+    def update(path, event_types = [])
+      path = Pathname(path).expand_path
+
+      if path == @script.path
         @script.parse!
         @handler.refresh(monitored_paths)
       else
-        @script.action_for(path).call if event_conditions_satisfied?( path, events )
+        @script.action_for(path, event_types).call
       end
     end
 
@@ -72,24 +74,6 @@ module Watchr
       paths.push(@script.path).compact!
       paths.map {|path| Pathname(path).expand_path }
     end
-
-  private
-    def is_current_script? path
-      expanded = Pathname(path.respond_to?(:to_path) ? path.to_path : path.to_s).expand_path
-      expanded == @script.path
-    end
-
-    # satisfied if:
-    #   - one of the thrown events matches one of the rule events
-    #   - thereare no rule events (none set in script, no default)
-    #
-    def event_conditions_satisfied?(path, got_events)
-      if exp_events = @script.events_for(path)
-        got_events.any? {|e| exp_events.include? e}
-      else
-        true
-      end
-    end
-  end # Controller
+  end
 end
 

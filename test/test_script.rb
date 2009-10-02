@@ -25,19 +25,30 @@ class TestScript < Test::Unit::TestCase
   test "rule object" do
     rule = @script.watch('pattern', :modified) { nil }
     rule.pattern.should be('pattern')
-    rule.events.should be([:modified])
+    rule.event_types.should be([:modified])
     rule.action.call.should be(nil)
   end
 
   test "default event types" do
     rule = @script.watch('pattern') { nil }
-    rule.events.should be([:modified])
+    rule.event_types.should be([:modified])
   end
 
   test "finds action for path" do
     @script.watch('abc') { :x }
     @script.watch('def') { :y }
     @script.action_for('abc').call.should be(:x)
+  end
+
+  test "finds action for path with event types" do
+    @script.watch('abc', [:accessed]) { :x }
+    @script.watch('abc', [:modified]) { :y }
+    @script.action_for('abc', [:accessed]).call.should be(:x)
+  end
+
+  test "no action for path" do
+    @script.watch('abc', [:accessed]) { :x }
+    @script.action_for('abc', [:modified]).call.should be(nil)
   end
 
   test "collects patterns" do

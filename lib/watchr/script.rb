@@ -17,7 +17,7 @@ module Watchr
     #   rule.pattern      #=> 'lib/.*\.rb'
     #   rule.action.call  #=> 'ohaie'
     #
-    Rule = Struct.new(:pattern, :events, :action)
+    Rule = Struct.new(:pattern, :event_types, :action)
 
     # TODO eval context
     class API #:nodoc:
@@ -130,25 +130,25 @@ module Watchr
       @rules.clear
     end
 
-    # Find an action corresponding to a path. The returned action is actually a
-    # wrapper around the rule's action, with the match_data prepopulated.
+    # Find an action corresponding to a path and event_types. The returned
+    # action is actually a wrapper around the rule's action, with the
+    # match_data prepopulated.
     #
     # ===== Examples
     #
     #   script.watch( 'test/test_.*\.rb' ) {|md| "ruby #{md[0]}" }
     #   script.action_for('test/test_watchr.rb').call #=> "ruby test/test_watchr.rb"
     #
-    def action_for(path)
+    def action_for(path, event_types = [])
       path = rel_path(path).to_s
-      rule = rule_for(path)
-      data = path.match(rule.pattern)
-      lambda { rule.action.call(data) }
-    end
-
-    def events_for(path)
-      path = rel_path(path).to_s
-      rule = rule_for(path)
-      rule.events
+      rule = rules_for(path).detect {|rule| rule.event_types.to_set == event_types.to_set }
+      rule = rules_for(path).first if rule.nil? && event_types.empty?
+      if rule
+        data = path.match(rule.pattern)
+        lambda { rule.action.call(data) }
+      else
+        lambda {}
+      end
     end
 
     # Collection of all patterns defined in script.
@@ -172,17 +172,17 @@ module Watchr
 
     private
 
-    # Rule corresponding to a given path. If more than one rule matches, then
-    # the last defined rule takes precedence.
+    # Rules corresponding to a given path, in reversed order of precedence
+    # (latest one is most inportant).
     #
     # ===== Parameters
     # path<Pathname, String>:: path to look up rule for
     #
     # ===== Returns
-    # rule<Rule>:: rule corresponding to <tt>path</tt>
+    # rules<Array(Rule)>:: rules corresponding to <tt>path</tt>
     #
-    def rule_for(path)
-      @rules.reverse.detect {|rule| path.match(rule.pattern) }
+    def rules_for(path)
+      @rules.reverse.select {|rule| path.match(rule.pattern) }
     end
 
     # Make a path relative to current working directory.
