@@ -39,9 +39,9 @@ module Watchr
         def types
           return [:deleted] if not pathname.exist?
           t = []
-          t << :modified  if pathname.mtime > reference_mtime
-          t << :accessed  if pathname.atime > reference_atime
-          t << :changed   if pathname.ctime > reference_ctime
+          t << :modified  if pathname.mtime > @reference_mtime
+          t << :accessed  if pathname.atime > @reference_atime
+          t << :changed   if pathname.ctime > @reference_ctime
           t
         end
       end

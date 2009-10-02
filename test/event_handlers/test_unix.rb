@@ -3,9 +3,6 @@ require 'test/test_helper'
 if Watchr::HAVE_REV
 
 class Watchr::EventHandler::Unix::SingleFileWatcher
-  attr_accessor :reference_atime
-  attr_accessor :reference_mtime
-  attr_accessor :reference_ctime
   public :types
 end
 
@@ -52,9 +49,9 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     @watcher.pathname.stubs(:ctime).returns(:time)
 
     @watcher.send(:update_reference_times)
-    @watcher.reference_atime.should be(:time)
-    @watcher.reference_mtime.should be(:time)
-    @watcher.reference_ctime.should be(:time)
+    @watcher.instance_variable_get(:@reference_atime).should be(:time)
+    @watcher.instance_variable_get(:@reference_mtime).should be(:time)
+    @watcher.instance_variable_get(:@reference_ctime).should be(:time)
   end
 
   test "stores initial reference times" do
@@ -158,9 +155,9 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     watcher.pathname.stubs(:atime).returns(now)
     watcher.pathname.stubs(:mtime).returns(now)
     watcher.pathname.stubs(:ctime).returns(now)
-    watcher.reference_atime = now
-    watcher.reference_mtime = now
-    watcher.reference_ctime = now
+    watcher.instance_variable_set(:@reference_atime, now)
+    watcher.instance_variable_set(:@reference_mtime, now)
+    watcher.instance_variable_set(:@reference_ctime, now)
 
     types.each do |type|
       watcher.pathname.stubs(type).returns(now+10)
