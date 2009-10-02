@@ -1,4 +1,6 @@
 
+* update source docs
+
 * 1.9 compatibility
 
 * sometimes an action is fired without a file being saved
