@@ -13,6 +13,8 @@ require 'rbconfig'
 # See README for more details
 #
 module Watchr
+  VERSION = '0.5.7'
+
   begin
     require 'rev'
     HAVE_REV = true
@@ -28,8 +30,6 @@ module Watchr
     autoload :Unix,     'watchr/event_handlers/unix' if ::Watchr::HAVE_REV
     autoload :Portable, 'watchr/event_handlers/portable'
   end
-
-  VERSION = '0.5.6'
 
   class << self
     attr_accessor :options
