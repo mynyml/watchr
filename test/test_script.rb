@@ -76,7 +76,7 @@ class TestScript < Test::Unit::TestCase
   test "resets state" do
     @script.default_action { 'x' }
     @script.watch('foo') { 'bar' }
-    @script.reset
+    @script.send(:reset)
     @script.instance_variable_get(:@default_action).call.should be(nil)
     @script.instance_variable_get(:@rules).should be([])
   end
