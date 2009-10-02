@@ -14,26 +14,32 @@ Gem::Specification.new do |s|
   s.bindir            = "bin"
   s.executables       = "watchr"
   s.files = %w[
-    README.rdoc
+    .gitignore
+    History.txt
     LICENSE
-    TODO.txt
+    Manifest
+    README.rdoc
     Rakefile
+    TODO.txt
     bin/watchr
+    docs.watchr
+    gem.watchr
     lib/watchr.rb
-    lib/watchr/script.rb
     lib/watchr/controller.rb
     lib/watchr/event_handlers/base.rb
-    lib/watchr/event_handlers/unix.rb
     lib/watchr/event_handlers/portable.rb
-    test/test_helper.rb
-    test/test_watchr.rb
-    test/test_script.rb
-    test/test_controller.rb
-    test/event_handlers/test_base.rb
-    test/event_handlers/test_unix.rb
-    test/event_handlers/test_portable.rb
+    lib/watchr/event_handlers/unix.rb
+    lib/watchr/script.rb
+    manifest.watchr
     specs.watchr
-    docs.watchr
+    test/README
+    test/event_handlers/test_base.rb
+    test/event_handlers/test_portable.rb
+    test/event_handlers/test_unix.rb
+    test/test_controller.rb
+    test/test_helper.rb
+    test/test_script.rb
+    test/test_watchr.rb
     watchr.gemspec
   ]
   s.test_files = %w[

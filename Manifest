@@ -1,6 +1,7 @@
 .gitignore
 History.txt
 LICENSE
+Manifest
 README.rdoc
 Rakefile
 TODO.txt
@@ -13,6 +14,7 @@ lib/watchr/event_handlers/base.rb
 lib/watchr/event_handlers/portable.rb
 lib/watchr/event_handlers/unix.rb
 lib/watchr/script.rb
+manifest.watchr
 specs.watchr
 test/README
 test/event_handlers/test_base.rb
