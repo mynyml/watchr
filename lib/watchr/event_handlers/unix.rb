@@ -17,6 +17,7 @@ module Watchr
           update_reference_times
         end
 
+        # File's path as a Pathname
         def pathname
           @pathname ||= Pathname(@path)
         end
@@ -36,6 +37,17 @@ module Watchr
           @reference_ctime = pathname.ctime
         end
 
+        # Type of latest event.
+        #
+        # A single type is determined, even though more than one stat times may
+        # have changed on the file. The type is the first to match in the
+        # following hierarchy:
+        #
+        #   :deleted, :modified (mtime), :accessed (atime), :changed (ctime)
+        #
+        # ===== Returns
+        # type<Symbol>:: latest event's type
+        #
         def type
           return :deleted   if !pathname.exist?
           return :modified  if  pathname.mtime > @reference_mtime

@@ -126,11 +126,6 @@ module Watchr
       instance_eval(@path.read)
     end
 
-    def reset
-      @default_action = lambda {}
-      @rules.clear
-    end
-
     # Find an action corresponding to a path and event type. The returned
     # action is actually a wrapper around the rule's action, with the
     # match_data prepopulated.
@@ -199,6 +194,12 @@ module Watchr
     #
     def rel_path(path)
       Pathname(path).expand_path.relative_path_from(Pathname(Dir.pwd))
+    end
+
+    # Reset script state
+    def reset
+      @default_action = lambda {}
+      @rules.clear
     end
   end
 end
