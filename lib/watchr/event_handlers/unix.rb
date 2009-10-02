@@ -25,7 +25,7 @@ module Watchr
         # Delegates to Controller#update, passing in path and event type
         def on_change
           self.class.handler.notify(path, type)
-          update_reference_times
+          update_reference_times unless type == :deleted
         end
 
         private
