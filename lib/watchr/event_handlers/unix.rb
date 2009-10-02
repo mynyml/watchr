@@ -22,9 +22,9 @@ module Watchr
         end
 
         # Callback. Called on file change event
-        # Delegates to Controller#update, passing in path and event types
+        # Delegates to Controller#update, passing in path and event type
         def on_change
-          self.class.handler.notify(path, types)
+          self.class.handler.notify(path, type)
           update_reference_times
         end
 
@@ -36,13 +36,11 @@ module Watchr
           @reference_ctime = pathname.ctime
         end
 
-        def types
-          return [:deleted] if not pathname.exist?
-          t = []
-          t << :modified  if pathname.mtime > @reference_mtime
-          t << :accessed  if pathname.atime > @reference_atime
-          t << :changed   if pathname.ctime > @reference_ctime
-          t
+        def type
+          return :deleted   if !pathname.exist?
+          return :modified  if  pathname.mtime > @reference_mtime
+          return :accessed  if  pathname.atime > @reference_atime
+          return :changed   if  pathname.ctime > @reference_ctime
         end
       end
 

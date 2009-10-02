@@ -13,13 +13,12 @@ module Watchr
       #
       # ===== Parameters
       # path<Pathname, String>:: full path or path relative to current working directory
-      # event_types<Array(Symbol)>:: event types. 
-      #
+      # event_type<Symbol>:: event type.
       #--
       # #changed and #notify_observers are Observable methods
-      def notify(path, event_types = [])
+      def notify(path, event_type = nil)
         changed(true)
-        notify_observers(path, event_types)
+        notify_observers(path, event_type)
       end
 
       # Begin watching given paths and enter listening loop. Called by the controller.

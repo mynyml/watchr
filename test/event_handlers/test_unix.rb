@@ -3,7 +3,7 @@ require 'test/test_helper'
 if Watchr::HAVE_REV
 
 class Watchr::EventHandler::Unix::SingleFileWatcher
-  public :types
+  public :type
 end
 
 class UnixEventHandlerTest < Test::Unit::TestCase
@@ -64,36 +64,30 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     @watcher.on_change
   end
 
-  test "detects event types" do
+  test "detects event type" do
     trigger_event @watcher, @now, :atime
-    @watcher.types.should include(:accessed)
-    @watcher.types.should exclude(:modified)
-    @watcher.types.should exclude(:changed)
-    @watcher.types.should exclude(:deleted)
+    @watcher.type.should be(:accessed)
 
     trigger_event @watcher, @now, :mtime
-    @watcher.types.should exclude(:accessed)
-    @watcher.types.should include(:modified)
-    @watcher.types.should exclude(:changed)
-    @watcher.types.should exclude(:deleted)
+    @watcher.type.should be(:modified)
 
     trigger_event @watcher, @now, :ctime
-    @watcher.types.should exclude(:accessed)
-    @watcher.types.should exclude(:modified)
-    @watcher.types.should include(:changed)
-    @watcher.types.should exclude(:deleted)
+    @watcher.type.should be(:changed)
+
+    trigger_event @watcher, @now, :atime, :mtime
+    @watcher.type.should be(:modified)
+
+    trigger_event @watcher, @now, :mtime, :ctime
+    @watcher.type.should be(:modified)
+
+    trigger_event @watcher, @now, :atime, :ctime
+    @watcher.type.should be(:accessed)
 
     trigger_event @watcher, @now, :atime, :mtime, :ctime
-    @watcher.types.should include(:accessed)
-    @watcher.types.should include(:modified)
-    @watcher.types.should include(:changed)
-    @watcher.types.should exclude(:deleted)
+    @watcher.type.should be(:modified)
 
     @watcher.pathname.stubs(:exist?).returns(false)
-    @watcher.types.should exclude(:accessed)
-    @watcher.types.should exclude(:modified)
-    @watcher.types.should exclude(:changed)
-    @watcher.types.should include(:deleted)
+    @watcher.type.should be(:deleted)
   end
 
   ## monitoring file events
@@ -111,25 +105,25 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     @watcher.on_change
   end
 
-  test "notifies observers of event types" do
+  test "notifies observers of event type" do
     trigger_event @watcher, @now, :atime
-    @handler.expects(:notify).with('foo/bar', [:accessed])
+    @handler.expects(:notify).with('foo/bar', :accessed)
     @watcher.on_change
 
     trigger_event @watcher, @now, :mtime
-    @handler.expects(:notify).with('foo/bar', [:modified])
+    @handler.expects(:notify).with('foo/bar', :modified)
     @watcher.on_change
 
     trigger_event @watcher, @now, :ctime
-    @handler.expects(:notify).with('foo/bar', [:changed])
+    @handler.expects(:notify).with('foo/bar', :changed)
     @watcher.on_change
 
     trigger_event @watcher, @now, :atime, :mtime, :ctime
-    @handler.expects(:notify).with('foo/bar', [:modified, :accessed, :changed])
+    @handler.expects(:notify).with('foo/bar', :modified)
     @watcher.on_change
 
     @watcher.pathname.stubs(:exist?).returns(false)
-    @handler.expects(:notify).with('foo/bar', [:deleted])
+    @handler.expects(:notify).with('foo/bar', :deleted)
     @watcher.on_change
   end
 

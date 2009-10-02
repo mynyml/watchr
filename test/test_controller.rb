@@ -78,9 +78,9 @@ class TestController < Test::Unit::TestCase
 
   test "calls action for path" do
     path = to_p('abc')
-    @script.expects(:action_for).with(path, [:modified]).returns(lambda {})
+    @script.expects(:action_for).with(path, :modified).returns(lambda {})
 
-    @controller.update('abc', [:modified])
+    @controller.update('abc', :modified)
   end
 
   test "parses script on script file update" do

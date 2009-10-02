@@ -8,6 +8,7 @@ module Watchr
   #   script = Watchr::Script.new(path)
   #
   class Script
+    DEFAULT_EVENT_TYPE = :modified
 
     # Convenience type. Provides clearer and simpler access to rule properties.
     #
@@ -17,7 +18,7 @@ module Watchr
     #   rule.pattern      #=> 'lib/.*\.rb'
     #   rule.action.call  #=> 'ohaie'
     #
-    Rule = Struct.new(:pattern, :event_types, :action)
+    Rule = Struct.new(:pattern, :event_type, :action)
 
     # TODO eval context
     class API #:nodoc:
@@ -69,9 +70,9 @@ module Watchr
     #
     # ===== Parameters
     # pattern<~#match>:: pattern to match targetted paths
-    # event_types<Array>::
-    #   Rule will only match events of these types. Accepted types are
-    #   :accessed, :modified, :changed and :delete, where the first three
+    # event_type<Symbol>::
+    #   Rule will only match events of this type. Accepted types are :accessed,
+    #   :modified, :changed, :delete and nil (any), where the first three
     #   correspond to atime, mtime and ctime respectively. Defaults to
     #   :modified.
     # action<Block>:: action to trigger
@@ -79,8 +80,8 @@ module Watchr
     # ===== Returns
     # rule<Rule>:: rule created by the method
     #
-    def watch(pattern, event_types = [:modified], &action)
-      @rules << Rule.new(pattern, Array(event_types), action || @default_action)
+    def watch(pattern, event_type = DEFAULT_EVENT_TYPE, &action)
+      @rules << Rule.new(pattern, event_type, action || @default_action)
       @rules.last
     end
 
@@ -130,20 +131,22 @@ module Watchr
       @rules.clear
     end
 
-    # Find an action corresponding to a path and event_types. The returned
+    # Find an action corresponding to a path and event type. The returned
     # action is actually a wrapper around the rule's action, with the
     # match_data prepopulated.
+    #
+    # ===== Params
+    # path<Pathnane,String>:: Find action that correspond to this path.
+    # event_type<Symbol>:: Find action only if rule's event if of this type.
     #
     # ===== Examples
     #
     #   script.watch( 'test/test_.*\.rb' ) {|md| "ruby #{md[0]}" }
     #   script.action_for('test/test_watchr.rb').call #=> "ruby test/test_watchr.rb"
     #
-    def action_for(path, event_types = nil)
+    def action_for(path, event_type = DEFAULT_EVENT_TYPE)
       path = rel_path(path).to_s
-      rule = event_types ?
-               rules_for(path).detect {|rule| rule.event_types.to_set == event_types.to_set } :
-               rules_for(path).first
+      rule = rules_for(path).detect {|rule| rule.event_type.nil? || rule.event_type == event_type }
       if rule
         data = path.match(rule.pattern)
         lambda { rule.action.call(data) }
