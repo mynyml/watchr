@@ -1,0 +1,11 @@
+
+To use local watchr executable for dev work:
+
+  $ ruby -rubygems -Ilib ./bin/watchr -d specs.watchr
+
+To force a specific handler:
+
+  $ HANDLER=protable watchr -d specs.watchr
+  $ HANDLER=unix watchr -d specs.watchr
+
+  (see Watchr.handler)
