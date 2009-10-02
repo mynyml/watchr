@@ -1,0 +1,31 @@
+
+=== v0.5.7
+
+* Unix handler supports :deleted event type
+* Unix handler supports :accessed (atime), :modified (mtime) and :changed
+  (ctime) event types (thanks gzuki[http://github.com/gzuki] for initial work)
+
+
+=== v0.5.6
+
+* Rev gem optional in development (thanks TwP[http://github.com/TwP])
+* Allow gems to bundle .watchr scripts (thanks foca[http://github.com/foca])
+
+    gemname/lib/gemname.watchr
+
+  is now automatically picked up with
+
+    $ watchr gemname.watchr
+
+* Look for script in path
+* debug msg when rev not found on *nix
+* rake task for cross interpreter testing
+
+
+=== v0.5.5
+
+* Rev gem is optional. Fixes issue #1
+  Install Rev to automatically get evented handler on *nix
+
+    gem install rev
+
