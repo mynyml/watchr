@@ -35,7 +35,7 @@ class PortableEventHandlerTest < Test::Unit::TestCase
     @foo.stubs(:mtime).returns(Time.now + 100) # fake event
 
     @handler.listen [ @foo, @bar ]
-    @handler.expects(:notify).with(@foo, :changed)
+    @handler.expects(:notify).with(@foo, :modified)
     @handler.trigger
   end
 

@@ -45,7 +45,7 @@ module Watchr
 
         if path.mtime > @reference_mtime
           @reference_mtime = path.mtime
-          [path, :changed]
+          [path, :modified]
         else
           nil
         end
