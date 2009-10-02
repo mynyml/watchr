@@ -99,8 +99,10 @@ docs::   http://docs.github.com/mynyml/watchr
 wiki::   http://wiki.github.com/mynyml/watchr
 bugs::   http://github.com/mynyml/watchr/issues
 
-=== Acknowledgement
+=== Contributions
 
-* macournoyer[http://github.com/macournoyer] for the evented backend idea
-* foca[http://github.com/foca] for suggesting automatically picking up watchr
-  scripts bundled in gems
+macournoyer[http://github.com/macournoyer]:: suggested evented backend
+foca[http://github.com/foca]:: suggested automatically picking up watchr scripts bundled in gems
+TwP[http://github.com/TwP]:: patch, Rev gem optional in development
+gzuki[http://github.com/gzuki]:: patch, recognize some event types
+
