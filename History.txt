@@ -1,6 +1,7 @@
 
 === v0.5.7
 
+* Added manifest.watchr script
 * Unix handler supports :deleted event type
 * Unix handler supports :accessed (atime), :modified (mtime) and :changed
   (ctime) event types (thanks gzuki[http://github.com/gzuki] for initial work)
