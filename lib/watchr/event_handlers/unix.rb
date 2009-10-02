@@ -44,7 +44,7 @@ module Watchr
           t << :changed   if pathname.ctime > reference_ctime
           t
         end
-      end # SingleFileWatcher
+      end
 
       def initialize
         SingleFileWatcher.handler = self

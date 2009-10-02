@@ -109,10 +109,8 @@ class UnixEventHandlerTest < Test::Unit::TestCase
   end
 
   test "notifies observers on file event" do
-    path = Pathname('foo')
-    @watcher.stubs(:path).returns(path)
-
-    @handler.expects(:notify).with(path, anything)
+    @watcher.stubs(:path).returns('foo')
+    @handler.expects(:notify).with('foo', anything)
     @watcher.on_change
   end
 

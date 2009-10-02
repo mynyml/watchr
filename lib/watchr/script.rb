@@ -139,10 +139,11 @@ module Watchr
     #   script.watch( 'test/test_.*\.rb' ) {|md| "ruby #{md[0]}" }
     #   script.action_for('test/test_watchr.rb').call #=> "ruby test/test_watchr.rb"
     #
-    def action_for(path, event_types = [])
+    def action_for(path, event_types = nil)
       path = rel_path(path).to_s
-      rule = rules_for(path).detect {|rule| rule.event_types.to_set == event_types.to_set }
-      rule = rules_for(path).first if rule.nil? && event_types.empty?
+      rule = event_types ?
+               rules_for(path).detect {|rule| rule.event_types.to_set == event_types.to_set } :
+               rules_for(path).first
       if rule
         data = path.match(rule.pattern)
         lambda { rule.action.call(data) }
