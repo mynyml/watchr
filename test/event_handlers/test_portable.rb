@@ -1,5 +1,9 @@
 require 'test/test_helper'
 
+class Watchr::EventHandler::Portable
+  attr_accessor :monitored_paths
+end
+
 class PortableEventHandlerTest < Test::Unit::TestCase
   include Watchr
 
@@ -12,10 +16,13 @@ class PortableEventHandlerTest < Test::Unit::TestCase
     @baz = Pathname('baz').expand_path
     @bax = Pathname('bax').expand_path
 
-    @foo.stubs(:mtime).returns(Time.now - 100)
-    @bar.stubs(:mtime).returns(Time.now - 100)
-    @baz.stubs(:mtime).returns(Time.now - 100)
-    @bax.stubs(:mtime).returns(Time.now - 100)
+    @now = Time.now
+    [@foo, @bar, @baz, @bax].each do |path|
+      path.stubs(:mtime ).returns(@now - 100)
+      path.stubs(:atime ).returns(@now - 100)
+      path.stubs(:ctime ).returns(@now - 100)
+      path.stubs(:exist?).returns(true)
+    end
   end
 
   test "triggers listening state" do
@@ -31,15 +38,80 @@ class PortableEventHandlerTest < Test::Unit::TestCase
     @handler.monitored_paths.should include(@bar)
   end
 
-  test "notifies observers on file event" do
-    @foo.stubs(:mtime).returns(Time.now + 100) # fake event
+  test "doesn't trigger on start" do
+  end
+
+  ## event types
+
+  test "deleted file event" do
+    @foo.stubs(:exist?).returns(false)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :deleted)
+    @handler.trigger
+  end
+
+  test "modified file event" do
+    @foo.stubs(:mtime).returns(@now + 100)
 
     @handler.listen [ @foo, @bar ]
     @handler.expects(:notify).with(@foo, :modified)
     @handler.trigger
   end
 
-  test "doesn't trigger on start" do
+  test "accessed file event" do
+    @foo.stubs(:atime).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :accessed)
+    @handler.trigger
+  end
+
+  test "changed file event" do
+    @foo.stubs(:ctime).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :changed)
+    @handler.trigger
+  end
+
+  ## event type priorities
+
+  test "mtime > atime" do
+    @foo.stubs(:mtime).returns(@now + 100)
+    @foo.stubs(:atime).returns(@now + 100)
+    @foo.stubs(:ctime).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :modified)
+    @handler.trigger
+  end
+
+  test "mtime > ctime" do
+    @foo.stubs(:mtime).returns(@now + 100)
+    @foo.stubs(:ctime).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :modified)
+    @handler.trigger
+  end
+
+  test "atime > ctime" do
+    @foo.stubs(:atime).returns(@now + 100)
+    @foo.stubs(:ctime).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :accessed)
+    @handler.trigger
+  end
+
+  test "deleted > mtime" do
+    @foo.stubs(:exist?).returns(false)
+    @foo.stubs(:mtime ).returns(@now + 100)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :deleted)
+    @handler.trigger
   end
 
   ## on the fly updates of monitored files list

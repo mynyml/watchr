@@ -3,11 +3,8 @@ module Watchr
     class Portable
       include Base
 
-      attr_accessor :monitored_paths
-      attr_accessor :reference_mtime
-
       def initialize
-        @reference_mtime = Time.now
+        @reference_mtime = @reference_atime = @reference_ctime = Time.now
       end
 
       # Enters listening loop.
@@ -40,15 +37,21 @@ module Watchr
       # ===== Returns
       # path and type of event if event occured, nil otherwise
       #
+      #--
+      # OPTIMIZE, REFACTOR
       def detect_event
-        path = @monitored_paths.max {|a,b| a.mtime <=> b.mtime }
-
-        if path.mtime > @reference_mtime
-          @reference_mtime = path.mtime
-          [path, :modified]
-        else
-          nil
+        @monitored_paths.each do |path|
+          return [path, :deleted] unless path.exist?
         end
+
+        mtime_path = @monitored_paths.max {|a,b| a.mtime <=> b.mtime }
+        atime_path = @monitored_paths.max {|a,b| a.atime <=> b.atime }
+        ctime_path = @monitored_paths.max {|a,b| a.ctime <=> b.ctime }
+
+        if    mtime_path.mtime > @reference_mtime then @reference_mtime = mtime_path.mtime; [mtime_path, :modified]
+        elsif atime_path.atime > @reference_atime then @reference_atime = atime_path.atime; [atime_path, :accessed]
+        elsif ctime_path.ctime > @reference_ctime then @reference_ctime = ctime_path.ctime; [ctime_path, :changed ]
+        else; nil; end
       end
     end
   end
