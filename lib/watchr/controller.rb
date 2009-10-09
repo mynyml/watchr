@@ -36,6 +36,7 @@ module Watchr
     #
     def run
       @handler.listen(monitored_paths)
+    rescue Interrupt
     end
 
     # Callback for file events.

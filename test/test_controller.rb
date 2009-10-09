@@ -99,5 +99,10 @@ class TestController < Test::Unit::TestCase
     @handler.expects(:refresh).with %w( foo bar )
     @controller.update(path)
   end
+
+  test "exits gracefully when Interrupted" do
+    @handler.stubs(:listen).raises(Interrupt)
+    @controller.run
+  end
 end
 

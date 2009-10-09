@@ -127,4 +127,16 @@ class PortableEventHandlerTest < Test::Unit::TestCase
     @handler.monitored_paths.should exclude(@foo)
     @handler.monitored_paths.should exclude(@bar)
   end
+
+  test "retries on ENOENT errors" do
+    @oops = Pathname('oops').expand_path
+    @oops.stubs(:exist?).returns(true)
+    @oops.stubs(:mtime).raises(Errno::ENOENT).
+      then.returns(Time.now + 100)
+
+    @handler.listen [ @oops ]
+
+    @handler.expects(:notify).with(@oops, :modified)
+    @handler.trigger
+  end
 end
