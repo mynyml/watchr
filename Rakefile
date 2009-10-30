@@ -47,3 +47,5 @@ namespace(:test) do
     end
   end
 end
+
+task :default => "test:all"
