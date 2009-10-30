@@ -27,6 +27,11 @@ class TestController < Test::Unit::TestCase
     @controller.run
   end
 
+  test "parses the script on #run" do
+    @script.stubs(:parse!)
+    @controller.run
+  end
+
   test "adds itself as handler observer" do
     @handler.count_observers.should be(1)
     @handler.delete_observer(@controller)

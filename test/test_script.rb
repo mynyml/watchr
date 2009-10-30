@@ -70,6 +70,7 @@ class TestScript < Test::Unit::TestCase
       watch( 'abc' ) { :x }
     STR
     script = Script.new(file)
+    script.parse!
     script.action_for('abc').call.should be(:x)
   end
 

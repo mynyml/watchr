@@ -26,8 +26,7 @@ module Watchr
 
     # Creates a script object for <tt>path</tt>.
     #
-    # Will also immediatly parse the script so it is ready to be passed to a
-    # controller.
+    # Does not parse the script.  The controller knows when to parse the script.
     #
     # ===== Parameters
     # path<Pathname>:: the path to the script
@@ -36,7 +35,6 @@ module Watchr
       @path  = path
       @rules = []
       @default_action = lambda {}
-      parse!
     end
 
     # Main script API method. Builds a new rule, binding a pattern to an action.

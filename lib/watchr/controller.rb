@@ -25,6 +25,7 @@ module Watchr
     def initialize(script, handler)
       @script  = script
       @handler = handler
+
       @handler.add_observer(self)
 
       Watchr.debug "using %s handler" % handler.class.name
@@ -35,6 +36,7 @@ module Watchr
     # Will block control flow until application is explicitly stopped/killed.
     #
     def run
+      @script.parse!
       @handler.listen(monitored_paths)
     rescue Interrupt
     end
