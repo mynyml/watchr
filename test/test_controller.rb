@@ -28,7 +28,7 @@ class TestController < Test::Unit::TestCase
   end
 
   test "parses the script on #run" do
-    @script.stubs(:parse!)
+    @script.expects(:parse!)
     @controller.run
   end
 
