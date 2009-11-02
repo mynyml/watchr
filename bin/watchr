@@ -34,7 +34,39 @@ module Watchr
       dir ? path.expand_path(dir) : nil
     end
 
+    # Create a script file that loads autowatchr
+    #
+    # ===== Returns
+    # script<File> or nil if autowatchr isn't installed
+    #
+    def autowatchr
+      return nil unless have_autowatchr?
+
+      @autowatchr ||= begin
+        require 'tmpdir'
+        file = Pathname(Dir.tmpdir) + 'auto.watchr'
+        file.open('w') {|f|
+          f << "require 'autowatchr'; Autowatchr.new(self)"
+          f << "{|config| config.require='rubygems'}" if defined?(Gem)
+        }
+        file
+      end
+    end
+
     private
+
+    # Wether the autowatchr gem is present on user's system
+    #
+    # ===== Returns
+    # installed<bool>
+    #
+    def have_autowatchr?
+      @have_autowatchr ||= begin
+        require 'autowatchr'
+      rescue LoadError
+        false
+      end
+    end
 
     # If the block returns nil, requires gem <tt>name</tt> and tries running the
     # block again. If all fails, returns nil
@@ -70,8 +102,17 @@ opts = OptionParser.new do |opts|
   opts.parse! ARGV
 end
 
-relative_path = Pathname( ARGV.first )                   rescue abort(Watchr::Bin.usage)
-absolute_path = Watchr::Bin.find_in_load_path(relative_path) or abort("no script found; file #{relative_path.to_s.inspect} is not in path.")
+file =
+  if ARGV.first.nil?
+    Watchr::Bin.autowatchr or abort(<<-END.gsub(/^\s*/,''))
+      #{Watchr::Bin.usage}
+      Or install autowatchr to get default functionality (gem install autowatchr --source http://gemcutter.org)
+    END
+  else
+    Watchr::Bin.find_in_load_path(Pathname(ARGV.first)) or abort <<-END.gsub(/^\s*/,'')
+      no script found; file #{relative_path.to_s.inspect} is not in path.
+    END
+  end
 
-Watchr::Controller.new(Watchr::Script.new(absolute_path), Watchr.handler.new).run
+Watchr::Controller.new(Watchr::Script.new(file), Watchr.handler.new).run
 
