@@ -13,10 +13,7 @@ begin
 rescue LoadError, RuntimeError
 end
 
-root = Pathname(__FILE__).dirname.parent.expand_path
-$:.unshift(root.join('lib').to_s).uniq!
-
-require 'watchr'
+require 'lib/watchr'
 
 class Test::Unit::TestCase
   class << self
