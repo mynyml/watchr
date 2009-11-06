@@ -113,8 +113,6 @@ module Watchr
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
           when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            Watchr.debug ENV['HANDLER']
-            Watchr.debug check_handler
             if ::Watchr::HAVE_FSE && check_handler =~ /osx|darwin/
               Watchr::EventHandler::FSE
             elsif ::Watchr::HAVE_REV
