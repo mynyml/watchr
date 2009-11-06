@@ -12,8 +12,17 @@ require 'rbconfig'
 #     # on command line, from project's root dir
 #     $ watchr path/to/script
 #
+$LOAD_PATH.unshift(File.dirname(__FILE__))
 module Watchr
   VERSION = '0.6'
+
+  begin
+    begin require 'rubygems'; rescue LoadError; end
+    require 'fsevent'
+    HAVE_FSE = true
+  rescue LoadError, RuntimeError
+    HAVE_FSE = false
+  end
 
   begin
     require 'rev'
@@ -29,6 +38,7 @@ module Watchr
     autoload :Base,     'watchr/event_handlers/base'
     autoload :Unix,     'watchr/event_handlers/unix' if ::Watchr::HAVE_REV
     autoload :Portable, 'watchr/event_handlers/portable'
+    autoload :FSE,      'watchr/event_handlers/fse' if ::Watchr::HAVE_FSE
   end
 
   class << self
@@ -99,11 +109,15 @@ module Watchr
     #
     def handler
       @handler ||=
-        case ENV['HANDLER'] || Config::CONFIG['host_os']
+        case check_handler = ENV['HANDLER'] || Config::CONFIG['host_os']
           when /mswin|windows|cygwin/i
             Watchr::EventHandler::Portable
           when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            if ::Watchr::HAVE_REV
+            Watchr.debug ENV['HANDLER']
+            Watchr.debug check_handler
+            if ::Watchr::HAVE_FSE && check_handler =~ /osx|darwin/
+              Watchr::EventHandler::FSE
+            elsif ::Watchr::HAVE_REV
               Watchr::EventHandler::Unix
             else
               Watchr.debug "rev not found. `gem install rev` to get evented handler"
