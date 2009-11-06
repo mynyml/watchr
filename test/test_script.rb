@@ -11,12 +11,19 @@ class TestScript < Test::Unit::TestCase
   ## external api
 
   test "watch" do
-    @script.watch('pattern')
-    @script.watch('pattern', :event_type)
-    @script.watch('pattern') { nil }
+    @script.ec.watch('pattern')
+    @script.ec.watch('pattern', :event_type)
+    @script.ec.watch('pattern') { nil }
   end
 
   test "default action" do
+    @script.ec.default_action { nil }
+  end
+
+  test "script delegates methods to eval context" do
+    @script.watch('pattern')
+    @script.watch('pattern', :event_type)
+    @script.watch('pattern') { nil }
     @script.default_action { nil }
   end
 
@@ -77,9 +84,9 @@ class TestScript < Test::Unit::TestCase
   test "resets state" do
     @script.default_action { 'x' }
     @script.watch('foo') { 'bar' }
-    @script.send(:reset)
-    @script.instance_variable_get(:@default_action).call.should be(nil)
-    @script.instance_variable_get(:@rules).should be([])
+    @script.reset
+    @script.ec.instance_variable_get(:@default_action).call.should be(nil)
+    @script.ec.rules.should be([])
   end
 
   test "resets state on parse" do
