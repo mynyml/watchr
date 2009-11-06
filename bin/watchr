@@ -28,27 +28,8 @@ module Watchr
     #   absolute path of first occurence of partial path in load path, or nil if not found
     #
     def find_in_load_path(path)
-      dir = potentially_with_gem( path.basename('.watchr') ) do
-        $LOAD_PATH.detect {|p| Pathname(p).join(path).exist? }
-      end
+      dir = $LOAD_PATH.detect {|p| Pathname(p).join(path).exist? }
       dir ? path.expand_path(dir) : nil
-    end
-
-    private
-
-    # If the block returns nil, requires gem <tt>name</tt> and tries running the
-    # block again. If all fails, returns nil
-    #
-    # ===== Params
-    # name<Pathname,String>:: name of gem to require
-    #
-    # ===== Returns
-    # block's value or nil if gem <tt>name</tt> doesn't exist
-    #
-    def potentially_with_gem(name)
-      yield || (require(name) && yield)
-    rescue LoadError
-      nil
     end
   end
 end
