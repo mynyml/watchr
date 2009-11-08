@@ -26,9 +26,10 @@ module Watchr
     # ===== Returns
     # <Pathname>::
     #   absolute path of first occurence of partial path in load path, or nil if not found
-    #
+    #--
+    # Adds '.' for ruby1.9.2
     def find_in_load_path(path)
-      dir = $LOAD_PATH.detect {|p| Pathname(p).join(path).exist? }
+      dir = (['.'] + $LOAD_PATH).uniq.detect {|p| Pathname(p).join(path).exist? }
       dir ? path.expand_path(dir) : nil
     end
   end
