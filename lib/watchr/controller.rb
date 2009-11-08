@@ -21,6 +21,7 @@ module Watchr
     #
     # ===== Parameters
     # script<Script>:: The script object
+    # handler<EventHanlder::Base>:: The filesystem event handler
     #
     def initialize(script, handler)
       @script  = script
@@ -43,13 +44,13 @@ module Watchr
 
     # Callback for file events.
     #
-    # Called while control flow in in listening loop. It will execute the
+    # Called while control flow is in listening loop. It will execute the
     # file's corresponding action as defined in the script. If the file is the
     # script itself, it will refresh its state to account for potential changes.
     #
     # ===== Parameters
     # path<Pathname, String>:: path that triggered event
-    # event<Symbol>:: event type (ignored for now)
+    # event_type<Symbol>:: event type
     #
     def update(path, event_type = nil)
       path = Pathname(path).expand_path
