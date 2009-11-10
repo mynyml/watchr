@@ -165,7 +165,7 @@ module Watchr
     # match_data prepopulated.
     #
     # ===== Params
-    # path<Pathnane,String>:: Find action that correspond to this path.
+    # path<Pathnane,String>:: Find action that corresponds to this path.
     # event_type<Symbol>:: Find action only if rule's event if of this type.
     #
     # ===== Examples
