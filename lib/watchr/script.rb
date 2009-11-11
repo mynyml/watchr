@@ -26,88 +26,20 @@ module Watchr
     # that they get a clearly defined set of methods to work with. In other
     # words, it is the user script's API.
     #
-    class EvalContext
-      # Defined rules
-      #
-      # ===== Returns
-      # Array[Rule]:: rules defined with #watch calls
-      #
-      attr_reader :rules
+    class EvalContext #:nodoc:
 
-      def initialize
-        @rules = []
-        @default_action = lambda {}
+      def initialize(script)
+        @__script = script
       end
 
-      # Main script API method. Builds a new rule, binding a pattern to an action.
-      #
-      # Whenever a file is saved that matches a rule's <tt>pattern</tt>, its
-      # corresponding <tt>action</tt> is triggered.
-      #
-      # Patterns can be either a Regexp or a string. Because they always
-      # represent paths however, it's simpler to use strings. But remember to use
-      # single quotes (not double quotes), otherwise escape sequences will be
-      # parsed (for example "foo/bar\.rb" #=> "foo/bar.rb", notice "\." becomes
-      # "."), and won't be interpreted as the regexp you expect.
-      #
-      # Also note that patterns will be matched against relative paths (relative
-      # from current working directory).
-      #
-      # Actions, the blocks passed to <tt>watch</tt>, receive a MatchData object
-      # as argument. It will be populated with the whole matched string (md[0])
-      # as well as individual backreferences (md[1..n]). See MatchData#[]
-      # documentation for more details.
-      #
-      # ===== Examples
-      #
-      #   # in script file
-      #   watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
-      #   watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
-      #
-      # With these two rules, watchr will run any test file whenever it is itself
-      # changed (first rule), and will also run a corresponding test file
-      # whenever a lib file is changed (second rule).
-      #
-      # ===== Parameters
-      # pattern<~#match>:: pattern to match targetted paths
-      # event_type<Symbol>::
-      #   Rule will only match events of this type. Accepted types are :accessed,
-      #   :modified, :changed, :delete and nil (any), where the first three
-      #   correspond to atime, mtime and ctime respectively. Defaults to
-      #   :modified.
-      # action<Block>:: action to trigger
-      #
-      # ===== Returns
-      # rule<Rule>:: rule created by the method
-      #
-      def watch(pattern, event_type = DEFAULT_EVENT_TYPE, &action)
-        @rules << Rule.new(pattern, event_type, action || @default_action)
-        @rules.last
-      end
-
-      # Convenience method. Define a default action to be triggered when a rule
-      # has none specified.
-      #
-      # ===== Examples
-      #
-      #   # in script file
-      #
-      #   default_action { system('rake --silent rdoc') }
-      #
-      #   watch( 'lib/.*\.rb'  )
-      #   watch( 'README.rdoc' )
-      #   watch( 'TODO.txt'    )
-      #   watch( 'LICENSE'     )
-      #
-      #   # equivalent to:
-      #
-      #   watch( 'lib/.*\.rb'  ) { system('rake --silent rdoc') }
-      #   watch( 'README.rdoc' ) { system('rake --silent rdoc') }
-      #   watch( 'TODO.txt'    ) { system('rake --silent rdoc') }
-      #   watch( 'LICENSE'     ) { system('rake --silent rdoc') }
-      #
+      # Delegated to Script
       def default_action(&action)
-        @default_action = action
+        @__script.default_action(&action)
+      end
+
+      # Delegated to Script
+      def watch(*args, &block)
+        @__script.watch(*args, &block)
       end
     end
 
@@ -119,6 +51,20 @@ module Watchr
     #
     attr_reader :ec
 
+    # Defined rules
+    #
+    # ===== Returns
+    # Array[Rule]:: rules defined with #watch calls
+    #
+    attr_reader :rules
+
+    # Default action
+    #
+    # ===== Returns
+    # Proc:: action defined with #default_action call
+    #
+    attr_reader :default_action
+
     # Create a script object for <tt>path</tt>.
     #
     # ===== Parameters
@@ -126,22 +72,90 @@ module Watchr
     #
     def initialize(path)
       @path = path
-      @ec = EvalContext.new
+      @rules = []
+      @default_action = lambda {}
+      @ec = EvalContext.new(self)
     end
 
-    # Delegated to EvalContext
+    # Main script API method. Builds a new rule, binding a pattern to an action.
+    #
+    # Whenever a file is saved that matches a rule's <tt>pattern</tt>, its
+    # corresponding <tt>action</tt> is triggered.
+    #
+    # Patterns can be either a Regexp or a string. Because they always
+    # represent paths however, it's simpler to use strings. But remember to use
+    # single quotes (not double quotes), otherwise escape sequences will be
+    # parsed (for example "foo/bar\.rb" #=> "foo/bar.rb", notice "\." becomes
+    # "."), and won't be interpreted as the regexp you expect.
+    #
+    # Also note that patterns will be matched against relative paths (relative
+    # from current working directory).
+    #
+    # Actions, the blocks passed to <tt>watch</tt>, receive a MatchData object
+    # as argument. It will be populated with the whole matched string (md[0])
+    # as well as individual backreferences (md[1..n]). See MatchData#[]
+    # documentation for more details.
+    #
+    # ===== Examples
+    #
+    #   # in script file
+    #   watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
+    #   watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
+    #
+    # With these two rules, watchr will run any test file whenever it is itself
+    # changed (first rule), and will also run a corresponding test file
+    # whenever a lib file is changed (second rule).
+    #
+    # ===== Parameters
+    # pattern<~#match>:: pattern to match targetted paths
+    # event_type<Symbol>::
+    #   Rule will only match events of this type. Accepted types are :accessed,
+    #   :modified, :changed, :delete and nil (any), where the first three
+    #   correspond to atime, mtime and ctime respectively. Defaults to
+    #   :modified.
+    # action<Block>:: action to trigger
+    #
+    # ===== Returns
+    # rule<Rule>:: rule created by the method
+    #
+    def watch(pattern, event_type = DEFAULT_EVENT_TYPE, &action)
+      @rules << Rule.new(pattern, event_type, action || @default_action)
+      @rules.last
+    end
+
+    # Convenience method. Define a default action to be triggered when a rule
+    # has none specified.
+    #
+    # ===== Examples
+    #
+    #   # in script file
+    #
+    #   default_action { system('rake --silent rdoc') }
+    #
+    #   watch( 'lib/.*\.rb'  )
+    #   watch( 'README.rdoc' )
+    #   watch( 'TODO.txt'    )
+    #   watch( 'LICENSE'     )
+    #
+    #   # equivalent to:
+    #
+    #   watch( 'lib/.*\.rb'  ) { system('rake --silent rdoc') }
+    #   watch( 'README.rdoc' ) { system('rake --silent rdoc') }
+    #   watch( 'TODO.txt'    ) { system('rake --silent rdoc') }
+    #   watch( 'LICENSE'     ) { system('rake --silent rdoc') }
+    #
+    # ===== Returns
+    # Proc:: default action
+    #
     def default_action(&action)
-      ec.default_action(&action)
-    end
-
-    # Delegated to EvalContext
-    def watch(*args, &block)
-      ec.watch(*args, &block)
+      @default_action = action if action
+      @default_action
     end
 
     # Reset script state
     def reset
-      @ec = EvalContext.new
+      @rules = []
+      @default_action = lambda {}
     end
 
     # Eval content of script file.
@@ -190,8 +204,8 @@ module Watchr
     # patterns<String, Regexp>:: all patterns
     #
     def patterns
-      #ec.rules.every.pattern
-      ec.rules.map {|r| r.pattern }
+      #@rules.every.pattern
+      @rules.map {|r| r.pattern }
     end
 
     # Path to the script file
@@ -215,7 +229,7 @@ module Watchr
     # rules<Array(Rule)>:: rules corresponding to <tt>path</tt>
     #
     def rules_for(path)
-      ec.rules.reverse.select {|rule| path.match(rule.pattern) }
+      @rules.reverse.select {|rule| path.match(rule.pattern) }
     end
 
     # Make a path relative to current working directory.

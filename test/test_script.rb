@@ -20,11 +20,14 @@ class TestScript < Test::Unit::TestCase
     @script.ec.default_action { nil }
   end
 
-  test "script delegates methods to eval context" do
-    @script.watch('pattern')
-    @script.watch('pattern', :event_type)
-    @script.watch('pattern') { nil }
-    @script.default_action { nil }
+  test "eval context delegates methods to script" do
+    @script.ec.watch('pattern')
+    @script.ec.watch('pattern', :event_type)
+    @script.ec.watch('pattern') { nil }
+    @script.ec.default_action { :foo }
+
+    @script.rules.size.should be(3)
+    @script.default_action.call.should be(:foo)
   end
 
   ## functionality
@@ -85,8 +88,8 @@ class TestScript < Test::Unit::TestCase
     @script.default_action { 'x' }
     @script.watch('foo') { 'bar' }
     @script.reset
-    @script.ec.instance_variable_get(:@default_action).call.should be(nil)
-    @script.ec.rules.should be([])
+    @script.default_action.call.should be(nil)
+    @script.rules.should be([])
   end
 
   test "resets state on parse" do
