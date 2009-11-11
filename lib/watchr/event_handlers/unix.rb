@@ -31,10 +31,14 @@ module Watchr
 
         private
 
+        #--
+        # TODO fix/figure out ENOENT error
         def update_reference_times
           @reference_atime = pathname.atime
           @reference_mtime = pathname.mtime
           @reference_ctime = pathname.ctime
+        rescue Errno::ENOENT
+          retry
         end
 
         # Type of latest event.

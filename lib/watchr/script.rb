@@ -160,7 +160,7 @@ module Watchr
 
     # Eval content of script file.
     #--
-    # TODO fix script file not found error
+    # TODO fix/figure out ENOENT error
     def parse!
       Watchr.debug('loading script file %s' % @path.to_s.inspect)
 
@@ -168,8 +168,6 @@ module Watchr
       @ec.instance_eval(@path.read)
 
     rescue Errno::ENOENT
-      # TODO figure out why this is happening. still can't reproduce
-      Watchr.debug('script file "not found". wth')
       sleep(0.3) #enough?
       instance_eval(@path.read)
     end

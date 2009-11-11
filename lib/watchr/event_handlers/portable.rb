@@ -39,6 +39,7 @@ module Watchr
       #
       #--
       # OPTIMIZE, REFACTOR
+      # TODO fix/figure out ENOENT error
       def detect_event
         @monitored_paths.each do |path|
           return [path, :deleted] unless path.exist?
@@ -52,7 +53,7 @@ module Watchr
         elsif atime_path.atime > @reference_atime then @reference_atime = atime_path.atime; [atime_path, :accessed]
         elsif ctime_path.ctime > @reference_ctime then @reference_ctime = ctime_path.ctime; [ctime_path, :changed ]
         else; nil; end
-      rescue Errno::ENOENT => e
+      rescue Errno::ENOENT
         retry
       end
     end
