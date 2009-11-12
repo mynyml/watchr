@@ -19,6 +19,10 @@ class TestScript < Test::Unit::TestCase
     @script.ec.default_action { nil }
   end
 
+  test "reload" do
+    @script.ec.reload
+  end
+
   test "eval context delegates methods to script" do
     @script.ec.watch('pattern')
     @script.ec.watch('pattern', :event_type)
@@ -90,6 +94,11 @@ class TestScript < Test::Unit::TestCase
     STR
     script = Script.new(path)
     lambda { script.parse!  }.should throw_symbol(path.to_s.to_sym)
+  end
+
+  test "reloads script file" do
+    @script.expects(:parse!)
+    @script.ec.reload
   end
 
   test "skips parsing on nil script file" do

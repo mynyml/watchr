@@ -41,6 +41,10 @@ module Watchr
       def watch(*args, &block)
         @__script.watch(*args, &block)
       end
+
+      def reload
+        @__script.parse!
+      end
     end
 
     # EvalContext instance
