@@ -4,8 +4,7 @@ class TestScript < Test::Unit::TestCase
   include Watchr
 
   def setup
-    tmpfile = Tempfile.new('foo')
-    @script = Script.new( Pathname.new( tmpfile.path ) )
+    @script = Script.new
   end
 
   ## external api
@@ -84,6 +83,12 @@ class TestScript < Test::Unit::TestCase
     script.action_for('abc').call.should be(:x)
   end
 
+  test "skips parsing on nil script file" do
+    script = Script.new
+    script.ec.stubs(:instance_eval).raises(Exception) #negative expectation hack
+    script.parse!
+  end
+
   test "resets state" do
     @script.default_action { 'x' }
     @script.watch('foo') { 'bar' }
@@ -93,9 +98,10 @@ class TestScript < Test::Unit::TestCase
   end
 
   test "resets state on parse" do
-    @script.stubs(:instance_eval)
-    @script.expects(:reset)
-    @script.parse!
+    script = Script.new( Pathname( Tempfile.new('foo').path ) )
+    script.stubs(:instance_eval)
+    script.expects(:reset)
+    script.parse!
   end
 
   test "actions receive a MatchData object" do
@@ -117,6 +123,11 @@ class TestScript < Test::Unit::TestCase
     path   = Pathname('some/file').expand_path
     script = Script.new(path)
     script.path.should be(path)
+  end
+
+  test "nil file path" do
+    script = Script.new
+    script.path.should be(nil)
   end
 
   test "later rules take precedence" do

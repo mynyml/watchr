@@ -70,7 +70,7 @@ module Watchr
     # ===== Parameters
     # path<Pathname>:: the path to the script
     #
-    def initialize(path)
+    def initialize(path = nil)
       @path = path
       @rules = []
       @default_action = lambda {}
@@ -162,6 +162,7 @@ module Watchr
     #--
     # TODO fix/figure out ENOENT error
     def parse!
+      return unless @path
       Watchr.debug('loading script file %s' % @path.to_s.inspect)
 
       reset
@@ -209,10 +210,10 @@ module Watchr
     # Path to the script file
     #
     # ===== Returns
-    # path<Pathname>:: path to script file
+    # path<Pathname>:: absolute path to script file
     #
     def path
-      Pathname(@path.respond_to?(:to_path) ? @path.to_path : @path.to_s).expand_path
+      @path && Pathname(@path.respond_to?(:to_path) ? @path.to_path : @path.to_s).expand_path
     end
 
     private
