@@ -163,14 +163,13 @@ module Watchr
     # TODO fix/figure out ENOENT error
     def parse!
       return unless @path
-      Watchr.debug('loading script file %s' % @path.to_s.inspect)
-
       reset
       @ec.instance_eval(@path.read)
-
     rescue Errno::ENOENT
       sleep(0.3) #enough?
-      instance_eval(@path.read)
+      retry
+    ensure
+      Watchr.debug('loaded script file %s' % @path.to_s.inspect)
     end
 
     # Find an action corresponding to a path and event type. The returned
