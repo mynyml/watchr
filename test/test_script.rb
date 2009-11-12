@@ -74,13 +74,22 @@ class TestScript < Test::Unit::TestCase
   end
 
   test "parses script file" do
-    file = Pathname( Tempfile.open('bar').path )
-    file.open('w') {|f| f.write <<-STR }
+    path = Pathname( Tempfile.open('bar').path )
+    path.open('w') {|f| f.write <<-STR }
       watch( 'abc' ) { :x }
     STR
-    script = Script.new(file)
+    script = Script.new(path)
     script.parse!
     script.action_for('abc').call.should be(:x)
+  end
+
+  test "__FILE__ is set properly in script file" do
+    path = Pathname( Tempfile.open('bar').path )
+    path.open('w') {|f| f.write <<-STR }
+      throw __FILE__.to_sym
+    STR
+    script = Script.new(path)
+    lambda { script.parse!  }.should throw_symbol(path.to_s.to_sym)
   end
 
   test "skips parsing on nil script file" do

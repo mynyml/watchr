@@ -164,7 +164,7 @@ module Watchr
     def parse!
       return unless @path
       reset
-      @ec.instance_eval(@path.read)
+      @ec.instance_eval(@path.read, @path.to_s)
     rescue Errno::ENOENT
       sleep(0.3) #enough?
       retry
