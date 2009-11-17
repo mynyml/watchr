@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-class BaseEventHandlerTest < Test::Unit::TestCase
+class BaseEventHandlerTest < MiniTest::Unit::TestCase
 
   class Handler
     include Watchr::EventHandler::Base
@@ -11,10 +11,10 @@ class BaseEventHandlerTest < Test::Unit::TestCase
   end
 
   test "api" do
-    @handler.should respond_to(:notify)
-    @handler.should respond_to(:listen)
-    @handler.should respond_to(:refresh)
-    @handler.class.ancestors.should include(Observable)
+    assert_respond_to @handler, :notify
+    assert_respond_to @handler, :listen
+    assert_respond_to @handler, :refresh
+    assert_includes   @handler.class.ancestors, Observable
   end
 
   test "notifies observers" do

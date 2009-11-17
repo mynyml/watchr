@@ -17,9 +17,7 @@ Gem::Specification.new do |s|
   s.version             =  Watchr::VERSION
   s.files               =  File.read("Manifest").strip.split("\n")
 
+  s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
-  s.add_development_dependency 'jeremymcanally-matchy'
-  s.add_development_dependency 'jeremymcanally-pending'
-  s.add_development_dependency 'mynyml-every'
-  s.add_development_dependency 'mynyml-redgreen'
+  s.add_development_dependency 'every' #http://gemcutter.org/gems/every
 end

@@ -6,7 +6,7 @@ class Watchr::EventHandler::Unix::SingleFileWatcher
   public :type
 end
 
-class UnixEventHandlerTest < Test::Unit::TestCase
+class UnixEventHandlerTest < MiniTest::Unit::TestCase
   include Watchr
 
   SingleFileWatcher = EventHandler::Unix::SingleFileWatcher
@@ -39,8 +39,8 @@ class UnixEventHandlerTest < Test::Unit::TestCase
   ## SingleFileWatcher
 
   test "watcher pathname" do
-    @watcher.pathname.should be_kind_of(Pathname)
-    @watcher.pathname.to_s.should be(@watcher.path)
+    assert_instance_of Pathname, @watcher.pathname
+    assert_equal @watcher.path, @watcher.pathname.to_s
   end
 
   test "stores reference times" do
@@ -49,9 +49,9 @@ class UnixEventHandlerTest < Test::Unit::TestCase
     @watcher.pathname.stubs(:ctime).returns(:time)
 
     @watcher.send(:update_reference_times)
-    @watcher.instance_variable_get(:@reference_atime).should be(:time)
-    @watcher.instance_variable_get(:@reference_mtime).should be(:time)
-    @watcher.instance_variable_get(:@reference_ctime).should be(:time)
+    assert_equal :time, @watcher.instance_variable_get(:@reference_atime)
+    assert_equal :time, @watcher.instance_variable_get(:@reference_mtime)
+    assert_equal :time, @watcher.instance_variable_get(:@reference_ctime)
   end
 
   test "stores initial reference times" do
@@ -66,37 +66,37 @@ class UnixEventHandlerTest < Test::Unit::TestCase
 
   test "detects event type" do
     trigger_event @watcher, @now, :atime
-    @watcher.type.should be(:accessed)
+    assert_equal :accessed, @watcher.type
 
     trigger_event @watcher, @now, :mtime
-    @watcher.type.should be(:modified)
+    assert_equal :modified, @watcher.type
 
     trigger_event @watcher, @now, :ctime
-    @watcher.type.should be(:changed)
+    assert_equal :changed, @watcher.type
 
     trigger_event @watcher, @now, :atime, :mtime
-    @watcher.type.should be(:modified)
+    assert_equal :modified, @watcher.type
 
     trigger_event @watcher, @now, :mtime, :ctime
-    @watcher.type.should be(:modified)
+    assert_equal :modified, @watcher.type
 
     trigger_event @watcher, @now, :atime, :ctime
-    @watcher.type.should be(:accessed)
+    assert_equal :accessed, @watcher.type
 
     trigger_event @watcher, @now, :atime, :mtime, :ctime
-    @watcher.type.should be(:modified)
+    assert_equal :modified, @watcher.type
 
     @watcher.pathname.stubs(:exist?).returns(false)
-    @watcher.type.should be(:deleted)
+    assert_equal :deleted, @watcher.type
   end
 
   ## monitoring file events
 
   test "listens for events on monitored files" do
     @handler.listen %w( foo bar )
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('foo', 'bar')
-    @loop.watchers.every.class.uniq.should be([SingleFileWatcher])
+    assert_equal 2, @loop.watchers.size
+    assert_equal %w( foo bar ), @loop.watchers.every.path
+    assert_equal [SingleFileWatcher], @loop.watchers.every.class.uniq
   end
 
   test "notifies observers on file event" do
@@ -131,16 +131,16 @@ class UnixEventHandlerTest < Test::Unit::TestCase
 
   test "reattaches to new monitored files" do
     @handler.listen %w( foo bar )
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('foo')
-    @loop.watchers.every.path.should include('bar')
+    assert_equal 2, @loop.watchers.size
+    assert_includes @loop.watchers.every.path, 'foo'
+    assert_includes @loop.watchers.every.path, 'bar'
 
     @handler.refresh %w( baz bax )
-    @loop.watchers.size.should be(2)
-    @loop.watchers.every.path.should include('baz')
-    @loop.watchers.every.path.should include('bax')
-    @loop.watchers.every.path.should exclude('foo')
-    @loop.watchers.every.path.should exclude('bar')
+    assert_equal 2, @loop.watchers.size
+    assert_includes @loop.watchers.every.path, 'baz'
+    assert_includes @loop.watchers.every.path, 'bax'
+    refute_includes @loop.watchers.every.path, 'foo'
+    refute_includes @loop.watchers.every.path, 'bar'
   end
 
   private

@@ -4,7 +4,7 @@ class Watchr::EventHandler::Portable
   attr_accessor :monitored_paths
 end
 
-class PortableEventHandlerTest < Test::Unit::TestCase
+class PortableEventHandlerTest < MiniTest::Unit::TestCase
   include Watchr
 
   def setup
@@ -34,8 +34,8 @@ class PortableEventHandlerTest < Test::Unit::TestCase
 
   test "listens for events on monitored files" do
     @handler.listen [ @foo, @bar ]
-    @handler.monitored_paths.should include(@foo)
-    @handler.monitored_paths.should include(@bar)
+    assert_includes @handler.monitored_paths, @foo
+    assert_includes @handler.monitored_paths, @bar
   end
 
   test "doesn't trigger on start" do
@@ -118,14 +118,14 @@ class PortableEventHandlerTest < Test::Unit::TestCase
 
   test "reattaches to new monitored files" do
     @handler.listen [ @foo, @bar ]
-    @handler.monitored_paths.should include(@foo)
-    @handler.monitored_paths.should include(@bar)
+    assert_includes @handler.monitored_paths, @foo
+    assert_includes @handler.monitored_paths, @bar
 
     @handler.refresh [ @baz, @bax ]
-    @handler.monitored_paths.should include(@baz)
-    @handler.monitored_paths.should include(@bax)
-    @handler.monitored_paths.should exclude(@foo)
-    @handler.monitored_paths.should exclude(@bar)
+    assert_includes @handler.monitored_paths, @baz
+    assert_includes @handler.monitored_paths, @bax
+    refute_includes @handler.monitored_paths, @foo
+    refute_includes @handler.monitored_paths, @bar
   end
 
   test "retries on ENOENT errors" do

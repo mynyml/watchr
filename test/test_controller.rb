@@ -7,7 +7,7 @@ class MockHandler
   def refresh(paths) end
 end
 
-class TestController < Test::Unit::TestCase
+class TestController < MiniTest::Unit::TestCase
   include Watchr
 
   def to_p(str)
@@ -33,9 +33,9 @@ class TestController < Test::Unit::TestCase
   end
 
   test "adds itself as handler observer" do
-    @handler.count_observers.should be(1)
+    assert_equal 1, @handler.count_observers
     @handler.delete_observer(@controller)
-    @handler.count_observers.should be(0)
+    assert_equal 0, @handler.count_observers
   end
 
   ## monitored paths list
@@ -50,8 +50,8 @@ class TestController < Test::Unit::TestCase
     @script.watch('.\.z') { :x }
 
     contrl = Controller.new(@script, MockHandler.new)
-    contrl.monitored_paths.should include(to_p('b/x.z'))
-    contrl.monitored_paths.should include(to_p('b/c/y.z'))
+    assert_includes contrl.monitored_paths, to_p('b/x.z')
+    assert_includes contrl.monitored_paths, to_p('b/c/y.z')
   end
 
   test "doesn't fetch unmonitored paths" do
@@ -64,9 +64,9 @@ class TestController < Test::Unit::TestCase
     @script.watch('.\.z') { :x }
 
     contrl = Controller.new(@script, MockHandler.new)
-    contrl.monitored_paths.should exclude(to_p('a'))
-    contrl.monitored_paths.should exclude(to_p('b/c'))
-    contrl.monitored_paths.should exclude(to_p('p/q.z'))
+    refute_includes contrl.monitored_paths, to_p('a')
+    refute_includes contrl.monitored_paths, to_p('b/c')
+    refute_includes contrl.monitored_paths, to_p('p/q.z')
   end
 
   test "monitored paths include script" do
@@ -76,7 +76,7 @@ class TestController < Test::Unit::TestCase
     path   = to_p('some/file')
     script = Script.new(path)
     contrl = Controller.new(script, MockHandler.new)
-    contrl.monitored_paths.should include(path)
+    assert_includes contrl.monitored_paths, path
   end
 
   ## on update

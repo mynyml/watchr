@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-class TestWatchr < Test::Unit::TestCase
+class TestWatchr < MiniTest::Unit::TestCase
 
   def setup
     Watchr.options = nil
@@ -9,52 +9,56 @@ class TestWatchr < Test::Unit::TestCase
   ## options
 
   test "debug option" do
-    Watchr.options.debug.should be(false)
+    assert_equal false, Watchr.options.debug
     Watchr.options.debug = true
-    Watchr.options.debug.should be(true)
+    assert_equal true,  Watchr.options.debug
   end
 
   ## functionality
 
   test "debug" do
-    capture_io { Watchr.debug('abc') }.stdout.should be('')
+    assert_empty capture_io { Watchr.debug('abc') }.first
     Watchr.options.debug = true
-    capture_io { Watchr.debug('abc') }.stdout.should be("[watchr debug] abc\n")
+    assert_equal "[watchr debug] abc\n", capture_io { Watchr.debug('abc') }.first
   end
 
   test "picking handler" do
 
+    if Watchr::HAVE_REV
+
     Watchr.handler = nil
     ENV['HANDLER'] = 'linux'
-    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Unix, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'bsd'
-    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Unix, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'darwin'
-    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Unix, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'unix'
-    Watchr.handler.should be(Watchr::HAVE_REV ? Watchr::EventHandler::Unix : Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Unix, Watchr.handler
+
+    end
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'mswin'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Portable, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'cygwin'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Portable, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'portable'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Portable, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'other'
-    Watchr.handler.should be(Watchr::EventHandler::Portable)
+    assert_equal Watchr::EventHandler::Portable, Watchr.handler
   end
 end
 
