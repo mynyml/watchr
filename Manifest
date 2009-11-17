@@ -6,6 +6,7 @@ README.rdoc
 Rakefile
 TODO.txt
 bin/watchr
+contributions.txt
 docs.watchr
 gem.watchr
 lib/watchr.rb

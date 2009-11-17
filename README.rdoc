@@ -88,8 +88,10 @@ Watchr evented.
 
 === See Also
 
-redgreen[http://github.com/mynyml/redgreen]:: Standalone redgreen eye candy for test results, ala autotest.
-phocus[http://github.com/mynyml/phocus]::     Run focused tests when running the whole file/suite is unnecessary.
+redgreen[http://github.com/mynyml/redgreen]::     Standalone redgreen eye candy for test results, ala autotest.
+phocus[http://github.com/mynyml/phocus]::         Run focused tests when running the whole file/suite is unnecessary.
+autowatchr[http://github.com/viking/autowatchr]:: Provides some autotest-like behavior for watchr
+nestor[http://github.com/francois/nestor]::       Continuous testing server for Rails
 
 
 === Links
@@ -98,11 +100,5 @@ source:: http://github.com/mynyml/watchr
 docs::   http://docs.github.com/mynyml/watchr
 wiki::   http://wiki.github.com/mynyml/watchr
 bugs::   http://github.com/mynyml/watchr/issues
-
-=== Contributions
-
-macournoyer[http://github.com/macournoyer]:: suggested evented backend
-foca[http://github.com/foca]:: suggested automatically picking up watchr scripts bundled in gems
-TwP[http://github.com/TwP]:: patch, Rev gem optional in development
-gzuki[http://github.com/gzuki]:: patch, recognize some event types
+group::  http://groups.google.com/group/watchr
 
