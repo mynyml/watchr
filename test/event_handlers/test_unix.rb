@@ -95,7 +95,7 @@ class UnixEventHandlerTest < MiniTest::Unit::TestCase
   test "listens for events on monitored files" do
     @handler.listen %w( foo bar )
     assert_equal 2, @loop.watchers.size
-    assert_equal %w( foo bar ), @loop.watchers.every.path
+    assert_equal %w( foo bar ).to_set, @loop.watchers.every.path.to_set
     assert_equal [SingleFileWatcher], @loop.watchers.every.class.uniq
   end
 
