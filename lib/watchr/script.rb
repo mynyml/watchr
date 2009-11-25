@@ -77,7 +77,7 @@ module Watchr
     def initialize(path = nil)
       @path = path
       @rules = []
-      @default_action = lambda {}
+      @default_action = Proc.new {}
       @ec = EvalContext.new(self)
     end
 
@@ -159,7 +159,7 @@ module Watchr
     # Reset script state
     def reset
       @rules = []
-      @default_action = lambda {}
+      @default_action = Proc.new {}
     end
 
     # Eval content of script file.
