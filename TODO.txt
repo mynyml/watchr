@@ -2,8 +2,8 @@
 
 * respond to :added file event (needs ability to watch dirs)
 
-* watchr #defaults to specs.watchr if exists
 * watchr -e
+* watchr --list
 * watchr --auto
 * watchr --fetch
 

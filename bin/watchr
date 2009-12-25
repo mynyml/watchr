@@ -20,9 +20,18 @@ module Watchr
       "watchr version: %s" % Watchr::VERSION
     end
 
-    def relative_path
-      return Pathname.new(ARGV.first) if ARGV.first
-      return DEFAULT_SCRIPT_PATH      if DEFAULT_SCRIPT_PATH.exist?
+    # Absolute path to script file
+    #
+    # The script's path is either first arg or DEFAULT_SCRIPT_PATH. If neither
+    # exist, the script immediatly aborts with an appropriate error message.
+    #
+    # ===== Returns
+    # <Pathname>:: absolute path to script
+    #--
+    # raise instead?
+    def path!
+      rel = relative_path    or abort( usage )
+      find_in_load_path(rel) or abort("no script found: file #{rel.to_s.inspect} is not in path.")
     end
 
     # Find a partial path name in load path
@@ -39,6 +48,13 @@ module Watchr
       dir = (['.'] + $LOAD_PATH).uniq.detect {|p| Pathname(p).join(path).exist? }
       dir ? path.expand_path(dir) : nil
     end
+
+    private
+
+    def relative_path
+      return Pathname.new(ARGV.first) if ARGV.first
+      return DEFAULT_SCRIPT_PATH      if DEFAULT_SCRIPT_PATH.exist?
+    end
   end
 end
 
@@ -52,6 +68,13 @@ opts = OptionParser.new do |opts|
     rescue LoadError, RuntimeError
     end
   }
+  opts.on('-l', '--list', "Display list of files monitored by script and exit") {
+    script     = Watchr::Script.new(Watchr::Bin.path!)
+    controller = Watchr::Controller.new(script, Watchr.handler.new)
+    script.parse!
+    puts controller.monitored_paths
+    exit
+  }
 
   opts.on_tail('-h', '--help', "Print inline help") { puts opts; exit }
   opts.on_tail('-v', '--version', "Print version" ) { puts Watchr::Bin.version; exit }
@@ -59,8 +82,5 @@ opts = OptionParser.new do |opts|
   opts.parse! ARGV
 end
 
-relative_path = Watchr::Bin.relative_path                    or abort(Watchr::Bin.usage)
-absolute_path = Watchr::Bin.find_in_load_path(relative_path) or abort("no script found; file #{relative_path.to_s.inspect} is not in path.")
-
-Watchr::Controller.new(Watchr::Script.new(absolute_path), Watchr.handler.new).run
+Watchr::Controller.new(Watchr::Script.new(Watchr::Bin.path!), Watchr.handler.new).run
 
