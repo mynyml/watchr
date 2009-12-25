@@ -10,12 +10,19 @@ module Watchr
   module Bin #:nodoc:
     extend self
 
+    DEFAULT_SCRIPT_PATH = Pathname.new('specs.watchr')
+
     def usage
       "Usage: watchr [opts] path/to/script"
     end
 
     def version
       "watchr version: %s" % Watchr::VERSION
+    end
+
+    def relative_path
+      return Pathname.new(ARGV.first) if ARGV.first
+      return DEFAULT_SCRIPT_PATH      if DEFAULT_SCRIPT_PATH.exist?
     end
 
     # Find a partial path name in load path
@@ -52,7 +59,7 @@ opts = OptionParser.new do |opts|
   opts.parse! ARGV
 end
 
-relative_path = Pathname( ARGV.first )                   rescue abort(Watchr::Bin.usage)
+relative_path = Watchr::Bin.relative_path                    or abort(Watchr::Bin.usage)
 absolute_path = Watchr::Bin.find_in_load_path(relative_path) or abort("no script found; file #{relative_path.to_s.inspect} is not in path.")
 
 Watchr::Controller.new(Watchr::Script.new(absolute_path), Watchr.handler.new).run
