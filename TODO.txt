@@ -1,5 +1,18 @@
+===== Features
 
-* 1.9 compatibility
+* respond to :added file event (needs ability to watch dirs)
+
+* watchr #defaults to specs.watchr if exists
+* watchr -e
+* watchr --auto
+* watchr --fetch
+
+* write a few prepackaged scripts
+  * post on gists
+  * post links on wiki
+  * post main links in readme
+
+===== Bugs
 
 * sometimes an action is fired without a file being saved
   * buffer flushing issue?
@@ -10,31 +23,7 @@
 * when a file is saved twice quickly, subsequent events are ignored.
   * seems like rev/libev drops the file watch
 
-* test on other platforms
-  x mswin
-  x cygwin
-  * bsd
-  * osx
-  * solaris
-
-* write a few prepackaged scripts
-  * post on gists
-  * post links on wiki
-  * post main links in readme
-
-* eval script within own context?
-  * use case: using <tt>path</tt> within script accesses Script#path
-
-* respond to different file events?
-  * modified
-  * created
-  * deleted
-  * etc.
-  * watch(pattern, EVENT, &action)
-  * use case: a script updates a manifest file when a file is deleted
+===== Other
 
 * memory profiling / benchmarks
-
-* version.watchr
-  * sync versions (gemspec & Watchr::VERSION)
 
