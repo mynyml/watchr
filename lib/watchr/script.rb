@@ -51,7 +51,7 @@ module Watchr
     #
     # ===== Examples
     # script.ec.watch('pattern') { }
-    # script.ec.rules
+    # script.ec.reload
     #
     attr_reader :ec
 
