@@ -9,8 +9,8 @@ namespace(:test) do
   task(:all) do
     tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
     cmd = "ruby -rubygems -I.:lib -e'%w( #{tests.join(' ')} ).each {|file| require file }'"
-    puts cmd if ENV['VERBOSE']
-    system cmd
+    puts(cmd) if ENV['VERBOSE']
+    exit system(cmd)
   end
 
   desc "Run all tests on multiple ruby versions (requires rvm)"
