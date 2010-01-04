@@ -25,5 +25,6 @@
 
 ===== Other
 
+* add tests for executable
 * memory profiling / benchmarks
 
