@@ -1,38 +1,37 @@
 # Run me with:
-#
 #   $ watchr specs.watchr
 
 # --------------------------------------------------
-# Helpers
+# Rules
 # --------------------------------------------------
-def run(cmd)
-  puts(cmd)
-  system(cmd)
-end
-
-def run_all_tests
-  # see Rakefile for the definition of the test:all task
-  system( "rake -s test:all VERBOSE=true" )
-end
-
-# --------------------------------------------------
-# Watchr Rules
-# --------------------------------------------------
-watch( '^test.*/test_.*\.rb'                 )  { |m| run( "ruby -rubygems -I.:lib %s"                             % m[0] ) }
-watch( '^lib/(.*)\.rb'                       )  { |m| run( "ruby -rubygems -I.:lib test/test_%s.rb"                % m[1] ) }
-watch( '^lib/watchr/(.*)\.rb'                )  { |m| run( "ruby -rubygems -I.:lib test/test_%s.rb"                % m[1] ) }
-watch( '^lib/watchr/event_handlers/(.*)\.rb' )  { |m| run( "ruby -rubygems -I.:lib test/event_handlers/test_%s.rb" % m[1] ) }
-watch( '^test/test_helper\.rb'               )  { run_all_tests }
+watch( '^test.*/test_.*\.rb'                 )  { |m| ruby( "%s"                             % m[0] ) }
+watch( '^lib/(.*)\.rb'                       )  { |m| ruby( "test/test_%s.rb"                % m[1] ) }
+watch( '^lib/watchr/(.*)\.rb'                )  { |m| ruby( "test/test_%s.rb"                % m[1] ) }
+watch( '^lib/watchr/event_handlers/(.*)\.rb' )  { |m| ruby( "test/event_handlers/test_%s.rb" % m[1] ) }
+watch( '^test/test_helper\.rb'               )  { ruby tests }
 
 # --------------------------------------------------
 # Signal Handling
 # --------------------------------------------------
-# Ctrl-\
-Signal.trap('QUIT') do
-  puts " --- Running all tests ---\n\n"
-  run_all_tests
+Signal.trap('QUIT') { ruby tests  } # Ctrl-\
+Signal.trap('INT' ) { abort("\n") } # Ctrl-C
+
+# --------------------------------------------------
+# Helpers
+# --------------------------------------------------
+def ruby(*paths)
+  run "ruby #{gem_opt} -I.:lib:test -e'%w( #{paths.flatten.join(' ')} ).each {|p| require p }'"
 end
 
-# Ctrl-C
-Signal.trap('INT') { abort("\n") }
+def tests
+  Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
+end
 
+def run( cmd )
+  puts   cmd
+  system cmd
+end
+
+def gem_opt
+  defined?(Gem) ? "-rubygems" : ""
+end
