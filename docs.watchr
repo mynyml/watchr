@@ -6,7 +6,7 @@ require 'yard'
 # Rules
 # --------------------------------------------------
 watch( 'lib/.*\.rb'  ) { yard }
-watch( 'README.rdoc' ) { yard }
+watch( 'README.md'   ) { yard }
 watch( 'TODO.txt'    ) { yard }
 watch( 'LICENSE'     ) { yard }
 
@@ -21,6 +21,6 @@ Signal.trap('INT' ) { abort("\n") } # Ctrl-C
 # --------------------------------------------------
 def yard
   print "Updating yardocs... "; STDOUT.flush
-  YARD::CLI::Yardoc.run *%w( -o doc/yard --readme README.rdoc --markup rdoc - LICENSE TODO.txt )
+  YARD::CLI::Yardoc.run *%w( -o doc/yard --readme README.md --markup rdoc - LICENSE TODO.txt )
   print "done\n"
 end
