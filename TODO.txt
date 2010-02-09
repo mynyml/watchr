@@ -2,8 +2,7 @@
 
 * respond to :added file event (needs ability to watch dirs)
 
-* watchr -e
-* watchr --list
+* watchr -e       # watchr -e "watch('foo.gemspec') { system('gem build foo.gemspec') }"
 * watchr --auto
 * watchr --fetch
 
