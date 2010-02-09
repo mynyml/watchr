@@ -69,13 +69,6 @@ module Watchr
     #
     attr_reader :rules
 
-    # Default action
-    #
-    # @return [Proc]
-    #   action defined with `#default_action` call
-    #
-    attr_reader :default_action
-
     # Create a Script object for script at `path`
     #
     # @param [Pathname] path
@@ -137,7 +130,8 @@ module Watchr
     end
 
     # Convenience method. Define a default action to be triggered when a rule
-    # has none specified.
+    # has none specified. When called without a block, acts as a getter and
+    # returns stored default_action
     #
     # @example
     #
