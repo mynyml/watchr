@@ -2,55 +2,58 @@ module Watchr
 
   # The controller contains the app's core logic.
   #
-  # ===== Examples
+  # @example
   #
-  #   script = Watchr::Script.new(file)
-  #   contrl = Watchr::Controller.new(script)
-  #   contrl.run
+  #     script = Watchr::Script.new(file)
+  #     contrl = Watchr::Controller.new(script, Watchr.handler.new)
+  #     contrl.run
   #
-  # Calling <tt>#run</tt> will enter the listening loop, and from then on every
-  # file event will trigger its corresponding action defined in <tt>script</tt>
+  #     # Calling `run` will enter the listening loop, and from then on every
+  #     # file event will trigger its corresponding action defined in `script`
   #
-  # The controller also automatically adds the script's file itself to its list
-  # of monitored files and will detect any changes to it, providing on the fly
-  # updates of defined rules.
+  #     # The controller also automatically adds the script's file to its list of
+  #     # monitored files and will detect any changes to it, providing on the fly
+  #     # updates of defined rules.
   #
   class Controller
 
-    # Creates a controller object around given <tt>script</tt>
+    # Create a controller object around given `script`
     #
-    # ===== Parameters
-    # script<Script>:: The script object
-    # handler<EventHanlder::Base>:: The filesystem event handler
+    # @param [Script] script
+    #   The script object
+    #
+    # @param [EventHandler::Base] handler
+    #   The filesystem event handler
+    #
+    # @see Watchr::Script
+    # @see Watchr.handler
     #
     def initialize(script, handler)
-      @script  = script
-      @handler = handler
-
+      @script, @handler = script, handler
       @handler.add_observer(self)
 
       Watchr.debug "using %s handler" % handler.class.name
     end
 
-    # Enters listening loop.
-    #
-    # Will block control flow until application is explicitly stopped/killed.
-    #
+    # Enter listening loop. Will block control flow until application is
+    # explicitly stopped/killed.
     def run
       @script.parse!
       @handler.listen(monitored_paths)
     rescue Interrupt
     end
 
-    # Callback for file events.
+    # Callback for file events
     #
     # Called while control flow is in listening loop. It will execute the
     # file's corresponding action as defined in the script. If the file is the
     # script itself, it will refresh its state to account for potential changes.
     #
-    # ===== Parameters
-    # path<Pathname, String>:: path that triggered event
-    # event_type<Symbol>:: event type
+    # @param [Pathname, String] path
+    #   path that triggered the event
+    #
+    # @param [Symbol] event
+    #   event type
     #
     def update(path, event_type = nil)
       path = Pathname(path).expand_path
@@ -68,8 +71,8 @@ module Watchr
     # Basically this means all paths below current directoly recursivelly that
     # match any of the rules' patterns, plus the script file.
     #
-    # ===== Returns
-    # paths<Array[Pathname]>:: List of monitored paths
+    # @return [Array<Pathname>]
+    #   list of all monitored paths
     #
     def monitored_paths
       paths = Dir['**/*'].select do |path|

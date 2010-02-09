@@ -3,27 +3,41 @@ module Watchr
     class Unix
       include Base
 
-      # Used by Rev. Wraps a monitored path, and Rev::Loop will call its
+      # Used by Rev. Wraps a monitored path, and `Rev::Loop` will call its
       # callback on file events.
-      class SingleFileWatcher < Rev::StatWatcher #:nodoc:
+      #
+      # @private
+      class SingleFileWatcher < Rev::StatWatcher
         class << self
-          # Stores a reference back to handler so we can call its #nofity
+          # Stores a reference back to handler so we can call its {Base#notify notify}
           # method with file event info
+          #
+          # @return [EventHandler::Base]
+          #
           attr_accessor :handler
         end
 
+        # @param [String] path
+        #   single file to monitor
+        #
         def initialize(path)
           super
           update_reference_times
         end
 
         # File's path as a Pathname
+        #
+        # @return [Pathname]
+        #
         def pathname
           @pathname ||= Pathname(@path)
         end
 
-        # Callback. Called on file change event
-        # Delegates to Controller#update, passing in path and event type
+        # Callback. Called on file change event. Delegates to
+        # {Controller#update}, passing in path and event type
+        #
+        # @return [undefined]
+        #
         def on_change
           self.class.handler.notify(path, type)
           update_reference_times unless type == :deleted
@@ -31,8 +45,7 @@ module Watchr
 
         private
 
-        #--
-        # TODO fix/figure out ENOENT error
+        # @todo improve ENOENT error handling
         def update_reference_times
           @reference_atime = pathname.atime
           @reference_mtime = pathname.mtime
@@ -47,10 +60,10 @@ module Watchr
         # have changed on the file. The type is the first to match in the
         # following hierarchy:
         #
-        #   :deleted, :modified (mtime), :accessed (atime), :changed (ctime)
+        #     :deleted, :modified (mtime), :accessed (atime), :changed (ctime)
         #
-        # ===== Returns
-        # type<Symbol>:: latest event's type
+        # @return [Symbol] type
+        #   latest event's type
         #
         def type
           return :deleted   if !pathname.exist?
@@ -65,9 +78,10 @@ module Watchr
         @loop = Rev::Loop.default
       end
 
-      # Enters listening loop.
+      # Enters listening loop. Will block control flow until application is
+      # explicitly stopped/killed.
       #
-      # Will block control flow until application is explicitly stopped/killed.
+      # @return [undefined]
       #
       def listen(monitored_paths)
         @monitored_paths = monitored_paths
@@ -75,9 +89,13 @@ module Watchr
         @loop.run
       end
 
-      # Rebuilds file bindings.
+      # Rebuilds file bindings. Will detach all current bindings, and reattach
+      # the `monitored_paths`
       #
-      # will detach all current bindings, and reattach the <tt>monitored_paths</tt>
+      # @param [Array<Pathname>] monitored_paths
+      #   list of paths the application is currently monitoring.
+      #
+      # @return [undefined]
       #
       def refresh(monitored_paths)
         @monitored_paths = monitored_paths
@@ -87,12 +105,18 @@ module Watchr
 
       private
 
-      # Binds all <tt>monitored_paths</tt> to the listening loop.
+      # Binds all `monitored_paths` to the listening loop.
+      #
+      # @return [undefined]
+      #
       def attach
         @monitored_paths.each {|path| SingleFileWatcher.new(path.to_s).attach(@loop) }
       end
 
       # Unbinds all paths currently attached to listening loop.
+      #
+      # @return [undefined]
+      #
       def detach
         @loop.watchers.each {|watcher| watcher.detach }
       end

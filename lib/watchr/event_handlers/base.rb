@@ -2,32 +2,40 @@ require 'observer'
 
 module Watchr
   module EventHandler
-    class AbstractMethod < Exception #:nodoc:
-    end
 
-    # Base functionality mixin meant to be included in specific event handlers.
+    # @private
+    class AbstractMethod < Exception; end
+
+    # Base functionality mixin, meant to be included in specific event handlers.
+    #
+    # @abstract
     module Base
       include Observable
 
       # Notify that a file was modified.
       #
-      # ===== Parameters
-      # path<Pathname, String>:: full path or path relative to current working directory
-      # event_type<Symbol>:: event type.
-      #--
-      # #changed and #notify_observers are Observable methods
+      # @param [Pathname, String] path
+      #   full path or path relative to current working directory
+      #
+      # @param [Symbol] event
+      #   event type.
+      #
+      # @return [undefined]
+      #
       def notify(path, event_type = nil)
         changed(true)
         notify_observers(path, event_type)
       end
 
-      # Begin watching given paths and enter listening loop. Called by the controller.
+      # Begin watching given paths and enter listening loop. Called by the
+      # controller.
       #
-      # Abstract method
+      # @param [Array<Pathname>] monitored_paths
+      #   list of paths the application is currently monitoring.
       #
-      # ===== Parameters
-      # monitored_paths<Array(Pathname)>:: list of paths the application is currently monitoring.
+      # @return [undefined]
       #
+      # @abstract
       def listen(monitored_paths)
         raise AbstractMethod
       end
@@ -35,11 +43,12 @@ module Watchr
       # Called by the controller when the list of paths monitored by wantchr
       # has changed. It should refresh the list of paths being watched.
       #
-      # Abstract method
+      # @param [Array<Pathname>] monitored_paths
+      #   list of paths the application is currently monitoring.
       #
-      # ===== Parameters
-      # monitored_paths<Array(Pathname)>:: list of paths the application is currently monitoring.
+      # @return [undefined]
       #
+      # @abstract
       def refresh(monitored_paths)
         raise AbstractMethod
       end

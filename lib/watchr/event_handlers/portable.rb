@@ -11,18 +11,33 @@ module Watchr
       #
       # Will block control flow until application is explicitly stopped/killed.
       #
+      # @param [Array<Pathname>] monitored_paths
+      #   list of paths the application is currently monitoring.
+      #
+      # @return [undefined]
+      #
       def listen(monitored_paths)
         @monitored_paths = monitored_paths
         loop { trigger; sleep(1) }
       end
 
       # See if an event occured, and if so notify observers.
-      def trigger #:nodoc:
+      #
+      # @return [undefined]
+      #
+      # @private
+      def trigger
         path, type = detect_event
         notify(path, type) unless path.nil?
       end
 
       # Update list of monitored paths.
+      #
+      # @param [Array<Pathname>] monitored_paths
+      #   list of paths the application is currently monitoring.
+      #
+      # @return [undefined]
+      #
       def refresh(monitored_paths)
         @monitored_paths = monitored_paths
       end
@@ -34,13 +49,12 @@ module Watchr
       # If the latest mtime is more recent than the reference mtime, return
       # that file's path.
       #
-      # ===== Returns
-      # path and type of event if event occured, nil otherwise
+      # @return [[Pathname, Symbol]]
+      #   path and type of event if event occured, nil otherwise
       #
-      #--
-      # OPTIMIZE, REFACTOR
-      # TODO fix/figure out ENOENT error
-      def detect_event
+      # @todo improve ENOENT error handling
+      #
+      def detect_event # OPTIMIZE, REFACTOR
         @monitored_paths.each do |path|
           return [path, :deleted] unless path.exist?
         end

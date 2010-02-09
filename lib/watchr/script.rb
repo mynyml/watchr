@@ -2,21 +2,23 @@ module Watchr
 
   # A script object wraps a script file, and is used by a controller.
   #
-  # ===== Examples
+  # @example
   #
-  #   path   = Pathname.new('specs.watchr')
-  #   script = Watchr::Script.new(path)
+  #     path   = Pathname.new('specs.watchr')
+  #     script = Watchr::Script.new(path)
   #
   class Script
+
+    # @private
     DEFAULT_EVENT_TYPE = :modified
 
     # Convenience type. Provides clearer and simpler access to rule properties.
     #
-    # ===== Examples
+    # @example
     #
-    #   rule = script.watch('lib/.*\.rb') { 'ohaie' }
-    #   rule.pattern      #=> 'lib/.*\.rb'
-    #   rule.action.call  #=> 'ohaie'
+    #     rule = script.watch('lib/.*\.rb') { 'ohaie' }
+    #     rule.pattern      #=> 'lib/.*\.rb'
+    #     rule.action.call  #=> 'ohaie'
     #
     Rule = Struct.new(:pattern, :event_type, :action)
 
@@ -26,22 +28,24 @@ module Watchr
     # that they get a clearly defined set of methods to work with. In other
     # words, it is the user script's API.
     #
+    # @private
     class EvalContext #:nodoc:
 
       def initialize(script)
         @__script = script
       end
 
-      # Delegated to Script
+      # Delegated to script
       def default_action(&action)
         @__script.default_action(&action)
       end
 
-      # Delegated to Script
+      # Delegated to script
       def watch(*args, &block)
         @__script.watch(*args, &block)
       end
 
+      # Reload script
       def reload
         @__script.parse!
       end
@@ -49,30 +53,33 @@ module Watchr
 
     # EvalContext instance
     #
-    # ===== Examples
-    # script.ec.watch('pattern') { }
-    # script.ec.reload
+    # @example
+    #
+    #     script.ec.watch('pattern') { }
+    #     script.ec.reload
+    #
+    # @return [EvalContext]
     #
     attr_reader :ec
 
     # Defined rules
     #
-    # ===== Returns
-    # Array[Rule]:: rules defined with #watch calls
+    # @return [Rule]
+    #   all rules defined with `#watch` calls
     #
     attr_reader :rules
 
     # Default action
     #
-    # ===== Returns
-    # Proc:: action defined with #default_action call
+    # @return [Proc]
+    #   action defined with `#default_action` call
     #
     attr_reader :default_action
 
-    # Create a script object for <tt>path</tt>.
+    # Create a Script object for script at `path`
     #
-    # ===== Parameters
-    # path<Pathname>:: the path to the script
+    # @param [Pathname] path
+    #   the path to the script
     #
     def initialize(path = nil)
       @path = path
@@ -83,44 +90,46 @@ module Watchr
 
     # Main script API method. Builds a new rule, binding a pattern to an action.
     #
-    # Whenever a file is saved that matches a rule's <tt>pattern</tt>, its
-    # corresponding <tt>action</tt> is triggered.
+    # Whenever a file is saved that matches a rule's `pattern`, its
+    # corresponding `action` is triggered.
     #
     # Patterns can be either a Regexp or a string. Because they always
     # represent paths however, it's simpler to use strings. But remember to use
     # single quotes (not double quotes), otherwise escape sequences will be
-    # parsed (for example "foo/bar\.rb" #=> "foo/bar.rb", notice "\." becomes
+    # parsed (for example `"foo/bar\.rb" #=> "foo/bar.rb"`, notice "\." becomes
     # "."), and won't be interpreted as the regexp you expect.
     #
     # Also note that patterns will be matched against relative paths (relative
-    # from current working directory).
+    # to current working directory).
     #
-    # Actions, the blocks passed to <tt>watch</tt>, receive a MatchData object
-    # as argument. It will be populated with the whole matched string (md[0])
-    # as well as individual backreferences (md[1..n]). See MatchData#[]
+    # Actions, the blocks passed to `watch`, receive a `MatchData` object as
+    # argument. It will be populated with the whole matched string ( `md[0]` )
+    # as well as individual backreferences ( `md[1..n]` ). See `MatchData#[]`
     # documentation for more details.
     #
-    # ===== Examples
+    # @example
     #
-    #   # in script file
-    #   watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
-    #   watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
+    #     # in script file
+    #     watch( 'test/test_.*\.rb' )  {|md| system("ruby #{md[0]}") }
+    #     watch( 'lib/(.*)\.rb' )      {|md| system("ruby test/test_#{md[1]}.rb") }
     #
     # With these two rules, watchr will run any test file whenever it is itself
     # changed (first rule), and will also run a corresponding test file
     # whenever a lib file is changed (second rule).
     #
-    # ===== Parameters
-    # pattern<~#match>:: pattern to match targetted paths
-    # event_type<Symbol>::
-    #   Rule will only match events of this type. Accepted types are :accessed,
-    #   :modified, :changed, :delete and nil (any), where the first three
-    #   correspond to atime, mtime and ctime respectively. Defaults to
-    #   :modified.
-    # action<Block>:: action to trigger
+    # @param [#match] pattern
+    #   pattern to match targetted paths
     #
-    # ===== Returns
-    # rule<Rule>:: rule created by the method
+    # @param [Symbol] event_type
+    #   rule will only match events of this type. Accepted types are
+    #   `:accessed`, `:modified`, `:changed`, `:delete` and `nil` (any), where
+    #   the first three correspond to atime, mtime and ctime respectively.
+    #   Defaults to `:modified`.
+    #
+    # @yield
+    #   action to trigger
+    #
+    # @return [Rule]
     #
     def watch(pattern, event_type = DEFAULT_EVENT_TYPE, &action)
       @rules << Rule.new(pattern, event_type, action || @default_action)
@@ -130,26 +139,26 @@ module Watchr
     # Convenience method. Define a default action to be triggered when a rule
     # has none specified.
     #
-    # ===== Examples
+    # @example
     #
-    #   # in script file
+    #     # in script file
     #
-    #   default_action { system('rake --silent rdoc') }
+    #     default_action { system('rake --silent yard') }
     #
-    #   watch( 'lib/.*\.rb'  )
-    #   watch( 'README.rdoc' )
-    #   watch( 'TODO.txt'    )
-    #   watch( 'LICENSE'     )
+    #     watch( 'lib/.*\.rb'  )
+    #     watch( 'README.md'   )
+    #     watch( 'TODO.txt'    )
+    #     watch( 'LICENSE'     )
     #
-    #   # equivalent to:
+    #     # is equivalent to:
     #
-    #   watch( 'lib/.*\.rb'  ) { system('rake --silent rdoc') }
-    #   watch( 'README.rdoc' ) { system('rake --silent rdoc') }
-    #   watch( 'TODO.txt'    ) { system('rake --silent rdoc') }
-    #   watch( 'LICENSE'     ) { system('rake --silent rdoc') }
+    #     watch( 'lib/.*\.rb'  ) { system('rake --silent yard') }
+    #     watch( 'README.md'   ) { system('rake --silent yard') }
+    #     watch( 'TODO.txt'    ) { system('rake --silent yard') }
+    #     watch( 'LICENSE'     ) { system('rake --silent yard') }
     #
-    # ===== Returns
-    # Proc:: default action
+    # @return [Proc]
+    #   default action
     #
     def default_action(&action)
       @default_action = action if action
@@ -163,8 +172,8 @@ module Watchr
     end
 
     # Eval content of script file.
-    #--
-    # TODO fix/figure out ENOENT error
+    #
+    # @todo improve ENOENT error handling
     def parse!
       return unless @path
       reset
@@ -180,14 +189,19 @@ module Watchr
     # action is actually a wrapper around the rule's action, with the
     # match_data prepopulated.
     #
-    # ===== Params
-    # path<Pathnane,String>:: Find action that corresponds to this path.
-    # event_type<Symbol>:: Find action only if rule's event if of this type.
+    # @example
     #
-    # ===== Examples
+    #     script.watch( 'test/test_.*\.rb' ) {|md| "ruby #{md[0]}" }
+    #     script.action_for('test/test_watchr.rb').call #=> "ruby test/test_watchr.rb"
     #
-    #   script.watch( 'test/test_.*\.rb' ) {|md| "ruby #{md[0]}" }
-    #   script.action_for('test/test_watchr.rb').call #=> "ruby test/test_watchr.rb"
+    # @param [Pathname, String] path
+    #   find action that corresponds to this path.
+    #
+    # @param [Symbol] event_type
+    #   find action only if rule's event is of this type.
+    #
+    # @return [Proc]
+    #   action, preparsed and ready to be called
     #
     def action_for(path, event_type = DEFAULT_EVENT_TYPE)
       path = rel_path(path).to_s
@@ -202,18 +216,18 @@ module Watchr
 
     # Collection of all patterns defined in script.
     #
-    # ===== Returns
-    # patterns<String, Regexp>:: all patterns
+    # @return [Array<String,Regexp>]
+    #   all defined patterns
     #
     def patterns
       #@rules.every.pattern
       @rules.map {|r| r.pattern }
     end
 
-    # Path to the script file
+    # Path to the script file corresponding to this object
     #
-    # ===== Returns
-    # path<Pathname>:: absolute path to script file
+    # @return [Pathname]
+    #   absolute path to script file
     #
     def path
       @path && Pathname(@path.respond_to?(:to_path) ? @path.to_path : @path.to_s).expand_path
@@ -224,11 +238,11 @@ module Watchr
     # Rules corresponding to a given path, in reversed order of precedence
     # (latest one is most inportant).
     #
-    # ===== Parameters
-    # path<Pathname, String>:: path to look up rule for
+    # @param [Pathname, String] path
+    #   path to look up rule for
     #
-    # ===== Returns
-    # rules<Array(Rule)>:: rules corresponding to <tt>path</tt>
+    # @return [Array<Rule>]
+    #   rules corresponding to `path`
     #
     def rules_for(path)
       @rules.reverse.select {|rule| path.match(rule.pattern) }
@@ -236,11 +250,11 @@ module Watchr
 
     # Make a path relative to current working directory.
     #
-    # ===== Parameters
-    # path<Pathname, String>:: absolute or relative path
+    # @param [Pathname, String] path
+    #   absolute or relative path
     #
-    # ===== Returns
-    # path<Pathname>:: relative path, from current working directory.
+    # @return [Pathname]
+    #   relative path, from current working directory.
     #
     def rel_path(path)
       Pathname(path).expand_path.relative_path_from(Pathname(Dir.pwd))

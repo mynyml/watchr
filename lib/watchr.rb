@@ -5,12 +5,12 @@ require 'rbconfig'
 # user defined action whenever an observed file is modified. Its most typical
 # use is continuous testing.
 #
-# Usage:
-#
-#   # on command line, from project's root dir
-#   $ watchr path/to/script
-#
 # See README for more details
+#
+# @example
+#
+#     # on command line, from project's root dir
+#     $ watchr path/to/script
 #
 module Watchr
   VERSION = '0.5.9'
@@ -35,7 +35,7 @@ module Watchr
     attr_accessor :options
     attr_accessor :handler
 
-    # backwards compatibility
+    # @deprecated
     def version #:nodoc:
       Watchr::VERSION
     end
@@ -43,55 +43,59 @@ module Watchr
     # Options proxy.
     #
     # Currently supported options:
-    # * debug<Boolean> Debugging state. More verbose.
     #
-    # ===== Examples
+    # * debug[Boolean] Debugging state. More verbose.
     #
-    #   Watchr.options.debug #=> false
-    #   Watchr.options.debug = true
+    # @example
     #
-    # ===== Returns
-    # options<Struct>:: options proxy.
+    #     Watchr.options.debug #=> false
+    #     Watchr.options.debug = true
     #
-    #--
-    # On first use, initialize the options struct and default option values.
+    # @return [Struct]
+    #   options proxy.
+    #
     def options
       @options ||= Struct.new(:debug).new
       @options.debug ||= false
       @options
     end
 
-    # Outputs formatted debug statement to stdout, only if ::options.debug is true
+    # Outputs formatted debug statement to stdout, only if `::options.debug` is true
     #
-    # ===== Examples
+    # @example
     #
-    #   Watchr.options.debug = true
-    #   Watchr.debug('im in ur codes, notifayinin u')
+    #     Watchr.options.debug = true
+    #     Watchr.debug('im in ur codes, notifayinin u')
     #
-    # outputs: "[watchr debug] im in ur codes, notifayinin u"
+    #     #outputs: "[watchr debug] im in ur codes, notifayinin u"
     #
-    def debug(str)
-      puts "[watchr debug] #{str}" if options.debug
+    # @param [String] message
+    #   debug message to print
+    #
+    # @return [nil]
+    #
+    def debug(msg)
+      puts "[watchr debug] #{msg}" if options.debug
     end
 
     # Detect current OS and return appropriate handler.
     #
-    # ===== Examples
+    # @example
     #
-    #   Config::CONFIG['host_os'] #=> 'linux-gnu'
-    #   Watchr.handler #=> Watchr::EventHandler::Unix
+    #     Config::CONFIG['host_os'] #=> 'linux-gnu'
+    #     Watchr.handler #=> Watchr::EventHandler::Unix
     #
-    #   Config::CONFIG['host_os'] #=> 'cygwin'
-    #   Watchr.handler #=> Watchr::EventHandler::Portable
+    #     Config::CONFIG['host_os'] #=> 'cygwin'
+    #     Watchr.handler #=> Watchr::EventHandler::Portable
     #
-    #   ENV['HANDLER'] #=> 'unix'
-    #   Watchr.handler #=> Watchr::EventHandler::Unix
+    #     ENV['HANDLER'] #=> 'unix'
+    #     Watchr.handler #=> Watchr::EventHandler::Unix
     #
-    #   ENV['HANDLER'] #=> 'portable'
-    #   Watchr.handler #=> Watchr::EventHandler::Portable
+    #     ENV['HANDLER'] #=> 'portable'
+    #     Watchr.handler #=> Watchr::EventHandler::Portable
     #
-    # ===== Returns
-    # handler<Class>:: handler class for current architecture
+    # @return [Class]
+    #   handler class for current architecture
     #
     def handler
       @handler ||=
