@@ -1,17 +1,16 @@
-===== Features
+Features
+--------
 
-* respond to :added file event (needs ability to watch dirs)
-
-* watchr -e       # watchr -e "watch('foo.gemspec') { system('gem build foo.gemspec') }"
+* watchr -e ( `$ watchr -e "watch('foo.gemspec') { system('gem build foo.gemspec') }"` )
 * watchr --auto
 * watchr --fetch
 
-* write a few prepackaged scripts
-  * post on gists
-  * post links on wiki
-  * post main links in readme
+* enable ability to watch dirs
+  * requires new handler(s)
+  * will allow recognizing `:added` events
 
-===== Bugs
+Bugs
+----
 
 * sometimes an action is fired without a file being saved
   * buffer flushing issue?
@@ -22,7 +21,8 @@
 * when a file is saved twice quickly, subsequent events are ignored.
   * seems like rev/libev drops the file watch
 
-===== Other
+Other
+-----
 
 * add tests for executable
 * memory profiling / benchmarks

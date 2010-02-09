@@ -4,7 +4,7 @@ LICENSE
 Manifest
 README.md
 Rakefile
-TODO.txt
+TODO.md
 bin/watchr
 contributions.txt
 docs.watchr
