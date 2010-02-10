@@ -8,7 +8,9 @@ require 'watchr'
 
 module Watchr
   # Namespaced to avoid defining global methods
-  module Bin #:nodoc:
+  #
+  # @private
+  module Bin
     extend self
 
     DEFAULT_SCRIPT_PATH = Pathname.new('specs.watchr')
@@ -25,13 +27,13 @@ module Watchr
 
     # Absolute path to script file
     #
-    # The script's path is either first arg or DEFAULT_SCRIPT_PATH. If neither
-    # exist, the script immediatly aborts with an appropriate error message.
+    # Unless set manually, the script's path is either first arg or
+    # `DEFAULT_SCRIPT_PATH`. If neither exists, the script immediatly aborts
+    # with an appropriate error message.
     #
-    # ===== Returns
-    # <Pathname>:: absolute path to script
-    #--
-    # raise instead?
+    # @return [Pathname]
+    #   absolute path to script
+    #
     def path!
       return @path unless @path.nil?
       rel = relative_path    or abort( usage )
@@ -40,15 +42,14 @@ module Watchr
 
     # Find a partial path name in load path
     #
-    # ===== Params
-    # path<Pathname>:: partial pathname
+    # @param [Pathname] path
+    #   partial pathname
     #
-    # ===== Returns
-    # <Pathname>::
+    # @return [Pathname]
     #   absolute path of first occurence of partial path in load path, or nil if not found
-    #--
-    # Adds '.' for ruby1.9.2
+    #
     def find_in_load_path(path)
+      # Adds '.' for ruby1.9.2
       dir = (['.'] + $LOAD_PATH).uniq.detect {|p| Pathname(p).join(path).exist? }
       dir ? path.expand_path(dir) : nil
     end
