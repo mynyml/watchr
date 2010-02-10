@@ -2,6 +2,7 @@
 
 require 'pathname'
 require 'optparse'
+require 'tempfile'
 
 require 'watchr'
 
@@ -11,6 +12,8 @@ module Watchr
     extend self
 
     DEFAULT_SCRIPT_PATH = Pathname.new('specs.watchr')
+
+    attr_accessor :path
 
     def usage
       "Usage: watchr [opts] path/to/script"
@@ -30,6 +33,7 @@ module Watchr
     #--
     # raise instead?
     def path!
+      return @path unless @path.nil?
       rel = relative_path    or abort( usage )
       find_in_load_path(rel) or abort("no script found: file #{rel.to_s.inspect} is not in path.")
     end
@@ -74,6 +78,20 @@ opts = OptionParser.new do |opts|
     script.parse!
     puts controller.monitored_paths
     exit
+  }
+
+  def assert_syntax(code)
+    catch(:ok) { Object.new.instance_eval("BEGIN { throw :ok }; #{code}", %|-e "#{code}"|, 0) }
+  rescue SyntaxError => e
+    puts e.message.split("\n")[1]
+    exit
+  end
+
+  opts.on('-e', '--eval INLINE_SCRIPT', %|Evaluate script inline ($ watchr -e "watch('foo') { puts 'bar' }")|) {|code|
+    assert_syntax(code)
+
+    Tempfile.open('foo') {|f| f << code; @__path = f.path }
+    Watchr::Bin.path = Pathname(@__path)
   }
 
   opts.on_tail('-h', '--help', "Print inline help") { puts opts; exit }
