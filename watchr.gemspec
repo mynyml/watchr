@@ -8,9 +8,6 @@ Gem::Specification.new do |s|
   s.email               = "mynyml@gmail.com"
   s.homepage            = "http://mynyml.com/ruby/flexible-continuous-testing"
   s.rubyforge_project   = "watchr"
-  s.has_rdoc            =  true
-  s.rdoc_options        =  %w( --main README.rdoc )
-  s.extra_rdoc_files    =  %w( README.rdoc )
   s.require_path        = "lib"
   s.bindir              = "bin"
   s.executables         = "watchr"

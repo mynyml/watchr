@@ -13,7 +13,7 @@ require 'rbconfig'
 #     $ watchr path/to/script
 #
 module Watchr
-  VERSION = '0.5.9'
+  VERSION = '0.6'
 
   begin
     require 'rev'
