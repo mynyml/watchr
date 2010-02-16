@@ -1,3 +1,12 @@
+def gem_opt
+  defined?(Gem) ? "-rubygems" : ""
+end
+
+def ruby
+  require 'rbconfig'
+  File.join([Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name']]) << Config::CONFIG['EXEEXT']
+end
+
 # --------------------------------------------------
 # Tests
 # --------------------------------------------------
@@ -8,7 +17,7 @@ namespace(:test) do
   desc "Run all tests"
   task(:all) do
     tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
-    exit system("ruby -rubygems -I.:lib -e'%w( #{tests.join(' ')} ).each {|file| require file }'")
+    exit system(%Q{#{ruby} #{gem_opt} -I.:lib -e"%w( #{tests.join(' ')} ).each {|file| require file }"})
   end
 
   desc "Run all tests on multiple ruby versions (requires rvm)"
