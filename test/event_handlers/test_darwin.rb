@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-if Watchr::HAVE_REV
+if Watchr::HAVE_FSE
 
 class Watchr::EventHandler::Unix::SingleFileWatcher
   public :type
@@ -159,4 +159,4 @@ class UnixEventHandlerTest < MiniTest::Unit::TestCase
   end
 end
 
-end  # if Watchr::HAVE_REV
+end  # if Watchr::HAVE_FSE

@@ -35,12 +35,24 @@ class TestWatchr < MiniTest::Unit::TestCase
     assert_equal Watchr::EventHandler::Unix, Watchr.handler
 
     Watchr.handler = nil
-    ENV['HANDLER'] = 'darwin'
-    assert_equal Watchr::EventHandler::Unix, Watchr.handler
-
-    Watchr.handler = nil
     ENV['HANDLER'] = 'unix'
     assert_equal Watchr::EventHandler::Unix, Watchr.handler
+
+    end
+
+    if Watchr::HAVE_FSE
+
+    Watchr.handler = nil
+    ENV['HANDLER'] = 'darwin'
+    assert_equal Watchr::EventHandler::FSE, Watchr.handler
+
+    Watchr.handler = nil
+    ENV['HANDLER'] = 'osx'
+    assert_equal Watchr::EventHandler::FSE, Watchr.handler
+
+    Watchr.handler = nil
+    ENV['HANDLER'] = 'fsevent'
+    assert_equal Watchr::EventHandler::FSE, Watchr.handler
 
     end
 
