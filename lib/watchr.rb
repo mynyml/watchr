@@ -38,7 +38,8 @@ module Watchr
     autoload :Base,     'watchr/event_handlers/base'
     autoload :Unix,     'watchr/event_handlers/unix' if ::Watchr::HAVE_REV
     autoload :Portable, 'watchr/event_handlers/portable'
-    autoload :FSE,      'watchr/event_handlers/fse' if ::Watchr::HAVE_FSE
+    #autoload :FSE,      'watchr/event_handlers/fse' if ::Watchr::HAVE_FSE
+    autoload :FSE,      'watchr/event_handlers/darwin' if ::Watchr::HAVE_FSE
   end
 
   class << self

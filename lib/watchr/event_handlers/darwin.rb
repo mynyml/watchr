@@ -29,13 +29,13 @@ module Watchr
         update_monitored_paths
         watch_monitored_paths
         dirs.each do |dir|
-          Watchr.debug "change in #{dir}"
+          #Watchr.debug "change in #{dir}"
           changed_pathname = Pathname(dir)
           monitored_paths.each do |pathname|
             if pathname.dirname.basename == changed_pathname.basename
               type = detect_change(pathname)
               if type
-                Watchr.debug type
+                #Watchr.debug type
                 notify(pathname, type)
                 update_path_stats(pathname) unless type == :deleted
               end
