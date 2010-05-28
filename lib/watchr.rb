@@ -37,7 +37,7 @@ module Watchr
     autoload :Base,     'watchr/event_handlers/base'
     autoload :Portable, 'watchr/event_handlers/portable'
     autoload :Unix,     'watchr/event_handlers/unix'      if ::Watchr::HAVE_REV
-    autoload :FSE,      'watchr/event_handlers/darwin'    if ::Watchr::HAVE_FSE
+    autoload :Darwin,   'watchr/event_handlers/darwin'    if ::Watchr::HAVE_FSE
   end
 
   class << self
@@ -111,7 +111,7 @@ module Watchr
         case ENV['HANDLER'] || Config::CONFIG['host_os']
           when /darwin|mach|osx|fsevents?/i
             if Watchr::HAVE_FSE
-              Watchr::EventHandler::FSE
+              Watchr::EventHandler::Darwin
             else
               Watchr.debug "fsevent not found. `gem install ruby-fsevent` to get evented handler"
               Watchr::EventHandler::Portable

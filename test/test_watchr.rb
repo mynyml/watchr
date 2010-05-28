@@ -44,15 +44,15 @@ class TestWatchr < MiniTest::Unit::TestCase
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'darwin'
-    assert_equal Watchr::EventHandler::FSE, Watchr.handler
+    assert_equal Watchr::EventHandler::Darwin, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'osx'
-    assert_equal Watchr::EventHandler::FSE, Watchr.handler
+    assert_equal Watchr::EventHandler::Darwin, Watchr.handler
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'fsevent'
-    assert_equal Watchr::EventHandler::FSE, Watchr.handler
+    assert_equal Watchr::EventHandler::Darwin, Watchr.handler
 
     end
 

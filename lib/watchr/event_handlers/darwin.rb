@@ -1,105 +1,69 @@
 module Watchr
   module EventHandler
-    class FSEWatcher < ::FSEvent
-      attr_reader :handler
+    class Darwin < FSEvent
+      include Base
 
-      def initialize(handler)
-        super()
-        @handler = handler
+      def initialize
+        super
         self.latency = 0.2
       end
 
-      def on_change(dirs)
-        handler.on_change(dirs)
-      end
-    end
-
-    class FSE
-      include Base
-
-      attr_reader :watcher, :path_stats, :monitored_paths
-      attr_accessor :controller
-
-      def initialize
-        @watcher = FSEWatcher.new(self)
-        @path_stats = {}
-      end
-
-      def on_change(dirs)
-        update_monitored_paths
-        watch_monitored_paths
-        dirs.each do |dir|
-          #Watchr.debug "change in #{dir}"
-          changed_pathname = Pathname(dir)
-          monitored_paths.each do |pathname|
-            if pathname.dirname.basename == changed_pathname.basename
-              type = detect_change(pathname)
-              if type
-                #Watchr.debug type
-                notify(pathname, type)
-                update_path_stats(pathname) unless type == :deleted
-              end
-            end
-          end
-        end
-      end
-
       def listen(monitored_paths)
-        @monitored_paths = monitored_paths
-        watch_monitored_paths
-        @watcher.start
+        register_paths(monitored_paths)
+        start
       end
 
       def refresh(monitored_paths)
-        @monitored_paths = monitored_paths
-        watch_monitored_paths
+        register_paths(monitored_paths)
+        restart
       end
 
-      protected
+      private
+        def on_change(dirs)
+          dirs.each {|dir| notify(*detect_change_in(dir)) }
+        end
 
-      def watch_monitored_paths
-        init_path_stats
-        paths = monitored_paths.map {|p| p.dirname.to_s}.uniq
-        @watcher.watch_directories(paths)
-      end
-
-      def init_path_stats
-        now = Time.now
-        monitored_paths.each do |pathname|
-          unless path_stats[pathname]
-            path_stats[pathname] = {:mtime => now, :atime => now, :ctime => now}
+        def detect_change_in(dir)
+          paths = monitored_paths_for(dir)
+          paths.each do |path|
+            type = event_type(path)
+            return [path, type] if type
           end
         end
-      end
 
-      def detect_change(pathname)
-        return :deleted   if !pathname.exist?
-        return :modified  if  pathname.mtime > mtime(pathname)
-        return :accessed  if  pathname.atime > atime(pathname)
-        return :changed   if  pathname.ctime > ctime(pathname)
-      end
+        def event_type(path)
+          return :deleted   if !path.exist?
+          return :modified  if  path.mtime > @reference_times[path][:mtime]
+          return :accessed  if  path.atime > @reference_times[path][:atime]
+          return :changed   if  path.ctime > @reference_times[path][:ctime]
+          nil
+        end
 
-      def update_monitored_paths
-        @monitored_paths = controller.monitored_paths
-      end
+        def monitored_paths_for(dir)
+          dir = Pathname(dir).expand_path
+          @paths.select {|path| path.dirname.expand_path == dir }
+        end
 
-      def update_path_stats(pathname)
-        path_stats[pathname][:mtime] = pathname.mtime
-        path_stats[pathname][:atime] = pathname.atime
-        path_stats[pathname][:ctime] = pathname.ctime
-      end
+        def register_paths(paths)
+          @paths = paths
+          watch_directories(dirs_for(@paths))
+          update_reference_times
+        end
 
-      def mtime(pathname)
-        path_stats[pathname][:mtime]
-      end
+        def dirs_for(paths)
+          paths.map {|path| path.dirname.to_s }.uniq
+        end
 
-      def atime(pathname)
-        path_stats[pathname][:atime]
-      end
-
-      def ctime(pathname)
-        path_stats[pathname][:ctime]
-      end
+        def update_reference_times
+          @reference_times = {}
+          now = Time.now
+          @paths.each do |path|
+            @reference_times[path] = {}
+            @reference_times[path][:atime] = now
+            @reference_times[path][:mtime] = now
+            @reference_times[path][:ctime] = now
+          end
+        end
     end
   end
 end

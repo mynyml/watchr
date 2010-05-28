@@ -2,161 +2,116 @@ require 'test/test_helper'
 
 if Watchr::HAVE_FSE
 
-class Watchr::EventHandler::Unix::SingleFileWatcher
-  public :type
+class Watchr::EventHandler::Darwin
+  attr_accessor :paths
+
+  def start()   end #noop
+  def restart() end #noop
+
+  public :on_change, :registered_directories
 end
 
-class UnixEventHandlerTest < MiniTest::Unit::TestCase
+class DarwinEventHandlerTest < MiniTest::Unit::TestCase
   include Watchr
-
-  SingleFileWatcher = EventHandler::Unix::SingleFileWatcher
-
-  def setup
-    @now = Time.now
-    pathname = Pathname.new('foo/bar')
-    pathname.stubs(:atime ).returns(@now)
-    pathname.stubs(:mtime ).returns(@now)
-    pathname.stubs(:ctime ).returns(@now)
-    pathname.stubs(:exist?).returns(true)
-    SingleFileWatcher.any_instance.stubs(:pathname).returns(pathname)
-
-    @loop    = Rev::Loop.default
-    @handler = EventHandler::Unix.new
-    @watcher = SingleFileWatcher.new('foo/bar')
-    @loop.stubs(:run)
-  end
-
-  def teardown
-    SingleFileWatcher.handler = nil
-    Rev::Loop.default.watchers.every.detach
-  end
-
-  test "triggers listening state" do
-    @loop.expects(:run)
-    @handler.listen([])
-  end
-
-  ## SingleFileWatcher
-
-  test "watcher pathname" do
-    assert_instance_of Pathname, @watcher.pathname
-    assert_equal @watcher.path, @watcher.pathname.to_s
-  end
-
-  test "stores reference times" do
-    @watcher.pathname.stubs(:atime).returns(:time)
-    @watcher.pathname.stubs(:mtime).returns(:time)
-    @watcher.pathname.stubs(:ctime).returns(:time)
-
-    @watcher.send(:update_reference_times)
-    assert_equal :time, @watcher.instance_variable_get(:@reference_atime)
-    assert_equal :time, @watcher.instance_variable_get(:@reference_mtime)
-    assert_equal :time, @watcher.instance_variable_get(:@reference_ctime)
-  end
-
-  test "stores initial reference times" do
-    SingleFileWatcher.any_instance.expects(:update_reference_times)
-    SingleFileWatcher.new('foo')
-  end
-
-  test "updates reference times on change" do
-    @watcher.expects(:update_reference_times)
-    @watcher.on_change
-  end
-
-  test "detects event type" do
-    trigger_event @watcher, @now, :atime
-    assert_equal :accessed, @watcher.type
-
-    trigger_event @watcher, @now, :mtime
-    assert_equal :modified, @watcher.type
-
-    trigger_event @watcher, @now, :ctime
-    assert_equal :changed, @watcher.type
-
-    trigger_event @watcher, @now, :atime, :mtime
-    assert_equal :modified, @watcher.type
-
-    trigger_event @watcher, @now, :mtime, :ctime
-    assert_equal :modified, @watcher.type
-
-    trigger_event @watcher, @now, :atime, :ctime
-    assert_equal :accessed, @watcher.type
-
-    trigger_event @watcher, @now, :atime, :mtime, :ctime
-    assert_equal :modified, @watcher.type
-
-    @watcher.pathname.stubs(:exist?).returns(false)
-    assert_equal :deleted, @watcher.type
-  end
-
-  ## monitoring file events
-
-  test "listens for events on monitored files" do
-    @handler.listen %w( foo bar )
-    assert_equal 2, @loop.watchers.size
-    assert_equal %w( foo bar ).to_set, @loop.watchers.every.path.to_set
-    assert_equal [SingleFileWatcher], @loop.watchers.every.class.uniq
-  end
-
-  test "notifies observers on file event" do
-    @watcher.stubs(:path).returns('foo')
-    @handler.expects(:notify).with('foo', anything)
-    @watcher.on_change
-  end
-
-  test "notifies observers of event type" do
-    trigger_event @watcher, @now, :atime
-    @handler.expects(:notify).with('foo/bar', :accessed)
-    @watcher.on_change
-
-    trigger_event @watcher, @now, :mtime
-    @handler.expects(:notify).with('foo/bar', :modified)
-    @watcher.on_change
-
-    trigger_event @watcher, @now, :ctime
-    @handler.expects(:notify).with('foo/bar', :changed)
-    @watcher.on_change
-
-    trigger_event @watcher, @now, :atime, :mtime, :ctime
-    @handler.expects(:notify).with('foo/bar', :modified)
-    @watcher.on_change
-
-    @watcher.pathname.stubs(:exist?).returns(false)
-    @handler.expects(:notify).with('foo/bar', :deleted)
-    @watcher.on_change
-  end
-
-  ## on the fly updates of monitored files list
-
-  test "reattaches to new monitored files" do
-    @handler.listen %w( foo bar )
-    assert_equal 2, @loop.watchers.size
-    assert_includes @loop.watchers.every.path, 'foo'
-    assert_includes @loop.watchers.every.path, 'bar'
-
-    @handler.refresh %w( baz bax )
-    assert_equal 2, @loop.watchers.size
-    assert_includes @loop.watchers.every.path, 'baz'
-    assert_includes @loop.watchers.every.path, 'bax'
-    refute_includes @loop.watchers.every.path, 'foo'
-    refute_includes @loop.watchers.every.path, 'bar'
-  end
 
   private
 
-  def trigger_event(watcher, now, *types)
-    watcher.pathname.stubs(:atime).returns(now)
-    watcher.pathname.stubs(:mtime).returns(now)
-    watcher.pathname.stubs(:ctime).returns(now)
-    watcher.instance_variable_set(:@reference_atime, now)
-    watcher.instance_variable_set(:@reference_mtime, now)
-    watcher.instance_variable_set(:@reference_ctime, now)
+  def tempfile(name)
+    file = Tempfile.new(name, tmpdir.to_s)
+    Pathname(file.path)
+  ensure
+    file.close
+  end
 
-    types.each do |type|
-      watcher.pathname.stubs(type).returns(now+10)
-    end
+  # TODO clean up tmpdirs after tests run
+  def tmpdir
+    @@_tmpdir ||= Pathname(Dir.mktmpdir("watchrspecs_"))
+  end
+  alias :root :tmpdir
+
+  #at_exit { @@_tmpdir.delete }
+
+  public
+
+  def setup
+    @now = Time.now
+    @handler = EventHandler::Darwin.new
+
+    @foo = tempfile('foo').expand_path
+    @bar = tempfile('bar').expand_path
+  end
+
+  test "listening triggers listening state" do
+    @handler.expects(:start)
+    @handler.listen([])
+  end
+
+  test "listens for events on monitored files" do
+    @handler.listen [ @foo, @bar ]
+    assert_includes @handler.paths, @foo
+    assert_includes @handler.paths, @bar
+  end
+
+  test "reattaches to new monitored files" do
+    @baz = tempfile('baz').expand_path
+    @bax = tempfile('bax').expand_path
+
+    @handler.listen [ @foo, @bar ]
+    assert_includes @handler.paths, @foo
+    assert_includes @handler.paths, @bar
+
+    @handler.refresh [ @baz, @bax ]
+    assert_includes @handler.paths, @baz
+    assert_includes @handler.paths, @bax
+    refute_includes @handler.paths, @foo
+    refute_includes @handler.paths, @bar
+  end
+
+  ## event types
+
+  test "deleted file event" do
+    @foo.stubs(:exist?).returns(false)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.expects(:notify).with(@foo, :deleted)
+    @handler.on_change [root]
+  end
+
+  test "modified file event" do
+    @foo.stubs(:mtime).returns(@now + 100)
+    @handler.expects(:notify).with(@foo, :modified)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.on_change [root]
+  end
+
+  test "accessed file event" do
+    @foo.stubs(:atime).returns(@now + 100)
+    @handler.expects(:notify).with(@foo, :accessed)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.on_change [root]
+  end
+
+  test "changed file event" do
+    @foo.stubs(:ctime).returns(@now + 100)
+    @handler.expects(:notify).with(@foo, :changed)
+
+    @handler.listen [ @foo, @bar ]
+    @handler.on_change [root]
+  end
+
+  ## internal
+
+  test "registers directories" do
+    @handler.listen [ @foo, @bar ]
+
+    assert_equal @foo.dirname, @bar.dirname # make sure all tempfiles are in same dir
+    assert_equal 1, @handler.registered_directories.size
+    assert_includes @handler.registered_directories, @foo.dirname.to_s
+    assert_includes @handler.registered_directories, @bar.dirname.to_s
   end
 end
 
 end  # if Watchr::HAVE_FSE
+
