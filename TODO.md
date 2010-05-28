@@ -9,6 +9,8 @@ Features
   * requires new handler(s)
   * will allow recognizing `:added` events
 
+* allow setting latency
+
 Bugs
 ----
 
