@@ -26,12 +26,22 @@ module Watchr
           end
         end
 
-        def detect_change_in(dir)
+        def detect_change(dir)
           paths = monitored_paths_for(dir)
-          paths.each do |path|
-            type = event_type(path)
-            return [path, type] if type
+          type  = nil
+          path  = paths.find {|path| type = event_type(path) }
+
+          if type == :accessed || type.nil?
+            Watchr.debug "NO CHANGE DETECTED"
+            Watchr.debug "type:  #{type.inspect}"
+            Watchr.debug "dir:   #{dir.inspect}"
+            Watchr.debug "path:  #{path.inspect}"
+            Watchr.debug "refs:  #{@reference_times[path].inspect }"
+            Watchr.debug "/ NO CHANGE DETECTED"
           end
+
+          update_reference_times
+          [path, type]
         end
 
         def event_type(path)
