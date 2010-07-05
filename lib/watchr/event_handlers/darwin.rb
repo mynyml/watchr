@@ -20,7 +20,10 @@ module Watchr
 
       private
         def on_change(dirs)
-          dirs.each {|dir| notify(*detect_change_in(dir)) }
+          dirs.each do |dir|
+            path, type = detect_change(dir)
+            notify(path, type) unless path.nil?
+          end
         end
 
         def detect_change_in(dir)
