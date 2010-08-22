@@ -1,6 +1,23 @@
 module Watchr
   module EventHandler
 
+    class ::FSEvents
+      # Same as Watch.debug, but prefixed with [fsevents] instead.
+      #
+      # @example
+      #
+      #     FSEvents.debug('missfired')
+      #
+      # @param [String] message
+      #   debug message to print
+      #
+      # @return [nil]
+      #
+      def self.debug(msg)
+        puts "[fsevents] #{msg}" if Watchr.options.debug
+      end
+    end
+
     # FSEvents based event handler for Darwin/OSX
     #
     # Uses ruby-fsevents (http://github.com/sandro/ruby-fsevent)
@@ -63,14 +80,7 @@ module Watchr
           type  = nil
           path  = paths.find {|path| type = event_type(path) }
 
-          if type == :accessed || type.nil?
-            Watchr.debug "NO CHANGE DETECTED"
-            Watchr.debug "type:  #{type.inspect}"
-            Watchr.debug "dir:   #{dir.inspect}"
-            Watchr.debug "path:  #{path.inspect}"
-            Watchr.debug "refs:  #{@reference_times[path].inspect }"
-            Watchr.debug "/ NO CHANGE DETECTED"
-          end
+          FSEvents.debug("event detection error") if type.nil?
 
           update_reference_times
           [path, type]
