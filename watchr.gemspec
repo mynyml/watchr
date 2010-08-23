@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.bindir              = "bin"
   s.executables         = "watchr"
   s.version             =  Watchr::VERSION
-  s.files               =  File.read("Manifest").strip.split("\n")
+  s.files               =  `git ls-files`.strip.split("\n")
 
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'mocha'
