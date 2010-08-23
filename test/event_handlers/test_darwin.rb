@@ -14,31 +14,25 @@ end
 class DarwinEventHandlerTest < MiniTest::Unit::TestCase
   include Watchr
 
-  private
-
   def tempfile(name)
-    file = Tempfile.new(name, tmpdir.to_s)
+    file = Tempfile.new(name, @root.to_s)
     Pathname(file.path)
   ensure
     file.close
   end
 
-  # TODO clean up tmpdirs after tests run
-  def tmpdir
-    @@_tmpdir ||= Pathname(Dir.mktmpdir("watchrspecs_"))
-  end
-  alias :root :tmpdir
-
-  #at_exit { @@_tmpdir.delete }
-
-  public
-
   def setup
+    @root = Pathname(Dir.mktmpdir("WATCHR_SPECS-"))
+
     @now = Time.now
     @handler = EventHandler::Darwin.new
 
     @foo = tempfile('foo').expand_path
     @bar = tempfile('bar').expand_path
+  end
+
+  def teardown
+    FileUtils.remove_entry_secure(@root.to_s)
   end
 
   test "listening triggers listening state" do
@@ -74,7 +68,7 @@ class DarwinEventHandlerTest < MiniTest::Unit::TestCase
 
     @handler.listen [ @foo, @bar ]
     @handler.expects(:notify).with(@foo, :deleted)
-    @handler.on_change [root]
+    @handler.on_change [@root]
   end
 
   test "modified file event" do
@@ -82,7 +76,7 @@ class DarwinEventHandlerTest < MiniTest::Unit::TestCase
     @handler.expects(:notify).with(@foo, :modified)
 
     @handler.listen [ @foo, @bar ]
-    @handler.on_change [root]
+    @handler.on_change [@root]
   end
 
   test "accessed file event" do
@@ -90,7 +84,7 @@ class DarwinEventHandlerTest < MiniTest::Unit::TestCase
     @handler.expects(:notify).with(@foo, :accessed)
 
     @handler.listen [ @foo, @bar ]
-    @handler.on_change [root]
+    @handler.on_change [@root]
   end
 
   test "changed file event" do
@@ -98,7 +92,7 @@ class DarwinEventHandlerTest < MiniTest::Unit::TestCase
     @handler.expects(:notify).with(@foo, :changed)
 
     @handler.listen [ @foo, @bar ]
-    @handler.on_change [root]
+    @handler.on_change [@root]
   end
 
   ## internal

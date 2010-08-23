@@ -1,6 +1,7 @@
 require 'pathname'
+require 'tmpdir'
 require 'tempfile'
-require 'set'
+require 'fileutils'
 
 require 'minitest/autorun'
 require 'mocha'
