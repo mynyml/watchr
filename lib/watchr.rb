@@ -12,8 +12,16 @@ require 'rbconfig'
 #     # on command line, from project's root dir
 #     $ watchr path/to/script
 #
+$LOAD_PATH.unshift(File.dirname(__FILE__))
 module Watchr
   VERSION = '0.6'
+
+  begin
+    require 'fsevent'
+    HAVE_FSE = true
+  rescue LoadError, RuntimeError
+    HAVE_FSE = false
+  end
 
   begin
     require 'rev'
@@ -27,8 +35,9 @@ module Watchr
 
   module EventHandler
     autoload :Base,     'watchr/event_handlers/base'
-    autoload :Unix,     'watchr/event_handlers/unix' if ::Watchr::HAVE_REV
     autoload :Portable, 'watchr/event_handlers/portable'
+    autoload :Unix,     'watchr/event_handlers/unix'      if ::Watchr::HAVE_REV
+    autoload :Darwin,   'watchr/event_handlers/darwin'    if ::Watchr::HAVE_FSE
   end
 
   class << self
@@ -100,15 +109,22 @@ module Watchr
     def handler
       @handler ||=
         case ENV['HANDLER'] || Config::CONFIG['host_os']
-          when /mswin|windows|cygwin/i
-            Watchr::EventHandler::Portable
-          when /sunos|solaris|darwin|mach|osx|bsd|linux/i, 'unix'
-            if ::Watchr::HAVE_REV
+          when /darwin|mach|osx|fsevents?/i
+            if Watchr::HAVE_FSE
+              Watchr::EventHandler::Darwin
+            else
+              Watchr.debug "fsevent not found. `gem install ruby-fsevent` to get evented handler"
+              Watchr::EventHandler::Portable
+            end
+          when /sunos|solaris|bsd|linux|unix/i
+            if Watchr::HAVE_REV
               Watchr::EventHandler::Unix
             else
               Watchr.debug "rev not found. `gem install rev` to get evented handler"
               Watchr::EventHandler::Portable
             end
+          when /mswin|windows|cygwin/i
+            Watchr::EventHandler::Portable
           else
             Watchr::EventHandler::Portable
         end
