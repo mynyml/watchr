@@ -77,10 +77,15 @@ Install
 
     gem install watchr
 
-If you're on \*nix and have the [rev][4] gem installed, Watchr will detect it
-and use it automatically. This will make Watchr evented.
+If you're on Linux/BSD and have the [rev][4] gem installed, Watchr will detect
+it and use it automatically. This will make Watchr evented.
 
     gem install rev
+
+You can get the same evented behaviour on OS X by installing
+[ruby-fsevent][10].
+
+    gem install ruby-fsevent
 
 See Also
 --------
@@ -110,4 +115,5 @@ Links
 [7]:  http://github.com/mynyml/phocus
 [8]:  http://github.com/viking/autowatchr
 [9]:  http://github.com/francois/nestor
+[10]: http://github.com/sandro/ruby-fsevent
 
