@@ -14,20 +14,26 @@ require 'rbconfig'
 #
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 module Watchr
-  VERSION = '0.7'
-
-  begin
-    require 'fsevent'
-    HAVE_FSE = true
-  rescue LoadError, RuntimeError
-    HAVE_FSE = false
+  unless defined?(VERSION)
+    VERSION = '0.7'
   end
 
-  begin
-    require 'rev'
-    HAVE_REV = true
-  rescue LoadError, RuntimeError
-    HAVE_REV = false
+  unless defined?(HAVE_FSE)
+    begin
+      require 'fsevent'
+      HAVE_FSE = true
+    rescue LoadError, RuntimeError
+      HAVE_FSE = false
+    end
+  end
+
+  unless defined?(HAVE_REV)
+    begin
+      require 'rev'
+      HAVE_REV = true
+    rescue LoadError, RuntimeError
+      HAVE_REV = false
+    end
   end
 
   autoload :Script,     'watchr/script'
