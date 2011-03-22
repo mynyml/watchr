@@ -1,5 +1,4 @@
-# Run me with:
-#   $ watchr docs.watchr
+#!/usr/bin/env watchr
 
 require 'yard'
 # --------------------------------------------------
