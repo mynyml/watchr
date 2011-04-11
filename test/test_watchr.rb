@@ -24,7 +24,7 @@ class TestWatchr < MiniTest::Unit::TestCase
 
   test "picking handler" do
 
-    if Watchr::HAVE_REV
+    if Watchr::HAVE_COOLIO
 
     Watchr.handler = nil
     ENV['HANDLER'] = 'linux'

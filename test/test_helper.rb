@@ -27,8 +27,8 @@ class MiniTest::Unit::TestCase
   end
 end
 
-unless Watchr::HAVE_REV
-  puts "Skipping Unix handler tests. Install Rev (gem install rev) to properly test full suite"
+unless Watchr::HAVE_COOLIO
+  puts "Skipping Unix handler tests. Install Coolio (gem install coolio) to properly test full suite"
 end
 
 unless Watchr::HAVE_FSE
