@@ -3,11 +3,11 @@ module Watchr
     class Unix
       include Base
 
-      # Used by Rev. Wraps a monitored path, and `Rev::Loop` will call its
+      # Used by Coolio. Wraps a monitored path, and `Coolio::Loop` will call its
       # callback on file events.
       #
       # @private
-      class SingleFileWatcher < Rev::StatWatcher
+      class SingleFileWatcher < Coolio::StatWatcher
         class << self
           # Stores a reference back to handler so we can call its {Base#notify notify}
           # method with file event info
@@ -75,7 +75,7 @@ module Watchr
 
       def initialize
         SingleFileWatcher.handler = self
-        @loop = Rev::Loop.default
+        @loop = Coolio::Loop.default
       end
 
       # Enters listening loop. Will block control flow until application is
