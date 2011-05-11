@@ -109,5 +109,13 @@ class TestController < MiniTest::Unit::TestCase
     @handler.stubs(:listen).raises(Interrupt)
     @controller.run
   end
+
+  test "does not parse script on mere script file access" do
+    path = to_p('abc')
+    @script.stubs(:path).returns(path)
+    @script.expects(:parse!).never
+
+    @controller.update('abc', :accessed)
+  end
 end
 
