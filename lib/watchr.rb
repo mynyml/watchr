@@ -91,10 +91,10 @@ module Watchr
     #
     # @example
     #
-    #     Config::CONFIG['host_os'] #=> 'linux-gnu'
+    #     RbConfig::CONFIG['host_os'] #=> 'linux-gnu'
     #     Watchr.handler #=> Watchr::EventHandler::Unix
     #
-    #     Config::CONFIG['host_os'] #=> 'cygwin'
+    #     RbConfig::CONFIG['host_os'] #=> 'cygwin'
     #     Watchr.handler #=> Watchr::EventHandler::Portable
     #
     #     ENV['HANDLER'] #=> 'unix'
@@ -108,7 +108,7 @@ module Watchr
     #
     def handler
       @handler ||=
-        case ENV['HANDLER'] || Config::CONFIG['host_os']
+        case ENV['HANDLER'] || RbConfig::CONFIG['host_os']
           when /darwin|mach|osx|fsevents?/i
             if Watchr::HAVE_FSE
               Watchr::EventHandler::Darwin
