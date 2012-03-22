@@ -11,7 +11,7 @@ namespace(:test) do
 
   desc "Run all tests"
   task(:all) do
-    tests = Dir['test/**/test_*.rb'] - ['test/test_helper.rb']
+    tests = FileList['test/**/test_*.rb'] - FileList['test/test_helper.rb']
     ruby %(#{gem_opt} -I.:lib -e"%w( #{tests.join(' ')} ).each {|file| require file }")
   end
 
