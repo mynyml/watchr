@@ -2,8 +2,8 @@ require 'lib/watchr'
 
 Gem::Specification.new do |s|
   s.name                = "watchr"
-  s.summary             = "Modern continious testing (flexible alternative to autotest)"
-  s.description         = "Modern continious testing (flexible alternative to autotest)."
+  s.summary             = "Modern continuous testing (flexible alternative to autotest)"
+  s.description         = "Modern continuous testing (flexible alternative to autotest)."
   s.author              = "mynyml"
   s.email               = "mynyml@gmail.com"
   s.homepage            = "http://mynyml.com/ruby/flexible-continuous-testing"
