@@ -1,4 +1,4 @@
-require 'lib/watchr'
+require File.expand_path('../lib/watchr/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name                = "watchr"

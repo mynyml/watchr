@@ -1,5 +1,6 @@
 require 'pathname'
 require 'rbconfig'
+require 'watchr/version'
 
 # Agile development tool that monitors a directory recursively, and triggers a
 # user defined action whenever an observed file is modified. Its most typical
@@ -14,8 +15,6 @@ require 'rbconfig'
 #
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 module Watchr
-  VERSION = '0.7'
-
   begin
     require 'fsevent'
     HAVE_FSE = true
