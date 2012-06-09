@@ -1,5 +1,4 @@
-# Run me with:
-#   $ watchr gem.watchr
+#!/usr/bin/env watchr
 
 def gemspec() Dir['*.gemspec'].first end
 # --------------------------------------------------

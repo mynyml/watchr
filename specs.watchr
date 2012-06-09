@@ -1,5 +1,4 @@
-# Run me with:
-#   $ watchr specs.watchr
+#!/usr/bin/env watchr
 
 # --------------------------------------------------
 # Rules
