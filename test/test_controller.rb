@@ -117,5 +117,13 @@ class TestController < MiniTest::Unit::TestCase
 
     @controller.update('abc', :accessed)
   end
+  
+  test "does not parse script on deletion" do
+    path = to_p('abc')
+    @script.stubs(:path).returns(path)
+    @script.expects(:parse!).never
+
+    @controller.update('abc', :deleted)
+  end
 end
 

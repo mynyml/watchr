@@ -59,7 +59,7 @@ module Watchr
       path = Pathname(path).expand_path
 
       Watchr.debug("received #{event_type.inspect} event for #{path.relative_path_from(Pathname(Dir.pwd))}")
-      if path == @script.path && event_type != :accessed
+      if path == @script.path && (event_type != :accessed && event_type != :deleted)
         @script.parse!
         @handler.refresh(monitored_paths)
       else
