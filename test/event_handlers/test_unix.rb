@@ -1,4 +1,5 @@
 require 'test/test_helper'
+require 'set'
 
 if Watchr::HAVE_REV
 
