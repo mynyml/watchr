@@ -1,6 +1,6 @@
 require 'test/test_helper'
 
-if Watchr::HAVE_REV
+if Watchr::HAVE_COOLIO
 
 class Watchr::EventHandler::Unix::SingleFileWatcher
   public :type
@@ -20,7 +20,7 @@ class UnixEventHandlerTest < MiniTest::Unit::TestCase
     pathname.stubs(:exist?).returns(true)
     SingleFileWatcher.any_instance.stubs(:pathname).returns(pathname)
 
-    @loop    = Rev::Loop.default
+    @loop    = Coolio::Loop.default
     @handler = EventHandler::Unix.new
     @watcher = SingleFileWatcher.new('foo/bar')
     @loop.stubs(:run)
@@ -28,7 +28,7 @@ class UnixEventHandlerTest < MiniTest::Unit::TestCase
 
   def teardown
     SingleFileWatcher.handler = nil
-    Rev::Loop.default.watchers.every.detach
+    Coolio::Loop.default.watchers.every.detach
   end
 
   test "triggers listening state" do
@@ -159,4 +159,4 @@ class UnixEventHandlerTest < MiniTest::Unit::TestCase
   end
 end
 
-end  # if Watchr::HAVE_REV
+end  # if Watchr::HAVE_COOLIO

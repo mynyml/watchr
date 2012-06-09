@@ -24,10 +24,10 @@ module Watchr
   end
 
   begin
-    require 'rev'
-    HAVE_REV = true
+    require 'coolio'
+    HAVE_COOLIO = true
   rescue LoadError, RuntimeError
-    HAVE_REV = false
+    HAVE_COOLIO = false
   end
 
   autoload :Script,     'watchr/script'
@@ -36,7 +36,7 @@ module Watchr
   module EventHandler
     autoload :Base,     'watchr/event_handlers/base'
     autoload :Portable, 'watchr/event_handlers/portable'
-    autoload :Unix,     'watchr/event_handlers/unix'      if ::Watchr::HAVE_REV
+    autoload :Unix,     'watchr/event_handlers/unix'      if ::Watchr::HAVE_COOLIO
     autoload :Darwin,   'watchr/event_handlers/darwin'    if ::Watchr::HAVE_FSE
   end
 
@@ -117,10 +117,10 @@ module Watchr
               Watchr::EventHandler::Portable
             end
           when /sunos|solaris|bsd|linux|unix/i
-            if Watchr::HAVE_REV
+            if Watchr::HAVE_COOLIO
               Watchr::EventHandler::Unix
             else
-              Watchr.debug "rev not found. `gem install rev` to get evented handler"
+              Watchr.debug "coolio not found. `gem install coolio` to get evented handler"
               Watchr::EventHandler::Portable
             end
           when /mswin|windows|cygwin/i

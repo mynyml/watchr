@@ -77,10 +77,10 @@ Install
 
     gem install watchr
 
-If you're on Linux/BSD and have the [rev][4] gem installed, Watchr will detect
+If you're on Linux/BSD and have the [cool.io][4] gem installed, Watchr will detect
 it and use it automatically. This will make Watchr evented.
 
-    gem install rev
+    gem install coolio
 
 You can get the same evented behaviour on OS X by installing
 [ruby-fsevent][10].
@@ -109,7 +109,7 @@ Links
 [1]:  http://github.com/mynyml/watchr/blob/master/specs.watchr
 [2]:  http://github.com/mynyml/watchr/blob/master/docs.watchr
 [3]:  http://github.com/mynyml/watchr/blob/master/gem.watchr
-[4]:  http://github.com/tarcieri/rev/
+[4]:  https://github.com/tarcieri/cool.io
 [5]:  http://wiki.github.com/mynyml/watchr
 [6]:  http://github.com/mynyml/redgreen
 [7]:  http://github.com/mynyml/phocus
