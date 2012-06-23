@@ -107,8 +107,9 @@ module Watchr
     #   handler class for current architecture
     #
     def handler
+      conf = Object.const_get(defined?(RbConfig) ? :RbConfig : :Config)::CONFIG
       @handler ||=
-        case ENV['HANDLER'] || Config::CONFIG['host_os']
+        case ENV['HANDLER'] || conf['host_os']
           when /darwin|mach|osx|fsevents?/i
             if Watchr::HAVE_FSE
               Watchr::EventHandler::Darwin
