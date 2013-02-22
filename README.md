@@ -109,7 +109,7 @@ Links
 [1]:  http://github.com/mynyml/watchr/blob/master/specs.watchr
 [2]:  http://github.com/mynyml/watchr/blob/master/docs.watchr
 [3]:  http://github.com/mynyml/watchr/blob/master/gem.watchr
-[4]:  http://github.com/tarcieri/rev/
+[4]:  http://rev.rubyforge.org/rdoc/
 [5]:  http://wiki.github.com/mynyml/watchr
 [6]:  http://github.com/mynyml/redgreen
 [7]:  http://github.com/mynyml/phocus
