@@ -1,4 +1,4 @@
-require 'lib/watchr'
+require_relative 'lib/watchr'
 
 Gem::Specification.new do |s|
   s.name                = "watchr"
