@@ -4,7 +4,8 @@ end
 
 def ruby
   require 'rbconfig'
-  File.join([Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name']]) << Config::CONFIG['EXEEXT']
+  cfg = (defined?(RbConfig) ? RbConfig : Config)
+  File.join([cfg::CONFIG['bindir'], cfg::CONFIG['ruby_install_name']]) << cfg::CONFIG['EXEEXT']
 end
 
 # --------------------------------------------------
